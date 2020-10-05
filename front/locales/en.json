@@ -1,0 +1,182 @@
+{
+    "common": {
+        "access": "Access",
+        "accesses": "Accesses",
+        "account": "Account",
+        "accounts": "Accounts",
+        "actions": "Actions",
+        "active": "Active",
+        "add": "Add",
+        "admin": "Admin",
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "client": "Client",
+        "clients": "Clients",
+        "close": "Close",
+        "confirm": "Confirm",
+        "confirm-question": "Do you confirm?",
+        "contact": "Contact",
+        "continue": "Continue",
+        "create": "Create",
+        "credentials": "Credentials",
+        "data": "Data",
+        "description": "Description",
+        "email": "Email",
+        "endpoint": "Endpoint",
+        "filters": "Filters",
+        "go-back-home": "Go back home!",
+        "help": "Help",
+        "http-clients": "HTTP Clients",
+        "information": "Information",
+        "load-more": "Load More",
+        "loading": "Loading...",
+        "management": "Management",
+        "me": "Me",
+        "name": "Name",
+        "none": "None",
+        "entity": "Entity",
+        "entities": "Entities",
+        "owner": "Owner",
+        "owners": "Owners",
+        "page-not-found": "Page not found :-(",
+        "paging-count": "Showing {from} to {to} of {total} items",
+        "password": "Password",
+        "permissions": "Permissions",
+        "protocol": "Protocol",
+        "refresh": "Refresh",
+        "required-fields": "Required fields",
+        "reset": "Reset",
+        "role": "Role",
+        "roles": "Roles",
+        "save": "Save",
+        "search": "Search",
+        "settings": "Settings",
+        "status": "Status",
+        "store": "Store",
+        "stores": "Stores",
+        "unauthorized": "You are not allowed to access this feature :-(",
+        "update": "Update",       
+        "upload": "Upload",
+        "username": "Username",
+        "user": "User",
+        "users": "Users"
+    },
+    "errors": {
+        "403-delete": "You are not allowed to delete this item!",
+        "423-delete": "This item can't be deleted because it is used somewhere!"
+    },
+    "auth": {
+        "change-password": "Change password",
+        "current-password": "Current password",
+        "define-password" : "Define your password",
+        "define-password-description" : "Please, enter your email and define your password.",
+        "email-placeholder": "Enter your email...",
+        "forgot-password" : "You forgot your password?",
+        "forgot-password-description" : "Please, enter your email and you will receive a link to reset your password.",
+        "know-my-password": "I remember my password!",
+        "log-in": "Log In",
+        "log-out": "Log Out",
+        "login": "Login",
+        "login-message": "Sign in with your credentials...",
+        "login-error": "Unknown user or wrong password!",
+        "my-account": "My Account",
+        "new-password": "New password",
+        "new-password-confirm": "New password (again)",
+        "password-changed": "Your password has been changed!",
+        "password-placeholder": "Enter your password...",
+        "reset-link-sent": "Please, check your emails. We just sent a reset link!",
+        "save-password": "Save this password",
+        "send-reset-link": "Send me a reset link",
+        "username-placeholder": "Enter your username..."
+    },
+    "users": {
+        "delete-confirm": "Are you sure you want to delete this user?",
+        "firstname": "Firstname",
+        "lastname": "Lastname",
+        "new": "Add User",
+        "no-user": "There is currently no user in this store."
+    },
+    "roles": {
+        "delete-confirm": "Are you sure you want to delete this role?",
+        "new": "Add Role",
+        "no-role": "Roles can be used in order to control users permissions. You haven't defined any role yet. Create roles and assign them to users..."
+    },
+    "clients": {
+        "delete-confirm": "Are you sure you want to delete this client?",
+        "new": "Add Client",
+        "no-client": "You need to declare clients in order to let thrid-party applications send statements to the LRS. Let's go!"
+    },
+    "accesses": {
+        "adopt-client-permissions": "Adopt client permissions",
+        "cors": "CORS",
+        "delete-confirm": "Are you sure you want to delete this access?",
+        "new": "Add Access",
+        "no-access": "You need to declare one or several accesses to let this client send statements to the LRS. Let's go!"
+    },
+    "entities": {
+        "delete-confirm": "Are you sure you want to delete this entity?",
+        "new": "Add Entity",
+        "no-entity": "Entities are used to manage data visibility and filtering. You haven't defined any entity yet."
+    },
+    "owners": {
+        "delete-confirm": "Are you sure you want to delete this owner?",
+        "new": "Add Owner",
+        "no-owner": "Owners are used to manage data visibility. You haven't defined any owner yet."
+    },
+    "stores": {
+        "delete-confirm": "Are you sure you want to delete this store?",
+        "deleting": "Deleting",
+        "exit-store": "Exit From Store",
+        "new": "Add Store",
+        "no-store": "Stores are independent parts of the database where xAPI data is recorded. You must define one or several stores."
+    },
+    "xapi": {
+        "common": {
+            "statements": "Statements",
+            "actor": "Actor",
+            "verb": "Verb",
+            "object": "Object",
+            "result": "Result",
+            "context": "Context",
+            "stored": "Stored",
+            "authority": "Authority",
+            "homePage": "homePage",
+            "scopes": "Scopes",
+            "authorization-scopes": "Authorization scopes",
+            "extra-permissions": "Extra permissions"
+        },
+        "statements": {
+            "search": {
+                "actor-placeholder": "'john@doe.com'  'account:jdoe'",
+                "verb-placeholder": "'completed'  'http://adlnet.gov/expapi/verbs/completed'",
+                "verb-error": "Only one word, please",
+                "object-placeholder": "'act/xapi101'  'name:xAPI'  'type:scorm'  'john@doe.com'  'account:jdoe'",
+                "context-placeholder": "'http://lms.com/course01'  'profile:cmi5'  'john@doe.com'  'account:jdoe'",
+                "from": "From (>=)",
+                "from-placeholder": "'2020'  '2020-12-01'  '2020-12-01 24:59:59'",
+                "to": "To (<)",
+                "to-placeholder": "'2020'  '2020-12-01'  '2020-12-01 24:59:59'",
+                "date-error": "This date is invalid",
+                "chronological": "Chronological",
+                "reveal_agents": "Reveal Agents",
+                "no-result": "There is no statement with these filters :-("
+            }
+        },
+        "management": {
+            "clear-all": {
+                "title": "Clear all xAPI data",
+                "description": "All xAPI data will be deleted (Statements, Activities, Agents, States, Profiles).",
+                "button": "Clear all",
+                "confirm": "Do you really want to delete all the LRS data? This is a definitive action!",
+                "error": "Sorry, there was an issue during data deletion :-("
+            },
+            "delete-statements": {
+                "title": "Delete Statements",
+                "description": "All the statements of the selected entity/client/access will be deleted.",
+                "button": "Delete",
+                "confirm": "Do you really want to delete the statements? This is a definitive action!",
+                "error": "Sorry, there was an issue during statements deletion :-("
+            }
+        }
+    }
+}
