@@ -76,8 +76,9 @@ trait MagicFilters
 
         // Fulltext search on name has been removed because it can't be used
         // on pseudonymized agents with the reveal option.
-
-        return [];
+        return [
+            [$target.'->mbox' => 'mailto:no-one'],
+        ];
     }
 
     /**
