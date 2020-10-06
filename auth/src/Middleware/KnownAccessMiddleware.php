@@ -34,7 +34,7 @@ class KnownAccessMiddleware
      * @param  \Closure  $next
      * @return mixed
      *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function handle(Request $request, Closure $next)
     {
