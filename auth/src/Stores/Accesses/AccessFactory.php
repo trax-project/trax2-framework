@@ -96,8 +96,8 @@ class AccessFactory implements ModelFactoryContract
             $data['cors'] = '';
         }
         
-        $model->update($data);
         self::setModelPermissions($model, $data);
+        $model->update($data);
         return $model;
     }
 }

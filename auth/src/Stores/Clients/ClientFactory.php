@@ -82,8 +82,8 @@ class ClientFactory implements ModelFactoryContract
      */
     public static function update($model, array $data)
     {
-        $model->update($data);
         self::setModelPermissions($model, $data);
+        $model->update($data);
         return $model;
     }
 }
