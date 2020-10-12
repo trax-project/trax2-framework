@@ -23,7 +23,7 @@ trait RequestMagicObject
         if (!$query->hasFilter('magicObject')) {
             return true;
         }
-        if (!empty($this->getMagicAgentFilter($query->filter('magicObject')))) {
+        if ($this->hasMagicAgentFilter($query->filter('magicObject'))) {
             return $this->requestMagicObjectAgent($query, $ownerId, $reveal);
         } else {
             return $this->requestMagicObjectActivity($query, $ownerId);

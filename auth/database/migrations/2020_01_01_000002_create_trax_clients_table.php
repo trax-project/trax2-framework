@@ -34,7 +34,7 @@ class CreateTraxClientsTable extends Migration
             $table->foreign('owner_id')
                 ->references('id')
                 ->on('trax_owners')
-                ->onDelete('restrict');
+                ->onDelete('cascade');
         });
     }
 

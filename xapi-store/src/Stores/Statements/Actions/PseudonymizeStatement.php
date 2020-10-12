@@ -57,9 +57,11 @@ trait PseudonymizeStatement
     protected function pseudonymizeGroup(object $group, array $agentsInfo)
     {
         // Identified group.
-        $vid = AgentFactory::virtualId($group);
-        if (!is_null($vid)) {
-            $this->pseudonymizeAgent($group, $agentsInfo);
+        if (config('trax-xapi-store.gdpr.pseudonymize_groups', true)) {
+            $vid = AgentFactory::virtualId($group);
+            if (!is_null($vid)) {
+                $this->pseudonymizeAgent($group, $agentsInfo);
+            }
         }
 
         // Group members.

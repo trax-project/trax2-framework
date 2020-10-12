@@ -46,11 +46,33 @@ trait MagicFilters
     }
 
     /**
+     * Check if there is an agent filter.
+     *
+     * @param  string  $field
+     * @return array
+     */
+    protected function hasMagicAgentFilter($field)
+    {
+        // Account filter.
+        if ($account = $this->getMagicPrefixedField($field, 'account')) {
+            return true;
+        }
+
+        // Mbox filter.
+        if ($mbox = $this->getMagicAgentMbox($field)) {
+            return true;
+        }
+
+        // Fulltext search on name has been removed because it can't be used
+        // on pseudonymized agents with the reveal option.
+        return false;
+    }
+
+    /**
      * Get agent filter.
      *
      * @param  string  $field
      * @param  string  $target
-     * @param  bool  $fulltext
      * @return array
      */
     protected function getMagicAgentFilter($field, string $target = 'data')
