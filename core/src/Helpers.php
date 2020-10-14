@@ -9,14 +9,13 @@ class Helpers
     /**
      * Transform a collection to a ready to use select data.
      *
+     * @param  \Illuminate\Support\Collection  $collection
      * @param  string  $nameProp
      * @param  string  $idProp
-     * @param  \Illuminate\Support\Collection  $collection
-     * @return object
+     * @return \Illuminate\Support\Collection
      */
-    public static function select(Collection $collection, $nameProp = 'name', $idProp = 'id')
+    public static function select(Collection $collection, $nameProp = 'name', $idProp = 'id'): Collection
     {
-        $data = $collection->pluck($nameProp, $idProp);
-        return $data->isEmpty() ? (new \stdClass()) : $data;
+        return $collection->pluck($nameProp, $idProp);
     }
 }

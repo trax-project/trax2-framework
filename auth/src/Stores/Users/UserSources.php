@@ -2,9 +2,9 @@
 
 namespace Trax\Auth\Stores\Users;
 
-use Illuminate\Support\Collection;
+use Trax\Core\Options;
 
-class UserSources
+class UserSources extends Options
 {
     /**
      * Return the data.
@@ -33,15 +33,5 @@ class UserSources
     public static function rule(): string
     {
         return 'string|in:internal,ldap';
-    }
-
-    /**
-     * Return the data collection.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public static function all(): Collection
-    {
-        return collect(self::data());
     }
 }
