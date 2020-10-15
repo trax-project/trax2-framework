@@ -11,7 +11,7 @@ class UserSources extends Options
      *
      * @return array
      */
-    public static function data(): array
+    public function data(): array
     {
         return [
             [
@@ -30,7 +30,7 @@ class UserSources extends Options
      *
      * @return string
      */
-    public static function rule(): string
+    public function rule(): string
     {
         return 'string|in:internal,ldap';
     }

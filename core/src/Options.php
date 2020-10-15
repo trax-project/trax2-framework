@@ -11,23 +11,23 @@ abstract class Options
      *
      * @return array
      */
-    abstract public static function data(): array;
+    abstract public function data(): array;
 
     /**
      * Return the request rule.
      *
      * @return string
      */
-    abstract public static function rule(): string;
+    abstract public function rule(): string;
 
     /**
      * Return the data collection.
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function all(): Collection
+    public function all(): Collection
     {
-        return collect(self::data());
+        return collect($this->data());
     }
 
     /**
@@ -37,8 +37,8 @@ abstract class Options
      * @param  string  $idProp
      * @return \Illuminate\Support\Collection
      */
-    public static function select($nameProp = 'name', $idProp = 'id'): Collection
+    public function select($nameProp = 'name', $idProp = 'id'): Collection
     {
-        return self::all()->pluck($nameProp, $idProp);
+        return $this->all()->pluck($nameProp, $idProp);
     }
 }

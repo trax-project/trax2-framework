@@ -112,7 +112,7 @@ class UserFactory implements ModelFactoryContract
         if (array_key_exists('password', $data) && is_null($data['password'])) {
             unset($data['password']);
         }
-        
+
         $model->update($data);
         return $model;
     }

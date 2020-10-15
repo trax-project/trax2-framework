@@ -82,7 +82,7 @@ class UserController extends CrudController
             'password' => 'nullable|string|min:8',
             'active' => 'boolean',
             'admin' => 'boolean',
-            'source' => UserSources::rule(),
+            'source' => (new UserSources)->rule(),
             'meta' => 'array',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',
             'entity_id' => 'nullable|integer|exists:trax_entities,id',
@@ -230,7 +230,7 @@ class UserController extends CrudController
             case 'roles':
                 return Trax::select($this->getResources('role', $this->roles));
             case 'sources':
-                return Trax::select(UserSources::all());
+                return Trax::select((new UserSources)->all());
         }
     }
 }
