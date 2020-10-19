@@ -49,6 +49,12 @@ export default class CrudController {
         this.reload()
     }
 
+    filterMore(filters) {
+        const legacy = this.query.filters ? this.query.filters : {}
+        this.query.filters = { ...legacy, ...filters }
+        this.reload()
+    }
+
     reload() {
         if (this.paging.currentPage > 1) {
             this.paging.currentPage = 1
