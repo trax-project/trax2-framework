@@ -103,7 +103,7 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
      */
     public function type(): string
     {
-        return \Str::of($this->credentials_type)->basename()->snake();
+        return \Str::of(class_basename($this->credentials_type))->snake();
     }
 
     /**
