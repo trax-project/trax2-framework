@@ -28,6 +28,6 @@ export default class CrudClient {
     }
 
     delete(id) {
-        return axios.delete(this.endpoint+'/'+id)
+        return axios.delete(this.endpoint+'/'+id, { params: this.query })
     }
 }
