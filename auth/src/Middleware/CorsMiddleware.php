@@ -72,8 +72,9 @@ class CorsMiddleware
 
         $response->header('Access-Control-Allow-Origin', $access->cors);
         $response->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
-        $response->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Experience-API-Version');
+        $response->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Experience-API-Version, If-Match, If-None-Match');
         $response->header('Access-Control-Allow-Credentials', 'true');
+        $response->header('Access-Control-Expose-Headers', 'ETag');
 
         return $response;
     }
