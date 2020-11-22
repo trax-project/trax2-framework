@@ -153,11 +153,14 @@ class Authentifier
     public function crudRoutes(string $endpoint, string $controllerClass): void
     {
         Route::middleware($this->mixedMiddleware())->group(function () use ($endpoint, $controllerClass) {
-            Route::apiResource($endpoint, $controllerClass);
+            // Addtional routes.
             $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
             Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass) {
                 Route::delete($endpoint, class_basename($controllerClass) . '@destroyByQuery');
+                Route::get($endpoint.'/count', class_basename($controllerClass) . '@count');
             });
+            // Keep at the end because the above routes must not be overriden.
+            Route::apiResource($endpoint, $controllerClass);
         });
     }
 

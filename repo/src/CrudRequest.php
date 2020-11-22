@@ -98,6 +98,24 @@ class CrudRequest
     }
 
     /**
+     * Get an option.
+     *
+     * @param  string  $name
+     * @return mixed
+     */
+    public function option(string $name)
+    {
+        if (!$this->hasParam('options')) {
+            return null;
+        }
+        $options = $this->param('options');
+        if (!isset($options[$name])) {
+            return null;
+        }
+        return $options[$name];
+    }
+
+    /**
      * Add a param.
      *
      * @param  string  $name
@@ -111,6 +129,27 @@ class CrudRequest
         } else {
             $this->params[$name] = $this->castParam($name, $value);
         }
+    }
+
+    /**
+     * Remove a param.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    public function removeParam(string $name)
+    {
+        unset($this->params[$name]);
+    }
+
+    /**
+     * Remove filters.
+     *
+     * @return void
+     */
+    public function removeFilters()
+    {
+        $this->removeParam('filters');
     }
 
     /**

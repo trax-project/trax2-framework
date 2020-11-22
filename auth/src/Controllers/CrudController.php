@@ -193,6 +193,29 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Count resources.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function count(Request $request)
+    {
+        // Validate request.
+        $crudRequest = $this->validateRequest($request);
+        $this->beforeRequest($crudRequest, $request);
+
+        // Perform task.
+        $count = $this->countResources($this->permissionsDomain, $this->repository, $crudRequest);
+        $data = ['count' => $count];
+        if ($crudRequest->option('unfiltered')) {
+            $crudRequest->removeFilters();
+            $total = $this->countResources($this->permissionsDomain, $this->repository, $crudRequest);
+            $data['unfiltered'] = $total;
+        }
+        return response()->json($data);
+    }
+
+    /**
      * Hook before any request.
      *
      * @param  \Trax\Repo\CrudRequest  $crudRequest
@@ -306,7 +329,6 @@ abstract class CrudController extends Controller
             return $repository->addFilter($filter)->count();
         }
     }
-
 
     /**
      * Count all resources from a repository, without pagination params.
