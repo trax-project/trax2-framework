@@ -255,6 +255,17 @@ class Query
     }
 
     /**
+     * Set limit.
+     *
+     * @param  int  $limit
+     * @return void
+     */
+    public function setLimit($limit): void
+    {
+        $this->limit = $limit;
+    }
+
+    /**
      * Get skip.
      *
      * @return int

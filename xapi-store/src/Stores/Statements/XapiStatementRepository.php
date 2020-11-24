@@ -27,6 +27,11 @@ trait XapiStatementRepository
             && !$query->hasFilter('activity')
             && !$query->hasFilter('registration')
         )) {
+            // Force the limit.
+            if (!$query->hasLimit()) {
+                $query->setLimit(config('trax-xapi-store.limit', 100));
+            }
+            // Request.
             return $this->addFilter(['voided' => false])->getRelationalFirst($query);
         }
 
@@ -36,6 +41,11 @@ trait XapiStatementRepository
         // which does not mean that is no other matching statement.
         // We recommended to limit the use of StatementRefs.
 
+        // Force the limit.
+        if (!$query->hasLimit()) {
+            $query->setLimit(config('trax-xapi-store.limit', 100));
+        }
+        // Request.
         $all = $this->getRelationalFirst($query);
         $result = $all->where('voided', false);
 
