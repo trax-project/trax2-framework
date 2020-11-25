@@ -82,6 +82,12 @@ trait PseudonymizeStatement
     protected function pseudonymizeAgent(object $agent, array $agentsInfo)
     {
         $vid = AgentFactory::virtualId($agent);
+
+        if (!isset($agentsInfo[$vid])) {
+            // This may happen when agents recording fail (e.g. concurrency issues)
+            return;
+        }
+        
         $pseudo = $agentsInfo[$vid]->model->pseudo->data;
 
         // Keep the name if present, but replace it.

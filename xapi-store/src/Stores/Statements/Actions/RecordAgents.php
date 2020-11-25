@@ -27,7 +27,13 @@ trait RecordAgents
         $this->checkExistingAgents($existingAgents);
 
         // Insert the new agents.
-        $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo, $context);
+        try {
+            $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo, $context);
+        } catch (\Exception $e) {
+            // We may have a concurrency issue.
+            // We accept to loose some data here!
+            return [];
+        }
 
         // Update agents info with models.
         $this->updateAgentsInfoWithModels($existingAgents, $insertedBatch, $agentsInfo, $context);
@@ -52,7 +58,7 @@ trait RecordAgents
     }
 
     /**
-     * Merge existing activities.
+     * Check existing agents.
      *
      * @param  \Illuminate\Support\Collection  $existingAgents
      * @param  array  $agentsInfo

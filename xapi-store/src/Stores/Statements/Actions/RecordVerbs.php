@@ -23,7 +23,13 @@ trait RecordVerbs
         $existingVerbs = $this->getExistingVerbs($verbsInfo, $context);
 
         // Insert the new verbs.
-        $insertedBatch = $this->insertNewVerbs($existingVerbs, $verbsInfo, $context);
+        try {
+            $insertedBatch = $this->insertNewVerbs($existingVerbs, $verbsInfo, $context);
+        } catch (\Exception $e) {
+            // We may have a concurrency issue.
+            // We accept to loose some data here!
+            return;
+        }
 
         // Index verbs.
         $this->indexVerbs($existingVerbs, $insertedBatch, $verbsInfo, $context);

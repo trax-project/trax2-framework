@@ -154,6 +154,12 @@ trait RecordStatements
     {
         // Identified group.
         $vid = AgentFactory::virtualId($group);
+
+        if (!isset($agentsInfo[$vid])) {
+            // This may happen when agents recording fail (e.g. concurrency issues)
+            return;
+        }
+
         if (!is_null($vid)) {
             $model->agents()->attach($agentsInfo[$vid]->model->id, [
                 'type' => $type,
@@ -183,6 +189,12 @@ trait RecordStatements
     protected function indexStatementAgent(Statement $model, object $agent, string $type, bool $sub, array $agentsInfo)
     {
         $vid = AgentFactory::virtualId($agent);
+
+        if (!isset($agentsInfo[$vid])) {
+            // This may happen when agents recording fail (e.g. concurrency issues)
+            return;
+        }
+
         $model->agents()->attach($agentsInfo[$vid]->model->id, [
             'type' => $type,
             'sub' => $sub,
