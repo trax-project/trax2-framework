@@ -15,6 +15,7 @@ export default class CrudController {
         this.paging = args.paging === undefined ? {} : args.paging
         this.paging.currentPage = 1
         this.callbacks = args.callbacks ? args.callbacks : {}
+        this.autolist = args.autolist !== undefined ? args.autolist : true
     }
 
     init(component, target) {
@@ -22,7 +23,9 @@ export default class CrudController {
         this.modals.init(component, target + '.modals')
         this.vm = component
         this.watch(component, target)
-        return this.list()
+        if (this.autolist) {
+            return this.list()
+        }
     }
 
     list() {
@@ -32,6 +35,10 @@ export default class CrudController {
             resp.data.data.forEach(item => {
                 this.rows.push(this.mapData(item))
             });
+            // Callback.
+            if (this.callbacks.listed) {
+                this.callbacks.listed(this.rows)
+            }
             // Update paging.
             if (resp.data.paging) {
                 this.paging.total = resp.data.paging.count
@@ -70,7 +77,9 @@ export default class CrudController {
                 this.callbacks.created(resp)
             }
             this.modals.close('edit')
-            this.list()
+            if (this.autolist) {
+                this.list()
+            }
         })
     }
     
@@ -81,7 +90,9 @@ export default class CrudController {
                 this.callbacks.updated(resp)
             }
             this.modals.close('edit')
-            this.list()
+            if (this.autolist) {
+                this.list()
+            }
         })
     }
 
@@ -103,7 +114,7 @@ export default class CrudController {
                     this.paging.total--
                     if (this.paging.total <= (this.paging.currentPage - 1) * this.paging.perPage && this.paging.currentPage > 1) {
                         this.paging.currentPage--
-                    } else {
+                    } else if (this.autolist) {
                         this.list()
                     }
                 })
