@@ -27,17 +27,6 @@ class PermissionsRegistry
     }
     
     /**
-     * Get a permission instance.
-     *
-     * @param string  $key
-     * @return \Trax\Auth\Contracts\PermissionContract
-     */
-    public function permission(string $key): PermissionContract
-    {
-        return $this->permissions[$key];
-    }
-    
-    /**
      * Get the higher scope given a domain, operation, default caps and permssions.
      *
      * @param string  $context  domain.operation
@@ -52,7 +41,13 @@ class PermissionsRegistry
 
         // Then, get scopes from permissions.
         foreach ($permissions as $key) {
-            $capabilities = $this->permission($key)->capabilities();
+
+            if (!isset($this->permissions[$key])) {
+                // This may happen if the permission keys change during a maintenance.
+                continue;
+            }
+
+            $capabilities = $this->permissions[$key]->capabilities();
             $scopes = array_merge(
                 $scopes,
                 $this->filterScopes($capabilities, $context)
