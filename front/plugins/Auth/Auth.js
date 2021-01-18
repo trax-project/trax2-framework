@@ -15,7 +15,7 @@ export default class Auth {
         // We don't have access to 'this' from this method because
         // it is called directly from Vue Router.
         axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions'],
+            accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
             include: ['owners'],
         }})
@@ -34,7 +34,7 @@ export default class Auth {
         // We don't have access to 'this' from this method because
         // it is called directly from Vue Router.
         axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions'],
+            accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
             include: ['owners'],
         }})
@@ -51,13 +51,55 @@ export default class Auth {
         // We don't have access to 'this' from this method because
         // it is called directly from Vue Router.
         axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions'],
+            accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
             include: ['owners'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
             if (Vue.prototype.$auth.hasPermission(permission)) {
+                Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+            } else {
+                next({ name: 'unauthorized' });
+            }
+        })
+        .catch(err => {
+            next({ name: 'login' });
+        })
+    }
+
+    ifHasOnePermission(permission, next) {
+        // We don't have access to 'this' from this method because
+        // it is called directly from Vue Router.
+        axios.get('/trax/api/front/users/me', {params: {
+            accessors: ['permissions', 'rights'],
+            relations: ['owner', 'entity', 'role'],
+            include: ['owners'],
+        }})
+        .then(resp => {
+            Vue.prototype.$auth.user = resp.data.data
+            if (Vue.prototype.$auth.hasOnePermission(permission)) {
+                Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+            } else {
+                next({ name: 'unauthorized' });
+            }
+        })
+        .catch(err => {
+            next({ name: 'login' });
+        })
+    }
+
+    ifHasAllPermissions(permission, next) {
+        // We don't have access to 'this' from this method because
+        // it is called directly from Vue Router.
+        axios.get('/trax/api/front/users/me', {params: {
+            accessors: ['permissions', 'rights'],
+            relations: ['owner', 'entity', 'role'],
+            include: ['owners'],
+        }})
+        .then(resp => {
+            Vue.prototype.$auth.user = resp.data.data
+            if (Vue.prototype.$auth.hasAllPermissions(permission)) {
                 Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
             } else {
                 next({ name: 'unauthorized' });
@@ -76,7 +118,7 @@ export default class Auth {
         Vue.prototype.$auth.reset()
 
         axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions'],
+            accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
             include: ['owners'],
         }})
@@ -129,6 +171,22 @@ export default class Auth {
 
     hasPermission(permission) {
         return Vue.prototype.$auth.user.admin || Vue.prototype.$auth.user.permissions.indexOf(permission) >= 0
+    }
+
+    hasOnePermission(permissions) {
+        if (Vue.prototype.$auth.user.admin) {
+            return true
+        }
+        let commonPermissions = Vue.prototype.$auth.user.permissions.filter(x => permissions.includes(x))
+        return commonPermissions.length > 0
+    }
+
+    hasAllPermissions(permissions) {
+        if (Vue.prototype.$auth.user.admin) {
+            return true
+        }
+        let missingPermissions = Vue.prototype.$auth.user.permissions.filter(x => !permissions.includes(x));
+        return missingPermissions.length == 0
     }
 
     reset() {

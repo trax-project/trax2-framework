@@ -100,10 +100,27 @@ class Authorizer
     }
 
     /**
+     * Check if the user has one of the mermissions.
+     *
+     * @param array  $permissions  [domain.operation(.scope)]
+     * @param \Illuminate\Database\Eloquent\Model  $resource
+     * @return bool
+     */
+    public function canOne(array $permissions, Model $resource = null): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($this->can($permission, $resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check a permission and throw an exception when the permission is not granted.
      *
      * @param string  $permission  domain.operation(.scope)
-     * @param \Illuminate\Database\Eloquent\Model  $resource
+     * @param  \Illuminate\Database\Eloquent\Model  $resource
      * @return void
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -112,6 +129,24 @@ class Authorizer
     {
         if (!$this->can($permission, $resource)) {
             throw new AuthorizationException("Forbidden: [$permission] permission not granted.");
+        }
+    }
+
+    /**
+     * Check if the user has one of the permissions
+     * and throw an exception when no permission is granted.
+     *
+     * @param  array  $permissions  [domain.operation(.scope)]
+     * @param  \Illuminate\Database\Eloquent\Model  $resource
+     * @return void
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function mustOne(array $permissions, Model $resource = null): void
+    {
+        if (!$this->canOne($permissions, $resource)) {
+            $permissions = implode(', ', $permissions);
+            throw new AuthorizationException("Forbidden: none of the [$permissions] permission(s) granted.");
         }
     }
 
