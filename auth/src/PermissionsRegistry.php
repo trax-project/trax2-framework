@@ -25,6 +25,21 @@ class PermissionsRegistry
             $this->permissions[$key] = new $class();
         }
     }
+
+    /**
+     * Get a permission instance.
+     *
+     * @param string  $key
+     * @return \Trax\Auth\Contracts\PermissionContract|null
+     */
+    public function permission(string $key)
+    {
+        if (!isset($this->permissions[$key])) {
+            // This may happen if the permission keys change during a maintenance.
+            return null;
+        }
+        return $this->permissions[$key];
+    }
     
     /**
      * Get the higher scope given a domain, operation, default caps and permssions.
@@ -42,7 +57,7 @@ class PermissionsRegistry
         // Then, get scopes from permissions.
         foreach ($permissions as $key) {
 
-            if (!isset($this->permissions[$key])) {
+            if (is_null($this->permission($key))) {
                 // This may happen if the permission keys change during a maintenance.
                 continue;
             }
