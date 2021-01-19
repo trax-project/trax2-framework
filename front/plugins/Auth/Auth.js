@@ -4,6 +4,7 @@ export default class Auth {
     constructor() {
         this.conf = {}
         this.user = null
+        this.token = null
         this.owner = null
     }
 
@@ -17,14 +18,16 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             next({ name: 'home' })
         })
         .catch(err => {
             Vue.prototype.$auth.user = null
+            Vue.prototype.$auth.token = null
             Vue.prototype.$auth.reset()
             next()
         })
@@ -36,10 +39,11 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
         })
         .catch(err => {
@@ -53,10 +57,11 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasPermission(permission)) {
                 Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
             } else {
@@ -74,10 +79,11 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasOnePermission(permission)) {
                 Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
             } else {
@@ -95,10 +101,11 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasAllPermissions(permission)) {
                 Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
             } else {
@@ -120,10 +127,11 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions', 'rights'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners'],
+            include: ['owners', 'xsrf-token'],
         }})
         .then(resp => {
             Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (!Vue.prototype.$auth.user.owner) {
                 next();
             } else {
