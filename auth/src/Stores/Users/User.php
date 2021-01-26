@@ -93,14 +93,14 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
     }
     
     /**
-     * Check a right.
+     * Check if the user has a right.
      *
      * @param  string  $right
      * @return bool
      */
     public function hasRight(string $right): bool
     {
-        return $this->isAdmin() || $this->rights[$right];
+        return isset($this->rights[$right]) && $this->rights[$right];
     }
 
     /**

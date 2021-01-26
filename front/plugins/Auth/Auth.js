@@ -209,8 +209,12 @@ export default class Auth {
     }
 
     reset() {
+        /* 
+        Don't do that because it will cause issues in Vue components which are using user
+        just before the components are unloaded!
         Vue.prototype.$auth.user = null
         Vue.prototype.$auth.token = null
+        */
         Vue.prototype.$auth.owner = null
         Vue.prototype.$auth.save()
     }
