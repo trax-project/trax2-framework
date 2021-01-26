@@ -6,45 +6,32 @@ export default class Auth {
         this.user = null
         this.token = null
         this.owner = null
+        this.getMeResolve = null
+        this.getMeReject = null
     }
 
     config(conf) {
         this.conf = conf
     }
     
+    // In most of the functions below, we don't have access to 'this'
+    // because functions are directly attached to the routes object of Vue Router.
+
     ifNotAuthenticated(to, from, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        // We don't pass "next" because we don't want to check the owner here.
+        Vue.prototype.$auth.getMe()
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             next({ name: 'home' })
         })
         .catch(err => {
-            Vue.prototype.$auth.user = null
-            Vue.prototype.$auth.token = null
-            Vue.prototype.$auth.reset()
             next()
         })
     }
 
     ifAuthenticated(to, from, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        Vue.prototype.$auth.getMe(next)
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
-            Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+            next()
         })
         .catch(err => {
             next({ name: 'login' });
@@ -52,18 +39,10 @@ export default class Auth {
     }
 
     ifHasPermission(permission, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        Vue.prototype.$auth.getMe(next)
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasPermission(permission)) {
-                Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+                next()
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -74,18 +53,10 @@ export default class Auth {
     }
 
     ifHasOnePermission(permission, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        Vue.prototype.$auth.getMe(next)
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasOnePermission(permission)) {
-                Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+                next()
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -96,18 +67,10 @@ export default class Auth {
     }
 
     ifHasAllPermissions(permission, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        Vue.prototype.$auth.getMe(next)
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (Vue.prototype.$auth.hasAllPermissions(permission)) {
-                Vue.prototype.$auth.checkOwner(resp.data.included.owners, next)
+                next()
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -118,21 +81,15 @@ export default class Auth {
     }
 
     ifHasNoOwner(to, from, next) {
-        // We don't have access to 'this' from this method because
-        // it is called directly from Vue Router.
 
-        // We reset the local storage because we just exited from an owner.
+        // We reset the local storage because want to select a new owner.
         Vue.prototype.$auth.reset()
 
-        axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
-            relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
-        }})
+        // We don't pass "next" because we don't want to check the owner here.
+        Vue.prototype.$auth.getMe()
         .then(resp => {
-            Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
             if (!Vue.prototype.$auth.user.owner) {
+                // Only users whithout assigned owner can select a owner.
                 next();
             } else {
                 next({ name: 'unauthorized' });
@@ -143,45 +100,96 @@ export default class Auth {
         })
     }
 
-    checkOwner(owners, next) {
+    // Make the "GET ME" request and return a promise.
+    // When "next" is set, check that the user has a selected owner.
+    // If not, it redirects to the owners selection page.
+
+    getMe(next = null) {
+
+        // Request.
+        axios.get('/trax/api/front/users/me', {params: {
+            accessors: ['permissions', 'rights'],
+            relations: ['owner', 'entity', 'role'],
+            include: ['owners', 'xsrf-token'],
+        }})
+        .then(resp => {
+
+            // Keep user data and XSRF token.
+            Vue.prototype.$auth.user = resp.data.data
+            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
+
+            // Does the user need to select an owner?
+            if (next && !Vue.prototype.$auth.hasLocalOwner(resp.data.included.owners)) {
+                next({ name: 'owners' })
+            } else {
+                // Next callback of the Promise.
+                Vue.prototype.$auth.getMeResolve()
+            }
+        })
+        .catch(err => {
+
+            // We reset local data.
+            Vue.prototype.$auth.reset()
+
+            // We reject the Promise.
+            Vue.prototype.$auth.getMeReject()
+        })
+
+        // Return a promise.
+        return new Promise((resolve, reject) => {
+            Vue.prototype.$auth.getMeResolve = resolve
+            Vue.prototype.$auth.getMeReject = reject
+        })
+    }
+
+    hasLocalOwner(owners) {
         
+        // There is no need to select a owner. It's only a config option.
         if (!Vue.prototype.$auth.conf.splitOwners) {
-            next()
-            return
+            return true
         }
 
         // We load data from the local storage.
         Vue.prototype.$auth.load()
 
+        // The user is attached to an owner and can't select an owner.
         if (Vue.prototype.$auth.user.owner) {
-            // User with an owner.
-            // No need to save it again!
             Vue.prototype.$auth.owner = Vue.prototype.$auth.user.owner
-            next()
-
-        } else if (Vue.prototype.$auth.owner) {
-            // Owner already selected.
-            // We check it still exists...
-            let found = Object.keys(owners).find(ownerId => ownerId == Vue.prototype.$auth.owner.id)
-            if (found) {
-                // It still exists. No need to save it again!
-                next()
-            } else {
-                // Otherwise, go to the owners page.
-                next({ name: 'owners' })
-            }
-
-        } else {
-            // Otherwise, go to the owners page.
-            next({ name: 'owners' })
+            return true
         }
+        
+        // Check that the the owner is still valid regarding available owners in the platform.
+        if (Vue.prototype.$auth.owner) {
+            return Object.keys(owners).find(ownerId => ownerId == Vue.prototype.$auth.owner.id)
+        }
+        
+        // No owner has been found.
+        return false
+    }
+
+    hasRight(right) {
+        if (!Vue.prototype.$auth.user) {
+            return false
+        }
+        // We don't check that the user is an admin here because
+        // all rights are not necessarily granted to admins.
+        return Vue.prototype.$auth.user.rights[right]
     }
 
     hasPermission(permission) {
-        return Vue.prototype.$auth.user.admin || Vue.prototype.$auth.user.permissions.indexOf(permission) >= 0
+        if (!Vue.prototype.$auth.user) {
+            return false
+        }
+        if (Vue.prototype.$auth.user.admin) {
+            return true
+        }
+        return Vue.prototype.$auth.user.permissions.indexOf(permission) >= 0
     }
 
     hasOnePermission(permissions) {
+        if (!Vue.prototype.$auth.user) {
+            return false
+        }
         if (Vue.prototype.$auth.user.admin) {
             return true
         }
@@ -190,6 +198,9 @@ export default class Auth {
     }
 
     hasAllPermissions(permissions) {
+        if (!Vue.prototype.$auth.user) {
+            return false
+        }
         if (Vue.prototype.$auth.user.admin) {
             return true
         }
@@ -198,13 +209,10 @@ export default class Auth {
     }
 
     reset() {
+        Vue.prototype.$auth.user = null
+        Vue.prototype.$auth.token = null
         Vue.prototype.$auth.owner = null
         Vue.prototype.$auth.save()
-    }
-
-    load() {
-        let data = JSON.parse(localStorage.getItem('auth'))
-        Vue.prototype.$auth.owner = data.owner
     }
 
     save() {
@@ -212,5 +220,10 @@ export default class Auth {
             owner: Vue.prototype.$auth.owner,
         }
         localStorage.setItem('auth', JSON.stringify(data))
+    }
+
+    load() {
+        let data = JSON.parse(localStorage.getItem('auth'))
+        Vue.prototype.$auth.owner = data.owner
     }
 }
