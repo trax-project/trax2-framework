@@ -83,27 +83,6 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
     }
 
     /**
-     * Get the rights.
-     *
-     * @return array
-     */
-    public function getRightsAttribute(): array
-    {
-        return [];
-    }
-    
-    /**
-     * Check if the user has a right.
-     *
-     * @param  string  $right
-     * @return bool
-     */
-    public function hasRight(string $right): bool
-    {
-        return isset($this->rights[$right]) && $this->rights[$right];
-    }
-
-    /**
      * Get the matching role.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -166,6 +145,7 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
     /**
      * Check if a consumer has a given permission.
      *
+     * @param  string  $permission
      * @return bool
      */
     public function hasPermission(string $permission): bool

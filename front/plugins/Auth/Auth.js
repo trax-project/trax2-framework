@@ -108,7 +108,7 @@ export default class Auth {
 
         // Request.
         axios.get('/trax/api/front/users/me', {params: {
-            accessors: ['permissions', 'rights'],
+            accessors: ['permissions'],
             relations: ['owner', 'entity', 'role'],
             include: ['owners', 'xsrf-token'],
         }})
@@ -165,15 +165,6 @@ export default class Auth {
         
         // No owner has been found.
         return false
-    }
-
-    hasRight(right) {
-        if (!Vue.prototype.$auth.user) {
-            return false
-        }
-        // We don't check that the user is an admin here because
-        // all rights are not necessarily granted to admins.
-        return Vue.prototype.$auth.user.rights[right]
     }
 
     hasPermission(permission) {

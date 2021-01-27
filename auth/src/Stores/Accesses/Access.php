@@ -168,6 +168,7 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
     /**
      * Check if a consumer has a given permission.
      *
+     * @param  string  $permission
      * @return bool
      */
     public function hasPermission(string $permission): bool
