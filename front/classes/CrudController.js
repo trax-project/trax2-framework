@@ -96,6 +96,19 @@ export default class CrudController {
         })
     }
 
+    duplicate(id) {
+        this.modals.open('edit')
+        this.form.duplicate(id).then(resp => {
+            if (this.callbacks.duplicated) {
+                this.callbacks.duplicated(resp)
+            }
+            this.modals.close('edit')
+            if (this.autolist) {
+                this.list()
+            }
+        })
+    }
+
     remove(id) {
         // Just an alias because delete can't be used in some contexts (reserved JS keyword).
         this.delete(id)

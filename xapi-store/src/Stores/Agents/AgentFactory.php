@@ -87,6 +87,20 @@ class AgentFactory implements ModelFactoryContract
     }
 
     /**
+     * Duplicate an existing model in the database, given some data.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $data
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public static function duplicate($model, array $data = [])
+    {
+        $copy = $model->replicate()->fill($data);
+        $copy->save();
+        return $copy;
+    }
+
+    /**
      * Generate a virtual ID for this agent.
      *
      * @param  object|array|string  $agent

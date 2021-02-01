@@ -111,6 +111,33 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Duplicate an existing resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function duplicate(Request $request)
+    {
+        // Validate request.
+        $crudRequest = $this->validateDuplicateRequest($request);
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeWrite($crudRequest, $request);
+        $this->beforeDuplicate($crudRequest, $request);
+        $include = $this->validateIncludeRequest($request);
+
+        // Check permissions.
+        $id = $request->route($this->routeParameter);
+        $resource = $this->repository->findOrFail($id);
+        $this->authorizer->must($this->permissionsDomain . '.read', $resource);
+        $this->authorizer->must($this->permissionsDomain . '.write');
+
+        // Perform task.
+        $copy = $this->repository->duplicateModel($resource, $crudRequest->content());
+        $responseData = $this->responseData($resource);
+        return $this->responseWithIncludedData($responseData, $include);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -228,7 +255,6 @@ abstract class CrudController extends Controller
         // You may override this in your controller.
     }
 
-
     /**
      * Hook before a store or update request.
      *
@@ -237,6 +263,18 @@ abstract class CrudController extends Controller
      * @return void
      */
     protected function beforeWrite(CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
+     * Hook before a duplicate request.
+     *
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeDuplicate(CrudRequest $crudRequest, Request $request)
     {
         // You may override this in your controller.
     }
@@ -260,12 +298,40 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Validate a duplicate request on model.
+     *
+     * @param  \Illuminate\Http\Request  $request;
+     * @return  \Trax\Repo\CrudRequest
+     */
+    protected function validateDuplicateRequest(Request $request): CrudRequest
+    {
+        $params = $request->validate(
+            CrudRequest::validationRules()
+        );
+        $content = $request->validate(
+            $this->duplicateValidationRules($request)
+        );
+        return new CrudRequest($params, $content);
+    }
+
+    /**
      * Get the validation rules.
      *
      * @param \Illuminate\Http\Request  $request;
      * @return array
      */
     abstract protected function validationRules(Request $request);
+
+    /**
+     * Get the duplicate validation rules.
+     *
+     * @param \Illuminate\Http\Request  $request;
+     * @return array
+     */
+    protected function duplicateValidationRules(Request $request)
+    {
+        return [];
+    }
 
     /**
      * Get resources from a repository.

@@ -16,7 +16,7 @@ export default class CrudClient {
     }
 
     read(id) {
-        return axios.get(this.endpoint+'/'+id, { params: this.query })
+        return axios.get(this.endpoint + '/' + id, { params: this.query })
     }
 
     create(data) {
@@ -24,10 +24,14 @@ export default class CrudClient {
     }
 
     update(data) {
-        return axios.put(this.endpoint+'/'+data.id, data)
+        return axios.put(this.endpoint + '/' + data.id, data)
+    }
+
+    duplicate(data) {
+        return axios.post(this.endpoint + '/' + data.id + '/duplicate', data)
     }
 
     delete(id) {
-        return axios.delete(this.endpoint+'/'+id, { params: this.query })
+        return axios.delete(this.endpoint + '/' + id, { params: this.query })
     }
 }
