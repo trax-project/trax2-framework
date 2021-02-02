@@ -5,6 +5,7 @@ namespace Trax\Auth\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Trax\Repo\Contracts\CrudRepositoryContract;
 use Trax\Repo\CrudRequest;
 use Trax\Auth\Authorizer;
@@ -132,8 +133,10 @@ abstract class CrudController extends Controller
         $this->authorizer->must($this->permissionsDomain . '.write');
 
         // Perform task.
-        $copy = $this->repository->duplicateModel($resource, $crudRequest->content());
-        $responseData = $this->responseData($resource);
+        $copy = DB::transaction(function () use ($resource, $crudRequest) {
+            return $this->repository->duplicateModel($resource, $crudRequest->content());
+        });
+        $responseData = $this->responseData($copy);
         return $this->responseWithIncludedData($responseData, $include);
     }
 

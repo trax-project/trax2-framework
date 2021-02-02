@@ -162,7 +162,7 @@ class Authentifier
             $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
 
             // Determine the name of the resource param.
-            $paramName = \Str::of($endpoint)->afterLast('/')->singular();
+            $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
 
             // Duplicate route.
             if (!empty($options['duplicate'])) {
