@@ -41,7 +41,7 @@ class ForgotPasswordController extends Controller
         $user = $this->users->addFilter(['email' => $request->input('email')])->get()->first();
 
         // If roles are activated, we check that the user has a role or is an admin.
-        if ($user && !$user->admin && config('trax-auth.services.roles') && !isset($user->role_id)) {
+        if ($user && !$user->admin && config('trax-auth.services.roles', false) && !isset($user->role_id)) {
             // We want the search to fail. And sure, it will fail.
             $role_id = 1;
         } else {

@@ -11,7 +11,7 @@ class PermissionScopes
      */
     public static function names(): array
     {
-        return config('trax-auth.permissions.scopes', ['mine', 'access', 'client', 'entity', 'all']);
+        return config('trax-auth.permissions.scopes', ['mine', 'access', 'client', 'entity', 'owner', 'all']);
     }
 
     /**

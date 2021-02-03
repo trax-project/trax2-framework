@@ -1,9 +1,19 @@
-# TRAX Framework 2.0 / Alpha
+# TRAX Framework 2.0 (beta 1)
 
-This package has been designed and developed by Sébastien FRAYSSE (http://fraysse.eu).
 
-If you got a copy of this package in its development phase (alpha or beta):
-- You can use it for testing purpose only.
-- You are not allowed to give access to the sofware on a server.
-- You are not allowed to distribute copies of the software.
- 
+## About TRAX Framework
+
+TRAX Framework is a Laravel package developed for the [TRAX LRS project](http://traxlrs.com).
+
+It provides the following features:
+
+- Authentication and authorization system
+- Data repository with CRUD operations
+- xAPI store
+
+
+## Sofware License & Copyright
+
+TRAX LRS **Starter Edition** is distributed under the [GNU-GPL3 license](https://www.gnu.org/licenses/gpl-3.0.fr.html).
+
+Copyright 2021 Sébastien Fraysse, http://fraysse.eu, sebastien@fraysse.eu.

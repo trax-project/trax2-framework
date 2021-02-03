@@ -72,7 +72,7 @@ class LoginController extends Controller
         }
 
         // Then, if roles are activated, we check that the user has a role or is an admin.
-        if (!$user->admin && config('trax-auth.services.roles') && !isset($user->role_id)) {
+        if (!$user->admin && config('trax-auth.services.roles', false) && !isset($user->role_id)) {
             throw new AuthenticationException();
         }
         
