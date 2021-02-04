@@ -53,7 +53,7 @@ class AuthServiceProvider extends ServiceProvider
             'user' => \Trax\Auth\Stores\Users\UserPermissions::class,
             'role' => \Trax\Auth\Stores\Roles\RolePermissions::class,
             'entity' => \Trax\Auth\Stores\Entities\EntityPermissions::class,
-            'owners' => \Trax\Auth\Stores\Owners\OwnerPermissions::class,
+            'owner' => \Trax\Auth\Stores\Owners\OwnerPermissions::class,
         ]));
     }
 }

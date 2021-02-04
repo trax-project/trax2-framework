@@ -7,6 +7,7 @@ use Trax\Auth\Stores\Accesses\AccessController;
 use Trax\Auth\Stores\Users\UserController;
 use Trax\Auth\Stores\Roles\RoleController;
 use Trax\Auth\Stores\Entities\EntityController;
+use Trax\Auth\Stores\Owners\OwnerController;
 
 if (config('trax-auth.services.clients', true)) {
     //
