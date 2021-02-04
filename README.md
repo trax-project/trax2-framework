@@ -14,6 +14,11 @@ It provides the following features:
 
 ## Sofware License & Copyright
 
-TRAX LRS **Starter Edition** is distributed under the [GNU-GPL3 license](https://www.gnu.org/licenses/gpl-3.0.fr.html).
+TRAX Framework is dual-licensed under:
+
+- [GNU-GPL3 license](https://www.gnu.org/licenses/gpl-3.0.fr.html)
+- TRAX LRS Extended Edition license
+
+You can choose between one of them if you use this work.
 
 Copyright 2021 Sébastien Fraysse, http://fraysse.eu, sebastien@fraysse.eu.
