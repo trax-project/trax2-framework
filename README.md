@@ -17,3 +17,5 @@ It provides the following features:
 TRAX LRS **Starter Edition** is distributed under the [GNU-GPL3 license](https://www.gnu.org/licenses/gpl-3.0.fr.html).
 
 Copyright 2021 Sébastien Fraysse, http://fraysse.eu, sebastien@fraysse.eu.
+
+test
