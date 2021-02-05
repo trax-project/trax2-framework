@@ -9,10 +9,11 @@ use Trax\Auth\Contracts\HasPermissionsContract;
 use Trax\Auth\Contracts\ConsumerContract;
 use Trax\Repo\ModelAttributes\ActivableModel;
 use Trax\Repo\ModelAttributes\AdminModel;
+use Trax\Repo\ModelAttributes\MetaModel;
 
 class User extends Authenticatable implements HasPermissionsContract, ConsumerContract, MustVerifyEmail
 {
-    use ActivableModel, AdminModel, Notifiable;
+    use ActivableModel, AdminModel, MetaModel, Notifiable;
 
     /**
      * The table associated with the model.
@@ -145,6 +146,7 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
     /**
      * Check if a consumer has a given permission.
      *
+     * @param  string  $permission
      * @return bool
      */
     public function hasPermission(string $permission): bool

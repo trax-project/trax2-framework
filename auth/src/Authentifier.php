@@ -148,19 +148,35 @@ class Authentifier
     /**
      * Register all the CRUD routes of a repository with a mixed middleware.
      *
+     * @param  string  $endpoint
+     * @param  string  $controllerClass
+     * @param  array  $options
      * @return void
      */
-    public function crudRoutes(string $endpoint, string $controllerClass): void
+    public function crudRoutes(string $endpoint, string $controllerClass, array $options = []): void
     {
-        Route::middleware($this->mixedMiddleware())->group(function () use ($endpoint, $controllerClass) {
-            // Addtional routes.
-            $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
-            Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass) {
-                Route::delete($endpoint, class_basename($controllerClass) . '@destroyByQuery');
-                Route::get($endpoint.'/count', class_basename($controllerClass) . '@count');
-            });
-            // Keep at the end because the above routes must not be overriden.
+        Route::middleware($this->mixedMiddleware())->group(function () use ($endpoint, $controllerClass, $options) {
+            
+            // Standard CRUD routes.
             Route::apiResource($endpoint, $controllerClass);
+            $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
+
+            // Determine the name of the resource param.
+            $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
+
+            // Duplicate route.
+            if (!empty($options['duplicate'])) {
+                Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $paramName) {
+                    Route::post($endpoint . "/{{$paramName}}/duplicate", class_basename($controllerClass) . '@duplicate');
+                });
+            }
+
+            // Delete by query route.
+            if (!empty($options['destroyByQuery'])) {
+                Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass) {
+                    Route::delete($endpoint, class_basename($controllerClass) . '@destroyByQuery');
+                });
+            }
         });
     }
 

@@ -5,7 +5,8 @@ use Trax\Auth\TraxAuth;
 
 TraxAuth::crudRoutes(
     'trax/api/{source}/xapi/ext/statements',
-    \Trax\XapiStore\Stores\Statements\StatementController::class
+    \Trax\XapiStore\Stores\Statements\StatementController::class,
+    ['destroyByQuery' => true]
 );
 
 TraxAuth::crudRoutes(

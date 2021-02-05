@@ -96,7 +96,7 @@ abstract class CrudRepository implements CrudRepositoryContract
         $resource = $this->factory()::make($data);
         $resource->save();
         event(new ResourceCreated($resource));
-        return $this->find($resource->id);
+        return $resource;
     }
 
     /**
@@ -128,7 +128,21 @@ abstract class CrudRepository implements CrudRepositoryContract
             $model->save();
         }
         event(new ResourceUpdated($model, $originalData, $data));
-        return $this->find($model->id);
+        return $model;
+    }
+
+    /**
+     * Duplicate an existing resource, given its model and new data.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $data
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function duplicateModel($model, array $data = null)
+    {
+        $copy = $this->factory()::duplicate($model, $data);
+        event(new ResourceCreated($copy));
+        return $copy;
     }
 
     /**

@@ -231,6 +231,8 @@ class UserController extends CrudController
                 return Trax::select($this->getResources('role', $this->roles));
             case 'sources':
                 return Trax::select((new UserSources)->all());
+            case 'xsrf-token':
+                return csrf_token();
         }
     }
 }

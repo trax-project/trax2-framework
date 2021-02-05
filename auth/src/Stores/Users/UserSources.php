@@ -24,14 +24,4 @@ class UserSources extends Options
             ],
         ];
     }
-
-    /**
-     * Return the request rule.
-     *
-     * @return string
-     */
-    public function rule(): string
-    {
-        return 'string|in:internal,ldap';
-    }
 }

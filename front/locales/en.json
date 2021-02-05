@@ -54,7 +54,7 @@
         "status": "Status",
         "store": "Store",
         "stores": "Stores",
-        "unauthorized": "You are not allowed to access this feature :-(",
+        "unauthorized": "You are not allowed to access this page :-(",
         "update": "Update",       
         "upload": "Upload",
         "username": "Username",
@@ -63,7 +63,7 @@
     },
     "errors": {
         "403-delete": "You are not allowed to delete this item!",
-        "423-delete": "This item can't be deleted because it is used somewhere!"
+        "423-delete": "This item can't be deleted because there is some data associated!"
     },
     "auth": {
         "change-password": "Change password",

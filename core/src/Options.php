@@ -15,10 +15,15 @@ abstract class Options
 
     /**
      * Return the request rule.
+     * The default behavior considers the items 'id' as possible values.
      *
      * @return string
      */
-    abstract public function rule(): string;
+    public function rule(): string
+    {
+        $values = collect($this->data())->implode('id', ',');
+        return 'string|in:' . $values;
+    }
 
     /**
      * Return the data collection.

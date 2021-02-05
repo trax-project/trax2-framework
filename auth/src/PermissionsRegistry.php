@@ -25,15 +25,19 @@ class PermissionsRegistry
             $this->permissions[$key] = new $class();
         }
     }
-    
+
     /**
      * Get a permission instance.
      *
      * @param string  $key
-     * @return \Trax\Auth\Contracts\PermissionContract
+     * @return \Trax\Auth\Contracts\PermissionContract|null
      */
-    public function permission(string $key): PermissionContract
+    public function permission(string $key)
     {
+        if (!isset($this->permissions[$key])) {
+            // This may happen if the permission keys change during a maintenance.
+            return null;
+        }
         return $this->permissions[$key];
     }
     
@@ -52,7 +56,13 @@ class PermissionsRegistry
 
         // Then, get scopes from permissions.
         foreach ($permissions as $key) {
-            $capabilities = $this->permission($key)->capabilities();
+
+            if (is_null($this->permission($key))) {
+                // This may happen if the permission keys change during a maintenance.
+                continue;
+            }
+
+            $capabilities = $this->permissions[$key]->capabilities();
             $scopes = array_merge(
                 $scopes,
                 $this->filterScopes($capabilities, $context)

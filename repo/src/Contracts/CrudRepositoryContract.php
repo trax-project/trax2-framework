@@ -71,6 +71,15 @@ interface CrudRepositoryContract
     public function updateModel($model, array $data = null);
 
     /**
+     * Duplicate an existing resource, given its model.
+     *
+     * @param \Illuminate\Database\Eloquent\Model  $model
+     * @param array  $data
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function duplicateModel($model, array $data = null);
+
+    /**
      * Insert a batch of resource.
      *
      * @param array  $batch

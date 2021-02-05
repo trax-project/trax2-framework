@@ -21,6 +21,7 @@ interface HasPermissionsContract
     /**
      * Check if a consumer has a given permission.
      *
+     * @param  string  $permission
      * @return bool
      */
     public function hasPermission(string $permission): bool;
