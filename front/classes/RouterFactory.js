@@ -4,7 +4,7 @@ export default class RouterFactory {
 
     static make(routes, activeClass = 'active') {
 
-        let segments = String(baseUrl).split('/');
+        let segments = String(window.baseURL).split('/');
         segments.splice(0, 3);
         let baseRoute = '/' + segments.join('/');
     
