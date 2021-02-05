@@ -29,17 +29,17 @@ export default class Auth {
     }
 
     ifAuthenticated(to, from, next) {
-        Vue.prototype.$auth.getMe(next)
+        Vue.prototype.$auth.getMe(true)
         .then(resp => {
             next()
         })
         .catch(err => {
-            next({ name: 'login' });
+            next({ name: err });
         })
     }
 
     ifHasPermission(permission, next) {
-        Vue.prototype.$auth.getMe(next)
+        Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasPermission(permission)) {
                 next()
@@ -48,12 +48,12 @@ export default class Auth {
             }
         })
         .catch(err => {
-            next({ name: 'login' });
+            next({ name: err });
         })
     }
 
     ifHasOnePermission(permission, next) {
-        Vue.prototype.$auth.getMe(next)
+        Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasOnePermission(permission)) {
                 next()
@@ -62,12 +62,12 @@ export default class Auth {
             }
         })
         .catch(err => {
-            next({ name: 'login' });
+            next({ name: err });
         })
     }
 
     ifHasAllPermissions(permission, next) {
-        Vue.prototype.$auth.getMe(next)
+        Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasAllPermissions(permission)) {
                 next()
@@ -76,7 +76,7 @@ export default class Auth {
             }
         })
         .catch(err => {
-            next({ name: 'login' });
+            next({ name: err });
         })
     }
 
@@ -96,7 +96,7 @@ export default class Auth {
             }
         })
         .catch(err => {
-            next({ name: 'login' });
+            next({ name: err });
         })
     }
 
@@ -104,7 +104,7 @@ export default class Auth {
     // When "next" is set, check that the user has a selected owner.
     // If not, it redirects to the owners selection page.
 
-    getMe(next = null) {
+    getMe(checkOwner = false) {
 
         // Request.
         axios.get('/trax/api/front/users/me', {params: {
@@ -119,8 +119,8 @@ export default class Auth {
             Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
 
             // Does the user need to select an owner?
-            if (next && !Vue.prototype.$auth.hasLocalOwner(resp.data.included.owners)) {
-                next({ name: 'owners' })
+            if (checkOwner && !Vue.prototype.$auth.hasLocalOwner(resp.data.included.owners)) {
+                Vue.prototype.$auth.getMeReject('owners')
             } else {
                 // Next callback of the Promise.
                 Vue.prototype.$auth.getMeResolve()
@@ -132,7 +132,7 @@ export default class Auth {
             Vue.prototype.$auth.reset()
 
             // We reject the Promise.
-            Vue.prototype.$auth.getMeReject()
+            Vue.prototype.$auth.getMeReject('login')
         })
 
         // Return a promise.
