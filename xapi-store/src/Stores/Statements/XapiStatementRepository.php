@@ -73,9 +73,24 @@ trait XapiStatementRepository
      */
     public function finalize(Model $resource, Query $query = null): Model
     {
+        // Early exit for performance improvement.
+        if (!isset($query) || (!$query->hasOption('format') && !$query->hasOption('reorder'))) {
+            return $resource;
+        }
+
+        // Format.
         $format = isset($query) ? $query->option('format', 'exact') : 'exact';
         $lang = isset($query) ? $query->option('lang') : null;
-        $resource->data = Statement::format($resource->data, $format, $lang);
+        $statement = Statement::format($resource->data, $format, $lang);
+
+        // Reorder props for readability.
+        $reorder = isset($query) ? $query->option('reorder') : false;
+        if ($reorder) {
+            $statement = Statement::reorderStatement($statement);
+        }
+
+        // Result.
+        $resource->data = $statement;
         return $resource;
     }
 

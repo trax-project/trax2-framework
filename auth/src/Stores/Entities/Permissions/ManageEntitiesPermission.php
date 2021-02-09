@@ -27,5 +27,5 @@ class ManageEntitiesPermission extends Permission
      *
      * @var array
      */
-    protected $supportedConsumerTypes = ['user', 'app'];
+    protected $supportedConsumerTypes = ['user'];
 }

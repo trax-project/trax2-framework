@@ -10,7 +10,7 @@ trait ReorderStatement
      * @param  \stdClass  $object
      * @return \stdClass
      */
-    protected static function reorderStatement($object)
+    public static function reorderStatement($object)
     {
         $reordered = self::reorder($object);
         $reordered->actor = self::reorderActor($reordered->actor);

@@ -24,7 +24,7 @@ trait FormatStatements
         } elseif ($format == 'canonical') {
             $statement =self::formatCanonical($statement, $lang);
         }
-        return self::reorderStatement($statement);
+        return $statement;
     }
     
     /**

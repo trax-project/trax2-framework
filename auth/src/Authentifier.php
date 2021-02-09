@@ -4,13 +4,12 @@ namespace Trax\Auth;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use Trax\Auth\Middleware\ApiMiddleware;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authorizer;
+use Trax\Auth\Stores\Accesses\Access;
 
 class Authentifier
 {
@@ -146,19 +145,161 @@ class Authentifier
     }
 
     /**
-     * Register all the CRUD routes of a repository with a mixed middleware.
+     * Define a GET route.
      *
-     * @param  string  $endpoint
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @param  string  $target
+     * @param  string|array  $middlewares
+     * @param  bool  $secure
+     * @return void
+     */
+    public function mixedGetRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $this->userGetRoute($prefix, $suffix, $target, $middlewares, $secure);
+        $this->appGetRoute($prefix, $suffix, $target, $middlewares, $secure);
+    }
+
+    public function userGetRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->userMiddleware($middlewares, $secure);
+        Route::get($prefix . '/front/' . $suffix, $target)->middleware($middleware);
+    }
+    
+    public function appGetRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->appMiddleware($middlewares, $secure);
+        Route::get($prefix . '/{source}/' . $suffix, $target)->middleware($middleware);
+    }
+
+    /**
+     * Define a POST route.
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @param  string  $target
+     * @param  string|array  $middlewares
+     * @param  bool  $secure
+     * @return void
+     */
+    public function mixedPostRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $this->userPostRoute($prefix, $suffix, $target, $middlewares, $secure);
+        $this->appPostRoute($prefix, $suffix, $target, $middlewares, $secure);
+    }
+
+    public function userPostRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->userMiddleware($middlewares, $secure);
+        Route::post($prefix . '/front/' . $suffix, $target)->middleware($middleware);
+    }
+    
+    public function appPostRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->appMiddleware($middlewares, $secure);
+        Route::post($prefix . '/{source}/' . $suffix, $target)->middleware($middleware);
+    }
+
+    /**
+     * Define a PUT route.
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @param  string  $target
+     * @param  string|array  $middlewares
+     * @param  bool  $secure
+     * @return void
+     */
+    public function mixedPutRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $this->userPutRoute($prefix, $suffix, $target, $middlewares, $secure);
+        $this->appPutRoute($prefix, $suffix, $target, $middlewares, $secure);
+    }
+
+    public function userPutRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->userMiddleware($middlewares, $secure);
+        Route::put($prefix . '/front/' . $suffix, $target)->middleware($middleware);
+    }
+    
+    public function appPutRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->appMiddleware($middlewares, $secure);
+        Route::put($prefix . '/{source}/' . $suffix, $target)->middleware($middleware);
+    }
+
+    /**
+     * Define a DELETE route.
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @param  string  $target
+     * @param  string|array  $middlewares
+     * @param  bool  $secure
+     * @return void
+     */
+    public function mixedDeleteRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $this->userDeleteRoute($prefix, $suffix, $target, $middlewares, $secure);
+        $this->appDeleteRoute($prefix, $suffix, $target, $middlewares, $secure);
+    }
+
+    public function userDeleteRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->userMiddleware($middlewares, $secure);
+        Route::delete($prefix . '/front/' . $suffix, $target)->middleware($middleware);
+    }
+    
+    public function appDeleteRoute(string $prefix, string $suffix, string $target, $middlewares = [], $secure = true): void
+    {
+        $middleware = $this->appMiddleware($middlewares, $secure);
+        Route::delete($prefix . '/{source}/' . $suffix, $target)->middleware($middleware);
+    }
+
+    /**
+     * Register all the CRUD routes of a repository.
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
      * @param  string  $controllerClass
      * @param  array  $options
      * @return void
      */
-    public function crudRoutes(string $endpoint, string $controllerClass, array $options = []): void
+    public function mixedCrudRoutes(string $prefix, string $suffix, string $controllerClass, array $options = []): void
     {
-        Route::middleware($this->mixedMiddleware())->group(function () use ($endpoint, $controllerClass, $options) {
+        $this->userCrudRoutes($prefix, $suffix, $controllerClass, $options);
+        $this->appCrudRoutes($prefix, $suffix, $controllerClass, $options);
+    }
+
+    public function userCrudRoutes(string $prefix, string $suffix, string $controllerClass, array $options = []): void
+    {
+        $endpoint = $prefix . '/front/' . $suffix;
+        $this->crudRoutes($endpoint, $controllerClass, $this->userMiddleware(), $options);
+    }
+
+    public function appCrudRoutes(string $prefix, string $suffix, string $controllerClass, array $options = []): void
+    {
+        $endpoint = $prefix . '/{source}/' . $suffix;
+        $this->crudRoutes($endpoint, $controllerClass, $this->appMiddleware(), $options);
+    }
+
+    /**
+     * Register all the CRUD routes of a repository with a given endpoint.
+     *
+     * @param  string  $endpoint
+     * @param  string  $controllerClass
+     * @param  array  $middlewares
+     * @param  array  $options
+     * @return void
+     */
+    public function crudRoutes(string $endpoint, string $controllerClass, array $middlewares, array $options = []): void
+    {
+        Route::middleware($middlewares)->group(function () use ($endpoint, $controllerClass, $options) {
             
             // Standard CRUD routes.
-            Route::apiResource($endpoint, $controllerClass);
+            Route::apiResource($endpoint, $controllerClass, ['names' => [
+                'index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>''
+            ]]);
             $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
 
             // Determine the name of the resource param.
@@ -184,9 +325,10 @@ class Authentifier
      * Return the middlewares for the web UI.
      *
      * @param  string|array  $middlewares
+     * @param  bool  $secure
      * @return array
      */
-    public function userMiddleware($middlewares = []): array
+    public function userMiddleware($middlewares = [], $secure = true): array
     {
         if (is_string($middlewares)) {
             $middlewares = [$middlewares];
@@ -217,18 +359,6 @@ class Authentifier
             $middlewares[] = 'throttle:60,1';
         }
         return array_merge([ApiMiddleware::class], $middlewares);
-    }
-
-    /**
-     * Return the middlewares for mixed protection (external API & web session).
-     *
-     * @param  string|array|null  $middlewares
-     * @param  bool  $secure
-     * @return array
-     */
-    public function mixedMiddleware($middlewares = [], $secure = true): array
-    {
-        return $this->isUser() ? $this->userMiddleware($middlewares) : $this->appMiddleware($middlewares, $secure);
     }
 
     /**
@@ -348,33 +478,13 @@ class Authentifier
     }
 
     /**
-     * Check an access given its UUID.
+     * Set the current access.
      *
-     * @param  string  $uuid
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Trax\Auth\Stores\Accesses\Access  $access
      * @return void
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
      */
-    public function checkAccess(string $uuid, Request $request): void
+    public function setAccess(Access $access): void
     {
-        // We find the access for this source.
-        if (!$access = $this->accesses->findByUuid($uuid)) {
-            throw new AuthenticationException();
-        }
-
-        // We check that the access is active.
-        if (!$access->isActive()) {
-            throw new AuthenticationException();
-        }
-
-        // We check access.
-        $guard = $this->guard($access->type);
-        if (!$guard->check($access->credentials, $request)) {
-            throw new AuthenticationException();
-        }
-
-        // Record the manager.
         $this->currentAccess = $access;
     }
 }

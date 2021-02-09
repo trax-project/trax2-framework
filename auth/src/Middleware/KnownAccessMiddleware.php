@@ -3,8 +3,9 @@
 namespace Trax\Auth\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Trax\Auth\Stores\Accesses\AccessService;
 
 class KnownAccessMiddleware
@@ -44,8 +45,13 @@ class KnownAccessMiddleware
             return $next($request);
         }
 
-        // We find the access for this source in order to get the cors settings.
-        if (!$this->accesses->findByUuid($source)) {
+        // Get the access from the cache first.
+        $access = Cache::remember("access_$source", 60, function () use ($source) {
+            return $this->accesses->findByUuid($source);
+        });
+
+        // Not found.
+        if (!$access) {
             throw new NotFoundHttpException();
         }
 

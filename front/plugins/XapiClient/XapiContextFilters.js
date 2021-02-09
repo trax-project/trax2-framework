@@ -51,6 +51,9 @@ export default class XapiContextFilters {
         if (!params.filters) {
             params.filters = {}
         }
+        if (!params.options) {
+            params.options = {}
+        }
         this.addEntity(params)
         this.addClient(params)
         this.addAccess(params)

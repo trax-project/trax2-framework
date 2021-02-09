@@ -34,6 +34,7 @@ export default class XapiStatementsFilters {
     get(params) {
         this.errors.clearAll()
         params = this.contextFilters.get(params)
+        params.options.reorder = true
         this.addActor(params)
         this.addVerb(params)
         this.addObject(params)
