@@ -24,13 +24,20 @@ abstract class CrudRepository implements CrudRepositoryContract
     protected $builder;
 
     /**
+     * DB table when DB query builder is prefered to Eloquent.
+     *
+     * @var string
+     */
+    protected $table;
+
+    /**
      * Constructor.
      *
      * @return void
      */
     public function __construct()
     {
-        $this->builder = new EloquentQueryWrapper($this, $this->factory()::modelClass(), $this->dynamicFilters());
+        $this->builder = new EloquentQueryWrapper($this, $this->factory()::modelClass(), $this->table, $this->dynamicFilters());
     }
 
     /**
@@ -334,11 +341,11 @@ abstract class CrudRepository implements CrudRepositoryContract
     /**
      * Finalize a resource before returning it.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $resource
+     * @param  \Illuminate\Database\Eloquent\Model|object  $resource
      * @param  \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model|object
      */
-    public function finalize(Model $resource, Query $query = null): Model
+    public function finalize($resource, Query $query = null)
     {
         return $resource;
     }

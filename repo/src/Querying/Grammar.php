@@ -9,24 +9,24 @@ abstract class Grammar
     /**
      * Add a JSON contains condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $prop
      * @param  mixed  $value
      * @param  bool  $orWhere
      * @return void
      */
-    abstract public function addJsonContainsCondition(Builder $builder, string $prop, $value, bool $orWhere);
+    abstract public function addJsonContainsCondition($builder, string $prop, $value, bool $orWhere);
 
     /**
      * Add a JSON search condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $prop
      * @param  mixed  $value
      * @param  bool  $orWhere
      * @return void
      */
-    abstract public function addJsonSearchCondition(Builder $builder, string $prop, $value, bool $orWhere);
+    abstract public function addJsonSearchCondition($builder, string $prop, $value, bool $orWhere);
 
     /**
      * Get the JSON candidate to be used with JSON_CONTAINS.

@@ -18,13 +18,13 @@ class MySqlGrammar extends Grammar
      * In an array of objects: 'meta->children[*]' => ['name' => 'child1', 'age' => 10]
      * > where JSON_CONTAINS(meta, '{"name" : "child1", "age" : 10}', '$.children')
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $prop
      * @param  mixed  $value
      * @param  bool  $orWhere
      * @return void
      */
-    public function addJsonContainsCondition(Builder $builder, string $prop, $value, bool $orWhere)
+    public function addJsonContainsCondition($builder, string $prop, $value, bool $orWhere)
     {
         $where = $orWhere ? 'orWhereRaw' : 'whereRaw';
         $parts = explode('[*]', $prop);
@@ -59,13 +59,13 @@ class MySqlGrammar extends Grammar
      * In an array of objects: 'meta->children[*]->name' => 'child'
      * > where JSON_SEARCH(meta, 'all', '%child%', NULL, '$.children[*].name') IS NOT NULL
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $prop
      * @param  mixed  $value
      * @param  bool  $orWhere
      * @return void
      */
-    public function addJsonSearchCondition(Builder $builder, string $prop, $value, bool $orWhere)
+    public function addJsonSearchCondition($builder, string $prop, $value, bool $orWhere)
     {
         $where = $orWhere ? 'orWhereRaw' : 'whereRaw';
         list($target, $path) = $this->jsonTargetAndPath($prop);

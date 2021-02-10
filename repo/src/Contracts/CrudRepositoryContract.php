@@ -198,9 +198,9 @@ interface CrudRepositoryContract
     /**
      * Finalize a resource before returning it.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $resource
+     * @param  \Illuminate\Database\Eloquent\Model|object  $resource
      * @param  \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model|object
      */
-    public function finalize(Model $resource, Query $query = null): Model;
+    public function finalize($resource, Query $query = null);
 }

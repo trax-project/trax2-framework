@@ -84,6 +84,12 @@ class StatementService extends StatementRepository
         $this->agents = $agents;
         $this->persons = $persons;
         $this->verbs = $verbs;
+
+        // Deactivate Eloquent for GET requests when there is no relational need.
+        if (!config('trax-xapi-store.requests.relational', false)) {
+            $this->table = 'trax_xapi_statements';
+        }
+        
         parent::__construct();
     }
 

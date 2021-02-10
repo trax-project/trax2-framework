@@ -2,8 +2,8 @@
 
 namespace Trax\Repo\Querying;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Trax\Repo\Contracts\CrudRepositoryContract;
 
 class EloquentQueryWrapper
@@ -32,6 +32,13 @@ class EloquentQueryWrapper
     protected $model;
 
     /**
+     * DB table when DB query builder is prefered to Eloquent.
+     *
+     * @var string
+     */
+    protected $table;
+
+    /**
      * The filters implemented by the repository.
      *
      * @var array
@@ -50,14 +57,16 @@ class EloquentQueryWrapper
      *
      * @param \Trax\Repo\Contracts\CrudRepositoryContract  $repo
      * @param string  $model
+     * @param string  $table
      * @param array  $dynamicFilters
      * @return void
      */
-    public function __construct(CrudRepositoryContract $repo, string $model, array $dynamicFilters = [])
+    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [])
     {
         $this->grammar = GrammarFactory::make();
         $this->repo = $repo;
         $this->model = $model;
+        $this->table = $table;
         $this->dynamicFilters = $dynamicFilters;
     }
 
@@ -72,9 +81,9 @@ class EloquentQueryWrapper
     {
         if (isset($query)) {
             $this->query = $query->addFilter($this->filters);
-            $result = $this->builder()->find($id)->append($query->append());
+            $result = $this->eloquentBuilder()->find($id)->append($query->append());
         } else {
-            $result = $this->builder()->find($id);
+            $result = $this->eloquentBuilder()->find($id);
         }
         return $this->response($result);
     }
@@ -90,9 +99,9 @@ class EloquentQueryWrapper
     {
         if (isset($query)) {
             $this->query = $query->addFilter($this->filters);
-            $result = $this->builder()->findOrFail($id)->append($query->append());
+            $result = $this->eloquentBuilder()->findOrFail($id)->append($query->append());
         } else {
-            $result = $this->builder()->findOrFail($id);
+            $result = $this->eloquentBuilder()->findOrFail($id);
         }
         return $this->response($result);
     }
@@ -165,9 +174,9 @@ class EloquentQueryWrapper
      * Return the query builder with a query already built.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
-    protected function queriedBuilder(Query $query = null, bool $paginate = true): Builder
+    protected function queriedBuilder(Query $query = null, bool $paginate = true)
     {
         // Simple query with filters.
         if (!isset($query)) {
@@ -213,11 +222,11 @@ class EloquentQueryWrapper
     /**
      * Perform a query on a given builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  array  $filters
      * @return void
      */
-    protected function processFilters(Builder $builder, array $filters, bool $or = false)
+    protected function processFilters($builder, array $filters, bool $or = false)
     {
         $filters = $this->checkFilters($filters);
         $orWhere = false;
@@ -230,12 +239,12 @@ class EloquentQueryWrapper
     /**
      * Add a condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  array  $condition
      * @param  bool  $orWhere
      * @return void
      */
-    protected function addCondition(Builder $builder, array $condition, bool $orWhere)
+    protected function addCondition($builder, array $condition, bool $orWhere)
     {
         // We always have 1 condition, but we loop to get the $prop easily.
         foreach ($condition as $prop => $value) {
@@ -259,12 +268,12 @@ class EloquentQueryWrapper
     /**
      * Add a logical OR condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  array  $conditions
      * @param  bool  $orWhere
      * @return void
      */
-    protected function addOrCondition(Builder $builder, array $filter, bool $orWhere)
+    protected function addOrCondition($builder, array $filter, bool $orWhere)
     {
         $where = $orWhere ? 'orWhere' : 'where';
         $builder->$where(function ($builder) use ($filter) {
@@ -275,12 +284,12 @@ class EloquentQueryWrapper
     /**
      * Add a logical AND condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  array  $conditions
      * @param  bool  $orWhere
      * @return void
      */
-    protected function addAndCondition(Builder $builder, array $filter, bool $orWhere)
+    protected function addAndCondition($builder, array $filter, bool $orWhere)
     {
         $where = $orWhere ? 'orWhere' : 'where';
         $builder->$where(function ($builder) use ($filter) {
@@ -291,13 +300,13 @@ class EloquentQueryWrapper
     /**
      * Add a filter condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $filterProp
      * @param  mixed  $filterValue
      * @param  bool  $orWhere
      * @return void
      */
-    protected function addFilterCondition(Builder $builder, string $filterProp, $filterValue, bool $orWhere)
+    protected function addFilterCondition($builder, string $filterProp, $filterValue, bool $orWhere)
     {
         $where = $orWhere ? 'orWhere' : 'where';
         $builder->$where(function ($builder) use ($filterProp, $filterValue) {
@@ -310,13 +319,13 @@ class EloquentQueryWrapper
     /**
      * Add a property condition to the query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $builder
      * @param  string  $prop
      * @param  mixed  $condition
      * @param  bool  $orWhere
      * @return mixed
      */
-    protected function addPropertyCondition(Builder $builder, string $prop, $condition, bool $orWhere)
+    protected function addPropertyCondition($builder, string $prop, $condition, bool $orWhere)
     {
         $where = $orWhere ? 'orWhere' : 'where';
 
@@ -377,15 +386,30 @@ class EloquentQueryWrapper
     /**
      * Return the query builder.
      *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    protected function builder()
+    {
+        // Get the DB query builder when it is prefered to Eloquent.
+        if (isset($this->table)) {
+            return DB::table($this->table);
+        }
+        // ELoquent query builder.
+        return $this->eloquentBuilder();
+    }
+
+    /**
+     * Return the Eloquent query builder.
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function builder(): Builder
+    protected function eloquentBuilder()
     {
+        $queryBuilder = $this->model::query();
         if (!is_null($this->query)) {
-            return $this->model::query()->with($this->query->with());
-        } else {
-            return $this->model::query();
+            $queryBuilder = $queryBuilder->with($this->query->with());
         }
+        return $queryBuilder;
     }
 
     /**
