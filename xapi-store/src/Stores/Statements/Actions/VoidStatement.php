@@ -33,6 +33,7 @@ trait VoidStatement
         }
         
         // Void it.
-        $this->updateModel($statement, ['voided' => true]);
+        // DOn't use updateModel here because it may be an object, and not an Eloquent model.
+        $this->update($statement->id, ['voided' => true]);
     }
 }

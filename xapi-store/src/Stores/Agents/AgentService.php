@@ -2,7 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Agents;
 
-use Trax\XapiStore\Stores\Persons\PersonRepository;
+use Illuminate\Container\Container;
 
 class AgentService extends AgentRepository
 {
@@ -14,15 +14,14 @@ class AgentService extends AgentRepository
     protected $persons;
 
     /**
-     * Create the constructor.
+     * Create a new class instance.
      *
-     * @param  \Trax\XapiStore\Stores\Persons\PersonRepository  $persons
+     * @param  \Illuminate\Container\Container
      * @return void
      */
-    public function __construct(
-        PersonRepository $persons
-    ) {
-        $this->persons = $persons;
+    public function __construct(Container $container)
+    {
+        $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         parent::__construct();
     }
 

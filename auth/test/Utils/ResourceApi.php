@@ -156,6 +156,9 @@ class ResourceApi
      */
     protected function testCase($consumer = null)
     {
+        if (!isset($consumer) && $this->testCase->asUser) {
+            $consumer = $this->testCase->admin;
+        }
         return $this->isUser($consumer)
             ? $this->testCase->actingAs($consumer)
             : $this->testCase->withHeaders($this->authHeaders($consumer));
@@ -186,6 +189,9 @@ class ResourceApi
      */
     protected function endpoint($consumer = null, $id = null): string
     {
+        if (!isset($consumer) && $this->testCase->asUser) {
+            $consumer = $this->testCase->admin;
+        }
         return $this->isUser($consumer)
             ? $this->userEndpoint($id)
             : $this->appEndpoint($consumer, $id);

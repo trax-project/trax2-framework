@@ -4,6 +4,7 @@ namespace Trax\Auth\Test\Utils;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Trax\XapiStore\Test\Utils\StatementFactory;
 
 class TraxAuthTestCase extends TestCase
 {
@@ -52,13 +53,30 @@ class TraxAuthTestCase extends TestCase
     public $owners;
     
     /**
+     * Statements extended API.
+     *
+     * @var \Trax\Auth\Test\Utils\ResourceApi
+     */
+    public $statements;
+    
+    /**
+     * @var bool
+     */
+    public $asUser = false;
+    
+    /**
+     * @var \Trax\Auth\Stores\Users\User
+     */
+    public $admin;
+
+    /**
      * Setup.
      *
      * @return  void
      */
-    protected function authSetup($userAuth = false): void
+    protected function authSetup(): void
     {
-        putenv("TRAX_AUTH_IS_USER=" . ($userAuth ? 'true' : 'false'));
+        putenv("TRAX_AUTH_IS_USER=" . ($this->asUser ? 'true' : 'false'));
         parent::setUp();
 
         // Owners API.
@@ -91,5 +109,16 @@ class TraxAuthTestCase extends TestCase
         $userFactory->setEntityFactory($this->entities->factory);
         $userFactory->setRoleFactory($this->roles->factory);
         $this->users = new ResourceApi('users', $userFactory, $this);
+
+        // Statements API.
+        $statementFactory = new StatementFactory($this->app, $this->faker);
+        $statementFactory->setOwnerFactory($this->owners->factory);
+        $statementFactory->setEntityFactory($this->entities->factory);
+        $this->statements = new ResourceApi('xapi/ext/statements', $statementFactory, $this);
+
+        // Create an admin user when needed.
+        if ($this->asUser) {
+            $this->admin = $this->users->factory->make(['admin' => true]);
+        }
     }
 }

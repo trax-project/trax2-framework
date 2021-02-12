@@ -38,12 +38,14 @@ trait CrudTrait
      */
     public function testGetAll()
     {
+        $count = count($this->api()->all()->json()['data']);
+
         $this->api()->factory->make();
         $this->api()->factory->make();
 
         $this->api()->all()
             ->assertOk()
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount($count + 2, 'data');
     }
 
     /**
@@ -51,6 +53,8 @@ trait CrudTrait
      */
     public function testDelete()
     {
+        $count = count($this->api()->all()->json()['data']);
+
         $first = $this->api()->factory->make();
         $last = $this->api()->factory->make();
         
@@ -59,13 +63,13 @@ trait CrudTrait
 
         $this->api()->all()
             ->assertOk()
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount($count + 1, 'data');
         
         $this->api()->delete($first->id)
             ->assertNoContent();
 
         $this->api()->all()
             ->assertOk()
-            ->assertJsonCount(0, 'data');
+            ->assertJsonCount($count, 'data');
     }
 }

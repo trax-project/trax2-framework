@@ -3,12 +3,6 @@
 namespace Trax\XapiStore;
 
 use Illuminate\Support\ServiceProvider;
-use Trax\XapiStore\Stores\Statements\StatementService;
-use Trax\XapiStore\Stores\Agents\AgentService;
-use Trax\XapiStore\Stores\Activities\ActivityRepository;
-use Trax\XapiStore\Stores\Attachments\AttachmentRepository;
-use Trax\XapiStore\Stores\Persons\PersonRepository;
-use Trax\XapiStore\Stores\Verbs\VerbRepository;
 use Trax\Auth\Traits\RegisterPermissionProviders;
 
 class XapiStoreServiceProvider extends ServiceProvider
@@ -32,6 +26,9 @@ class XapiStoreServiceProvider extends ServiceProvider
         \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class => \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class,
         \Trax\XapiStore\Stores\Persons\PersonRepository::class => \Trax\XapiStore\Stores\Persons\PersonRepository::class,
         \Trax\XapiStore\Stores\Verbs\VerbRepository::class => \Trax\XapiStore\Stores\Verbs\VerbRepository::class,
+        \Trax\XapiStore\Services\GlobalService::class => \Trax\XapiStore\Services\GlobalService::class,
+        \Trax\XapiStore\Stores\Statements\StatementService::class => \Trax\XapiStore\Stores\Statements\StatementService::class,
+        \Trax\XapiStore\Stores\Agents\AgentService::class => \Trax\XapiStore\Stores\Agents\AgentService::class,
     ];
 
     /**
@@ -52,30 +49,6 @@ class XapiStoreServiceProvider extends ServiceProvider
         'person' => \Trax\XapiStore\Stores\Persons\PersonPermissions::class,
         'verb' => \Trax\XapiStore\Stores\Verbs\VerbPermissions::class,
     ];
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        // Agent service.
-        $this->app->singleton(AgentService::class, function () {
-            $persons = $this->app->make(PersonRepository::class);
-            return new AgentService($persons);
-        });
-
-        // Statement service.
-        $this->app->singleton(StatementService::class, function () {
-            $activities = $this->app->make(ActivityRepository::class);
-            $attachments = $this->app->make(AttachmentRepository::class);
-            $agents = $this->app->make(AgentService::class);
-            $persons = $this->app->make(PersonRepository::class);
-            $verbs = $this->app->make(VerbRepository::class);
-            return new StatementService($activities, $attachments, $agents, $persons, $verbs);
-        });
-    }
 
     /**
      * Bootstrap any application services.

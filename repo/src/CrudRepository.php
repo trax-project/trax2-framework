@@ -314,7 +314,9 @@ abstract class CrudRepository implements CrudRepositoryContract
             'limit' => 1,
         ]));
         if ($resources->count() == 1) {
-            return $resources->last();
+            // Get may return objects, not Eloquent models.
+            // So we don't return directly the last resource.
+            return $this->find($resources->last()->id);
         }
         return false;
     }
@@ -333,7 +335,9 @@ abstract class CrudRepository implements CrudRepositoryContract
             'limit' => 1,
         ]));
         if ($resources->count() == 1) {
-            return $resources->last();
+            // Get may return objects, not Eloquent models.
+            // So we don't return directly the last resource.
+            return $this->find($resources->last()->id);
         }
         return false;
     }

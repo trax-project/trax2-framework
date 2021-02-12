@@ -3,7 +3,6 @@
 namespace Trax\Auth\Middleware;
 
 use Closure;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
@@ -47,7 +46,6 @@ class ApiMiddleware
      * @return mixed
      *
      * @throws \Illuminate\Auth\AuthenticationException
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function handle(Request $request, Closure $next)
     {
@@ -64,7 +62,7 @@ class ApiMiddleware
 
         // Not found.
         if (!$access) {
-            throw new NotFoundHttpException();
+            throw new AuthenticationException();
         }
 
         // Check the access is active.

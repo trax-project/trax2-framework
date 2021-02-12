@@ -2,109 +2,62 @@
 
 namespace Trax\XapiStore\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Trax\Auth\Authorizer;
-use Trax\XapiStore\Stores\Statements\StatementService;
-use Trax\XapiStore\Stores\Activities\ActivityRepository;
-use Trax\XapiStore\Stores\Agents\AgentRepository;
-use Trax\XapiStore\Stores\States\StateRepository;
-use Trax\XapiStore\Stores\ActivityProfiles\ActivityProfileRepository;
-use Trax\XapiStore\Stores\AgentProfiles\AgentProfileRepository;
-use Trax\XapiStore\Stores\Attachments\AttachmentRepository;
-use Trax\XapiStore\Stores\Persons\PersonRepository;
-use Trax\XapiStore\Stores\Verbs\VerbRepository;
+use Trax\Auth\Stores\Owners\OwnerRepository;
+use Trax\XapiStore\Services\GlobalService;
 
 class GlobalController extends Controller
 {
-    use ClearStores;
-    
     /**
      * @var \Trax\Auth\Authorizer
      */
     protected $authorizer;
 
     /**
-     * @var \Trax\XapiStore\Stores\Statements\StatementService
+     * @var \Trax\Auth\Stores\Owners\OwnerRepository
      */
-    protected $statements;
+    protected $owners;
 
     /**
-     * @var \Trax\XapiStore\Stores\Activities\ActivityRepository
+     * @var \Trax\XapiStore\Services\GlobalService
      */
-    protected $activities;
-
-    /**
-     * @var \Trax\XapiStore\Stores\Agents\AgentRepository
-     */
-    protected $agents;
-
-    /**
-     * @var \Trax\XapiStore\Stores\States\StateRepository
-     */
-    protected $states;
-
-    /**
-     * @var \Trax\XapiStore\Stores\ActivityProfiles\ActivityProfileRepository
-     */
-    protected $activityProfiles;
-
-    /**
-     * @var \Trax\XapiStore\Stores\AgentProfiles\AgentProfileRepository
-     */
-    protected $agentProfiles;
-
-    /**
-     * @var \Trax\XapiStore\Stores\Attachments\AttachmentRepository
-     */
-    protected $attachments;
-
-    /**
-     * @var \Trax\XapiStore\Stores\Persons\PersonRepository
-     */
-    protected $persons;
-
-    /**
-     * @var \Trax\XapiStore\Stores\Verbs\VerbRepository
-     */
-    protected $verbs;
+    protected $service;
 
 
     /**
      * Create the constructor.
      *
      * @param  \Trax\Auth\Authorizer  $authorizer
-     * @param  \Trax\XapiStore\Stores\Statements\StatementService  $statements
-     * @param  \Trax\XapiStore\Stores\Activities\ActivityRepository  $activities
-     * @param  \Trax\XapiStore\Stores\Agents\AgentRepository  $agents
-     * @param  \Trax\XapiStore\Stores\States\StateRepository  $states
-     * @param  \Trax\XapiStore\Stores\ActivityProfiles\ActivityProfileRepository  $activityProfiles
-     * @param  \Trax\XapiStore\Stores\AgentProfiles\AgentProfileRepository  $agentProfiles
-     * @param  \Trax\XapiStore\Stores\Attachments\AttachmentRepository  $attachments
-     * @param  \Trax\XapiStore\Stores\Persons\PersonRepository  $persons
-     * @param  \Trax\XapiStore\Stores\Verbs\VerbRepository  $verbs
+     * @param  \Trax\Auth\Stores\Owners\OwnerRepository  $owners
+     * @param  \Trax\XapiStore\Services\GlobalService  $service
      * @return void
      */
-    public function __construct(
-        Authorizer $authorizer,
-        StatementService $statements,
-        ActivityRepository $activities,
-        AgentRepository $agents,
-        StateRepository $states,
-        ActivityProfileRepository $activityProfiles,
-        AgentProfileRepository $agentProfiles,
-        AttachmentRepository $attachments,
-        PersonRepository $persons,
-        VerbRepository $verbs
-    ) {
+    public function __construct(Authorizer $authorizer, OwnerRepository $owners, GlobalService $service)
+    {
         $this->authorizer = $authorizer;
-        $this->statements = $statements;
-        $this->activities = $activities;
-        $this->agents = $agents;
-        $this->states = $states;
-        $this->activityProfiles = $activityProfiles;
-        $this->agentProfiles = $agentProfiles;
-        $this->attachments = $attachments;
-        $this->persons = $persons;
-        $this->verbs = $verbs;
+        $this->owners = $owners;
+        $this->service = $service;
+    }
+
+    /**
+     * Clear a store.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function clearStore(Request $request, $id)
+    {
+        // Check permissions.
+        $owner = $this->owners->findOrFail($id);
+        $this->authorizer->must('owner.delete', $owner);
+        $this->authorizer->must('xapi-extra.manage');
+
+        // Do it.
+        $this->service->clearStore($id);
+
+        return response('', 204);
     }
 }

@@ -4,13 +4,9 @@ namespace Trax\XapiStore\Stores\Statements;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Container\Container;
 use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\Stores\Activities\ActivityRepository;
-use Trax\XapiStore\Stores\Attachments\AttachmentRepository;
-use Trax\XapiStore\Stores\Verbs\VerbRepository;
-use Trax\XapiStore\Stores\Persons\PersonRepository;
-use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Statements\Actions\RecordStatements;
 use Trax\XapiStore\Stores\Statements\Actions\RecordAgents;
 use Trax\XapiStore\Stores\Statements\Actions\RecordVerbs;
@@ -63,27 +59,18 @@ class StatementService extends StatementRepository
     protected $verbs;
 
     /**
-     * Create the constructor.
+     * Create a new class instance.
      *
-     * @param  \Trax\XapiStore\Stores\Activities\ActivityRepository  $activities
-     * @param  \Trax\XapiStore\Stores\Attachments\AttachmentRepository  $attachments
-     * @param  \Trax\XapiStore\Stores\Agents\AgentService  $agents
-     * @param  \Trax\XapiStore\Services\Persons\PersonRepository  $persons
-     * @param  \Trax\XapiStore\Services\Verbs\VerbRepository  $verbs
+     * @param  \Illuminate\Container\Container
      * @return void
      */
-    public function __construct(
-        ActivityRepository $activities,
-        AttachmentRepository $attachments,
-        AgentService $agents,
-        PersonRepository $persons,
-        VerbRepository $verbs
-    ) {
-        $this->activities = $activities;
-        $this->attachments = $attachments;
-        $this->agents = $agents;
-        $this->persons = $persons;
-        $this->verbs = $verbs;
+    public function __construct(Container $container)
+    {
+        $this->activities = $container->make(\Trax\XapiStore\Stores\Activities\ActivityRepository::class);
+        $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
+        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentRepository::class);
+        $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
+        $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
 
         // Deactivate Eloquent for GET requests when there is no relational need.
         if (!config('trax-xapi-store.requests.relational', false)) {
