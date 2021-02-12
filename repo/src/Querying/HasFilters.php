@@ -81,7 +81,7 @@ trait HasFilters
      * Add a filter.
      *
      * @param array  $filter
-     * @return void
+     * @return \Trax\Repo\Querying\Query
      */
     public function addFilter(array $filter = [])
     {
@@ -93,23 +93,19 @@ trait HasFilters
     /**
      * Check filters.
      *
+     * At the end, each filter must be an array: [prop1 => value1], [prop2 => value2]
+     * so we can merge several lists of filters without conflict: [prop => [$gt => 10]], [prop => [$lt => 30]]
+     *
+     * However, we want to allow simpler forms: [prop1 => value1, prop2 => value2]
+     * So we must transform then into [[prop1 => value1], [prop2 => value2]] to avoid conflicts.
+     *
      * @param  array  $filter
      * @return array
      */
     protected function checkFilters(array $filters): array
     {
-        // Check that it is a list of conditions, each condition being a list with only one prop.
-
-        // May be usefull for dynamic filters like ['$or' => [...]],
-        // which returns [['$or' => [...]]].
-
-        // Or for simple requests like ['filters' => ['name' => 'john', 'age' => '20']].
-        // that would return [['name' => 'john'], ['age' => '20']].
-
-        // Something like ['filters' => [['name' => 'john', 'age' => '20']]].
-        // would also return [['name' => 'john'], ['age' => '20']].
-
         // We have an associative array at the first level.
+        // [prop1 => value1, prop2 => value2] becomes [[prop1 => value1], [prop2 => value2]].
         foreach ($filters as $prop => $value) {
             if (is_string($prop)) {
                 return collect($filters)->map(function ($val, $prop) {
@@ -118,7 +114,9 @@ trait HasFilters
             }
         }
 
+        // Now we focus on each item, which should be a single condition.
         // Check if we have only single conditions.
+        // [[prop1 => value1, prop2 => value2]] becomes [[prop1 => value1], [prop2 => value2]].
         $result = [];
         foreach ($filters as $condition) {
             $conditions = collect($condition)->map(function ($val, $prop) {
@@ -126,6 +124,9 @@ trait HasFilters
             })->values()->all();
             $result = array_merge($result, $conditions);
         }
+
+        // We want to avoid double-nested conditions like this:
+        // [[[prop1 => value1]], [[prop2 => value2]]] becomes [[prop1 => value1], [prop2 => value2]].
 
         return $result;
     }

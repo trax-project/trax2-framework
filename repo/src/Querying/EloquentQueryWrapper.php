@@ -5,6 +5,7 @@ namespace Trax\Repo\Querying;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Trax\Repo\Contracts\CrudRepositoryContract;
+use Illuminate\Support\Facades\Log;
 
 class EloquentQueryWrapper
 {
@@ -115,6 +116,8 @@ class EloquentQueryWrapper
     public function get(Query $query = null): Collection
     {
         $builder = $this->queriedBuilder($query);
+
+        //Log::channel('benchmark')->info($builder->toSql());
 
         //print_r($builder->toSql());
         //die;

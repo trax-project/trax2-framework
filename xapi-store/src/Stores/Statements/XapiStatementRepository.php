@@ -2,7 +2,6 @@
 
 namespace Trax\XapiStore\Stores\Statements;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Trax\Repo\Querying\Query;
 use Trax\XapiValidation\Statement;
