@@ -125,9 +125,6 @@ trait HasFilters
             $result = array_merge($result, $conditions);
         }
 
-        // We want to avoid double-nested conditions like this:
-        // [[[prop1 => value1]], [[prop2 => value2]]] becomes [[prop1 => value1], [prop2 => value2]].
-
         return $result;
     }
 

@@ -37,6 +37,7 @@ trait BuildResponse
         if ($resources->isEmpty()) {
             return false;
         }
+
         if (!$this->addFilter(['voided' => false])->$nav($resources->last()->id)) {
             return false;
         }

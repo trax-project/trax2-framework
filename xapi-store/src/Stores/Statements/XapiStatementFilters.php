@@ -80,9 +80,12 @@ trait XapiStatementFilters
         if (!$query->hasOption('related_agents') || $query->option('related_agents') == 'false') {
             return ['$or' => [
                 $this->agentFilterConditions('data->actor', $agent),
-                $this->agentFilterConditions('data->actor->member[*]', $agent),
                 $this->agentFilterConditions('data->object', $agent),
-                $this->agentFilterConditions('data->object->member[*]', $agent),
+
+                // Not clear if we should look into the members.
+                // Seems to be the case in the spec, not in the test suite.
+                //$this->agentFilterConditions('data->actor->member[*]', $agent),
+                //$this->agentFilterConditions('data->object->member[*]', $agent),
             ]];
         }
         // Related.
