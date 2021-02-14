@@ -73,6 +73,26 @@ class GlobalService
     }
 
     /**
+     * Clear all the stores.
+     *
+     * @return void
+     */
+    public function clearStores(): void
+    {
+        // Truncate can't be used because it does not accept foreign keys.
+        $query = new Query();
+        $this->statements->deleteByQuery($query);
+        $this->activities->deleteByQuery($query);
+        $this->agents->deleteByQuery($query);
+        $this->states->deleteByQuery($query);
+        $this->activityProfiles->deleteByQuery($query);
+        $this->agentProfiles->deleteByQuery($query);
+        $this->attachments->deleteByQuery($query);
+        $this->persons->deleteByQuery($query);
+        $this->verbs->deleteByQuery($query);
+    }
+
+    /**
      * Clear a store.
      *
      * @param  int|string  $ownerId
@@ -90,23 +110,5 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
-    }
-
-    /**
-     * Clear ALL the repositories.
-     *
-     * @return void
-     */
-    public function clearAll(): void
-    {
-        $this->statements->truncate();
-        $this->activities->truncate();
-        $this->agents->truncate();
-        $this->states->truncate();
-        $this->activityProfiles->truncate();
-        $this->agentProfiles->truncate();
-        $this->attachments->truncate();
-        $this->persons->truncate();
-        $this->verbs->truncate();
     }
 }

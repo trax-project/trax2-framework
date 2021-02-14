@@ -59,5 +59,6 @@ TraxAuth::mixedCrudRoutes(
 );
 
 Route::namespace('Trax\XapiStore\Controllers')->group(function () {
+    TraxAuth::mixedDeleteRoute('trax/api', 'xapi/ext/stores', 'GlobalController@clearStores');
     TraxAuth::mixedDeleteRoute('trax/api', 'xapi/ext/stores/{id}', 'GlobalController@clearStore');
 });

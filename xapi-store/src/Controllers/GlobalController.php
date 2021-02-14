@@ -42,6 +42,23 @@ class GlobalController extends Controller
     }
 
     /**
+     * Clear all stores.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function clearStores(Request $request)
+    {
+        // Check permissions.
+        $this->authorizer->must('xapi-extra.manage');
+
+        // Do it.
+        $this->service->clearStores();
+
+        return response('', 204);
+    }
+
+    /**
      * Clear a store.
      *
      * @param  \Illuminate\Http\Request  $request
