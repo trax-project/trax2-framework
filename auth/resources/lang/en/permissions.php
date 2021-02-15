@@ -8,7 +8,7 @@ return [
     'client_name' => 'Clients',
     'client_description' => 'Clients are third-party applications allowed to call APIs.',
     
-    'manage_clients_name' => 'Manage clients',
+    'manage_clients_name' => 'Manage HTTP clients',
     'manage_clients_description' => 'Full permissions to manage clients and related accesses.',
     
     'user_name' => 'Users',
