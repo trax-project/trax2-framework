@@ -42,7 +42,7 @@ class AgentController extends CrudController
         return [
             'data' => 'required|array',
             'person_id' => 'required|integer|exists:trax_xapi_persons,id',
-            'anomynous' => 'boolean',
+            'pseudonymized' => 'boolean',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',
         ];
     }
