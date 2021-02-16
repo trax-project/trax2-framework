@@ -305,19 +305,22 @@ class Authentifier
             // Determine the name of the resource param.
             $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
 
-            // Duplicate route.
-            if (!empty($options['duplicate'])) {
-                Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $paramName) {
-                    Route::post($endpoint . "/{{$paramName}}/duplicate", class_basename($controllerClass) . '@duplicate');
-                });
-            }
+            // Additional routes.
+            Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $paramName) {
 
-            // Delete by query route.
-            if (!empty($options['destroyByQuery'])) {
-                Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass) {
+                // Count route.
+                Route::get($endpoint . "/count", class_basename($controllerClass) . '@count');
+    
+                // Duplicate route.
+                if (!empty($options['duplicate'])) {
+                    Route::post($endpoint . "/{{$paramName}}/duplicate", class_basename($controllerClass) . '@duplicate');
+                }
+
+                // Delete by query route.
+                if (!empty($options['destroyByQuery'])) {
                     Route::delete($endpoint, class_basename($controllerClass) . '@destroyByQuery');
-                });
-            }
+                }
+            });
         });
     }
 
