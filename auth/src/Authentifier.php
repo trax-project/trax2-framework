@@ -306,7 +306,7 @@ class Authentifier
             $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
 
             // Additional routes.
-            Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $paramName) {
+            Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $options, $paramName) {
 
                 // Count route.
                 Route::get($endpoint . "/count", class_basename($controllerClass) . '@count');

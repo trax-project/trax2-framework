@@ -21,7 +21,6 @@ class Role extends Model implements StorePermissionsContract
      * @var array
      */
     protected $casts = [
-        'description' => '',
         'meta' => 'array',
     ];
 

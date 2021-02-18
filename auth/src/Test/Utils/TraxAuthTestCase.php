@@ -4,7 +4,6 @@ namespace Trax\Auth\Test\Utils;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Trax\XapiStore\Test\Utils\StatementFactory;
 
 class TraxAuthTestCase extends TestCase
 {
