@@ -30,21 +30,21 @@ class CreateTraxXapiAttachmentsTable extends Migration
             $table->foreign('entity_id')
                 ->references('id')
                 ->on('trax_entities')
-                ->onDelete('set null');
+                ->onDelete('restrict');
 
             // Client relation
             $table->unsignedBigInteger('client_id')->nullable()->index();
             $table->foreign('client_id')
                 ->references('id')
                 ->on('trax_clients')
-                ->onDelete('set null');
+                ->onDelete('restrict');
 
             // Access relation
             $table->unsignedBigInteger('access_id')->nullable()->index();
             $table->foreign('access_id')
                 ->references('id')
                 ->on('trax_accesses')
-                ->onDelete('set null');
+                ->onDelete('restrict');
         });
     }
 

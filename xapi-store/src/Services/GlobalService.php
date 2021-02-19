@@ -70,6 +70,7 @@ class GlobalService
         $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
         $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
+        $this->owners = $container->make(\Trax\Auth\Stores\Owners\OwnerRepository::class);
     }
 
     /**
@@ -110,5 +111,17 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
+    }
+
+    /**
+     * Delete a store.
+     *
+     * @param  int|string  $ownerId
+     * @return void
+     */
+    public function deleteStore($ownerId): void
+    {
+        $this->clearStore($ownerId);
+        $this->owners->delete($ownerId);
     }
 }

@@ -77,4 +77,24 @@ class GlobalController extends Controller
 
         return response('', 204);
     }
+
+    /**
+     * Delete a store.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteStore(Request $request, $id)
+    {
+        // Check permissions.
+        $owner = $this->owners->findOrFail($id);
+        $this->authorizer->must('owner.delete', $owner);
+        $this->authorizer->must('xapi-extra.manage');
+
+        // Do it.
+        $this->service->deleteStore($id);
+
+        return response('', 204);
+    }
 }
