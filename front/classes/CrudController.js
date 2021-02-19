@@ -115,7 +115,7 @@ export default class CrudController {
     }
 
     delete(id) {
-            this.modals.open('confirmDelete').then(resp => {
+        this.modals.open('confirmDelete').then(resp => {
             if (resp.confirmed) {
                 if (this.callbacks.deleteConfirmed) {
                     this.callbacks.deleteConfirmed()
