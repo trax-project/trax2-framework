@@ -47,13 +47,31 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
 
         // Define permissions.
-        $this->registerPermissionProviders(config('trax-auth.permissions.providers', [
-            'access' => \Trax\Auth\Stores\Accesses\AccessPermissions::class,
-            'client' => \Trax\Auth\Stores\Clients\ClientPermissions::class,
-            'user' => \Trax\Auth\Stores\Users\UserPermissions::class,
-            'role' => \Trax\Auth\Stores\Roles\RolePermissions::class,
-            'entity' => \Trax\Auth\Stores\Entities\EntityPermissions::class,
-            'owner' => \Trax\Auth\Stores\Owners\OwnerPermissions::class,
-        ]));
+        $this->registerPermissionProviders([
+            'access' => config(
+                'trax-auth.permissions.providers.access',
+                \Trax\Auth\Stores\Accesses\AccessPermissions::class
+            ),
+            'client' => config(
+                'trax-auth.permissions.providers.client',
+                \Trax\Auth\Stores\Clients\ClientPermissions::class
+            ),
+            'user' => config(
+                'trax-auth.permissions.providers.user',
+                \Trax\Auth\Stores\Users\UserPermissions::class
+            ),
+            'role' => config(
+                'trax-auth.permissions.providers.role',
+                \Trax\Auth\Stores\Roles\RolePermissions::class
+            ),
+            'entity' => config(
+                'trax-auth.permissions.providers.entity',
+                \Trax\Auth\Stores\Entities\EntityPermissions::class
+            ),
+            'owner' => config(
+                'trax-auth.permissions.providers.owner',
+                \Trax\Auth\Stores\Owners\OwnerPermissions::class
+            ),
+        ]);
     }
 }
