@@ -36,6 +36,10 @@ trait StatementFilters
      */
     public function magicActorFilter($field, Query $query)
     {
+        // Check of null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field, 'data->actor');
     }
 
@@ -48,6 +52,11 @@ trait StatementFilters
      */
     public function magicVerbFilter($field, Query $query)
     {
+        // Check of null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+
         return $this->getMagicVerbFilter($field, 'data->verb');
     }
 
@@ -60,14 +69,18 @@ trait StatementFilters
      */
     public function magicObjectFilter($field, Query $query)
     {
-        // Agent.
-        $filter = $this->getMagicAgentFilter($field, 'data->object');
-        if (!empty($filter)) {
-            return $filter;
+        // Check of null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
         }
 
-        // Activity.
-        return $this->getMagicActivityFilter($field, 'data->object');
+        if ($this->hasMagicAgentFilter($field)) {
+            // Agent.
+            return $this->getMagicAgentFilter($field, 'data->object');
+        } else {
+            // Activity.
+            return $this->getMagicActivityFilter($field, 'data->object');
+        }
     }
 
     /**
@@ -98,6 +111,11 @@ trait StatementFilters
      */
     public function magicContextFilter($field, Query $query)
     {
+        // Check of null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+
         // Agent.
         $filter = $this->getMagicContextAgentFilter($field);
         if (!empty($filter)) {
@@ -182,8 +200,8 @@ trait StatementFilters
         if (count($parts) > 1) {
             return [
                 ['$or' => [
-                    'data->context->instructor->mbox' => 'mailto:' . $parts[0],
-                    'data->context->team->mbox' => 'mailto:' . $parts[0],
+                    'data->context->instructor->mbox' => 'mailto:' . $field,
+                    'data->context->team->mbox' => 'mailto:' . $field,
                 ]],
             ];
         }

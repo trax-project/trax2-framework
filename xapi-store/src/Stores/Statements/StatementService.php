@@ -96,7 +96,6 @@ class StatementService extends StatementRepository
             $reveal = $query->option('reveal', false);
             return $this->getRelationalFirst($query, $reveal);
         }
-
         return parent::get($query);
     }
 
