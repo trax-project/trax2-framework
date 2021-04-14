@@ -184,9 +184,17 @@ trait RecordAgents
                 $agentsInfo = array_merge($agentsInfo, $this->statementAgentsInfo($statement->object, true));
             }
         }
-        // Authority.
-        $authorityInfo = $this->agentInfo($authority);
-        $agentsInfo[$authorityInfo->vid] = $authorityInfo;
+
+        // Authority agent.
+        if (!isset($authority->objectType) || $authority->objectType == 'Agent') {
+            $agentInfo = $this->agentInfo($authority);
+            $agentsInfo[$agentInfo->vid] = $agentInfo;
+        }
+
+        // Authority group.
+        if (isset($authority->objectType) && $authority->objectType == 'Group') {
+            $agentsInfo = array_merge($agentsInfo, $this->groupAgentsInfo($authority));
+        }
         
         return $agentsInfo;
     }
