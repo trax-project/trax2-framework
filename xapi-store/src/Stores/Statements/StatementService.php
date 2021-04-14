@@ -68,7 +68,7 @@ class StatementService extends StatementRepository
     {
         $this->activities = $container->make(\Trax\XapiStore\Stores\Activities\ActivityRepository::class);
         $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
-        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentRepository::class);
+        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentService::class);
         $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
 

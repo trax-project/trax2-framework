@@ -4,7 +4,7 @@ namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\Stores\Agents\AgentRepository;
+use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Activities\Activity;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
 
@@ -58,7 +58,7 @@ trait RequestMagicContext
 
         // Get the matching agents.
         $magicContext = $query->filter('magicContext');
-        $agents = resolve(AgentRepository::class)->addFilter([
+        $agents = resolve(AgentService::class)->addFilter([
             'magic' => $magicContext,
             'owner_id' => $ownerId
         ])->get();
