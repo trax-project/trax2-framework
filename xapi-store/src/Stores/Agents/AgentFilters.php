@@ -21,6 +21,8 @@ trait AgentFilters
     {
         return array_merge($this->xapiDynamicFilters(), [
             'magic',
+            'xapiObjectType',
+            'xapiName',
         ]);
     }
 
@@ -33,6 +35,56 @@ trait AgentFilters
      */
     public function magicFilter($field, Query $query = null)
     {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field);
+    }
+
+    /**
+     * Filter: xapiObjectType.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function xapiObjectTypeFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+
+        // Group.
+        if ($field == 'Group') {
+            return [
+                ['data->objectType' => 'Group'],
+            ];
+        }
+        
+        // Agent.
+        return ['$or' => [
+            ['data->objectType' => ['$exists' => false]],
+            ['data->objectType' => 'Agent'],
+        ]];
+    }
+
+    /**
+     * Filter: xapiName.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function xapiNameFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['data->name' => ['$text' => $field]],
+        ];
     }
 }

@@ -8,8 +8,6 @@ trait MagicFilters
      * Does agent filter support relational request?
      *
      * @param  string  $field
-     * @param  string  $target
-     * @param  bool  $fulltext
      * @return bool
      */
     protected function relationalMagicAgent($field)
@@ -22,8 +20,6 @@ trait MagicFilters
      * Does verb filter support relational request?
      *
      * @param  string  $field
-     * @param  string  $target
-     * @param  bool  $fulltext
      * @return bool
      */
     protected function relationalMagicVerb($field)
@@ -35,8 +31,6 @@ trait MagicFilters
      * Does activity filter support relational request?
      *
      * @param  string  $field
-     * @param  string  $target
-     * @param  bool  $fulltext
      * @return bool
      */
     protected function relationalMagicActivity($field)
@@ -108,24 +102,12 @@ trait MagicFilters
      *
      * @param  string  $field
      * @param  string  $target
-     * @param  bool  $fulltext
      * @return array
      */
     protected function getMagicVerbFilter($field, string $target = null)
     {
         $target = isset($target) ? $target.'->id' : 'iri';
-
-        // Exact match.
-        if ($id = $this->getMagicHttpField($field)) {
-            return [
-                [$target => $id],
-            ];
-        }
-
-        // Fulltext search on ID.
-        return [
-            [$target => ['$text' => $field]],
-        ];
+        return $this->getMagicIriFilter($field, $target);
     }
 
     /**
@@ -133,7 +115,6 @@ trait MagicFilters
      *
      * @param  string  $field
      * @param  string  $target
-     * @param  bool  $fulltext
      * @return array
      */
     protected function getMagicActivityFilter($field, string $target = null)
@@ -149,16 +130,27 @@ trait MagicFilters
         // Fulltext search on type.
         if ($type = $this->getMagicPrefixedField($field, 'type')) {
             $target = isset($target) ? $target : 'data';
-            return [
-                [$target.'->definition->type' => ['$text' => $type]],
-            ];
+            return $this->getMagicIriFilter($type, $target.'->definition->type');
         }
 
-        // Exact ID search.
+        // Magic search on ID.
         $target = isset($target) ? $target.'->id' : 'iri';
-        if ($id = $this->getMagicHttpField($field)) {
+        return $this->getMagicIriFilter($field, $target);
+    }
+
+    /**
+     * Get IRI filter.
+     *
+     * @param  string  $field
+     * @param  string  $target
+     * @return array
+     */
+    protected function getMagicIriFilter($field, string $target)
+    {
+        // Exact match.
+        if ($iri = $this->getMagicHttpField($field)) {
             return [
-                [$target => $id],
+                [$target => $iri],
             ];
         }
 

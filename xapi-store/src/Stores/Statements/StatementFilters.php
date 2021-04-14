@@ -36,7 +36,7 @@ trait StatementFilters
      */
     public function magicActorFilter($field, Query $query)
     {
-        // Check of null. This may happen when the UI field is empty.
+        // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
@@ -52,7 +52,7 @@ trait StatementFilters
      */
     public function magicVerbFilter($field, Query $query)
     {
-        // Check of null. This may happen when the UI field is empty.
+        // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
@@ -69,7 +69,7 @@ trait StatementFilters
      */
     public function magicObjectFilter($field, Query $query)
     {
-        // Check of null. This may happen when the UI field is empty.
+        // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
@@ -111,7 +111,7 @@ trait StatementFilters
      */
     public function magicContextFilter($field, Query $query)
     {
-        // Check of null. This may happen when the UI field is empty.
+        // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
