@@ -7,10 +7,16 @@ export default class XapiStatementsLoader {
         this.noMore = false
         this.rows = []
         this.lastId = null
-        this.filters = filters.statements
+        this.filters = filters
         this.params = {}
         this.pageSize = 20
     }
+
+    baseFilters() {
+        return {}
+    }
+
+    /* Generic methods */
 
     setMapData(mapData) {
         this.mapData = mapData
@@ -19,9 +25,7 @@ export default class XapiStatementsLoader {
     baseParams() {
         return {
             limit: this.pageSize,
-            filters: {
-                voided: false
-            },
+            filters: this.baseFilters(),
             options: {}
         }
     }
@@ -68,6 +72,6 @@ export default class XapiStatementsLoader {
     }
 
     hasMore() {
-        return this.filters.chronological || (this.rows.length % this.pageSize == 0 && !this.noMore)
+        return this.rows.length % this.pageSize == 0 && !this.noMore
     }
 }

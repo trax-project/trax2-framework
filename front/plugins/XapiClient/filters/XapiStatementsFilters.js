@@ -1,19 +1,10 @@
 import moment from 'moment'
-import FormErrors from '../../classes/FormErrors'
+import XapiFilters from './XapiFilters'
 
-export default class XapiStatementsFilters {
-
-    constructor(contextFilters) {
-        this.contextFilters = contextFilters
-        this.errors = new FormErrors()
-        this.reset()
-    }
-
-    attach(component) {
-        this.vm = component
-    }
+export default class XapiStatementsFilters extends XapiFilters {
 
     reset() {
+        super.reset()
         this.actor = null
         this.verb = null
         this.object = null
@@ -22,18 +13,15 @@ export default class XapiStatementsFilters {
         this.to = null
         this.chronological = false
         this.reveal = false
-        this.contextFilters.reset()
     }
 
     empty() {
         return !this.actor && !this.verb && !this.object 
             && !this.context && !this.from && !this.to
-            && this.contextFilters.empty()
+            && super.empty()
     }
 
-    get(params) {
-        this.errors.clearAll()
-        params = this.contextFilters.get(params)
+    addParams(params) {
         params.options.reorder = true
         this.addActor(params)
         this.addVerb(params)
@@ -43,7 +31,6 @@ export default class XapiStatementsFilters {
         this.addDate(params, 'to', 'until')
         this.addSorting(params)
         this.addReveal(params)
-        return this.errors.added() ? false : params
     }
 
     addActor(params) {

@@ -132,18 +132,32 @@
     },
     "xapi": {
         "common": {
-            "statements": "Statements",
+            "activities": "Activities",
+            "activity-profiles": "Activity Profiles",
             "actor": "Actor",
-            "verb": "Verb",
+            "agents": "Agents",
+            "agent-profiles": "Agent Profiles",
+            "authority": "Authority",
+            "authorization-scopes": "Authorization scopes",
+            "context": "Context",
+            "extra-permissions": "Extra permissions",
+            "homePage": "homePage",
+            "id": "ID",
+            "name": "Name",
             "object": "Object",
             "result": "Result",
-            "context": "Context",
+            "states": "States",
             "stored": "Stored",
-            "authority": "Authority",
-            "homePage": "homePage",
+            "verb": "Verb",
+            "verbs": "Verbs",
             "scopes": "Scopes",
-            "authorization-scopes": "Authorization scopes",
-            "extra-permissions": "Extra permissions"
+            "statements": "Statements",
+            "type": "Type",
+            "search": {
+                "magic-iri-placeholder": "Full or partial IRI",
+                "magic-name-placeholder": "Full or partial name",
+                "no-result": "There is no statement with these filters :-("
+            }
         },
         "statements": {
             "search": {
@@ -158,8 +172,7 @@
                 "to-placeholder": "'2020'  '2020-12-01'  '2020-12-01 24:59:59'",
                 "date-error": "This date is invalid",
                 "chronological": "Chronological",
-                "reveal_agents": "Reveal Agents",
-                "no-result": "There is no statement with these filters :-("
+                "reveal_agents": "Reveal Agents"
             }
         },
         "management": {
