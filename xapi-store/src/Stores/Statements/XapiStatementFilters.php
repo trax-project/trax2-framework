@@ -4,11 +4,11 @@ namespace Trax\XapiStore\Stores\Statements;
 
 use Trax\XapiStore\XapiDate;
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\Traits\AgentFilter;
+use Trax\XapiStore\Traits\XapiAgentFilter;
 
 trait XapiStatementFilters
 {
-    use AgentFilter;
+    use XapiAgentFilter;
     
     /**
      * Get the dynamic filters.

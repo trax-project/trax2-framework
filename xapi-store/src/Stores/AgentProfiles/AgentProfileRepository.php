@@ -4,11 +4,10 @@ namespace Trax\XapiStore\Stores\AgentProfiles;
 
 use Trax\Repo\CrudRepository;
 use Trax\XapiStore\Traits\MergeableModelRepo;
-use Trax\XapiStore\Traits\DocumentFilters;
 
 class AgentProfileRepository extends CrudRepository
 {
-    use MergeableModelRepo, DocumentFilters;
+    use MergeableModelRepo, AgentProfileFilters;
 
     /**
      * Return model factory.
@@ -18,17 +17,5 @@ class AgentProfileRepository extends CrudRepository
     public function factory()
     {
         return AgentProfileFactory::class;
-    }
-
-    /**
-     * Get the dynamic filters.
-     *
-     * @return array
-     */
-    public function dynamicFilters(): array
-    {
-        return [
-            'profileId', 'agent', 'since'
-        ];
     }
 }

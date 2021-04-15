@@ -3,12 +3,12 @@
 namespace Trax\XapiStore\Stores\Agents;
 
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\Traits\AgentFilter;
+use Trax\XapiStore\Traits\XapiAgentFilter;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 
 trait XapiAgentFilters
 {
-    use AgentFilter;
+    use XapiAgentFilter;
 
     /**
      * Get the dynamic filters.
