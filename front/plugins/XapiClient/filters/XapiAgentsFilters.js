@@ -1,22 +1,29 @@
 import XapiFilters from './XapiFilters'
 
-export default class XapiActivitiesFilters extends XapiFilters {
+export default class XapiAgentsFilters extends XapiFilters {
+
+    constructor(contextFilters) {
+        super(contextFilters)
+        this.options = {
+            objectType: { 'Agent': 'Agent', 'Group': 'Group' }
+        }
+    }
 
     reset() {
         super.reset()
         this.id = null
-        this.type = null
+        this.objectType = null
         this.name = null
     }
 
     empty() {
-        return !this.id && !this.type && !this.name 
+        return !this.id && !this.objectType && !this.name 
             && super.empty()
     }
 
     addParams(params) {
         this.addId(params)
-        this.addType(params)
+        this.addOjectType(params)
         this.addName(params)
     }
 
@@ -24,15 +31,15 @@ export default class XapiActivitiesFilters extends XapiFilters {
         if (!this.id) {
             return false
         }
-        params.filters['xapiId'] = this.id.trim()
+        params.filters['magic'] = this.id.trim()
         return true
     }
 
-    addType(params) {
-        if (!this.type) {
+    addOjectType(params) {
+        if (!this.objectType) {
             return false
         }
-        params.filters['xapiType'] = this.type.trim()
+        params.filters['xapiObjectType'] = this.objectType
         return true
     }
 

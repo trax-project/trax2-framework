@@ -22,7 +22,7 @@ trait AgentProfileFilters
             'profileId', 'agent', 'since',
 
             // Additional filters.
-            'magicAgent',
+            'magicAgent', 'magicProfile',
         ];
     }
 
@@ -35,8 +35,28 @@ trait AgentProfileFilters
      */
     public function magicAgentFilter($field, Query $query = null)
     {
-        // We don't check null values. This may happen when the UI field is empty.
-        // And it will return no result, which is what we want.
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field, 'agent');
+    }
+
+    /**
+     * Filter: magicProfile.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function magicProfileFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['profile_id' => ['$text' => $field]],
+        ];
     }
 }

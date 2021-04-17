@@ -22,7 +22,7 @@ trait StateFilters
             'stateId', 'activityId', 'agent', 'since',
 
             // Additional filters.
-            'magicAgent',
+            'magicAgent', 'magicActivity', 'magicState',
         ];
     }
 
@@ -35,8 +35,44 @@ trait StateFilters
      */
     public function magicAgentFilter($field, Query $query = null)
     {
-        // We don't check null values. This may happen when the UI field is empty.
-        // And it will return no result, which is what we want.
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field, 'agent');
+    }
+
+    /**
+     * Filter: magicActivity.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function magicActivityFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return $this->getMagicIriFilter($field, 'activity_id');
+    }
+
+    /**
+     * Filter: magicState.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function magicStateFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['state_id' => ['$text' => $field]],
+        ];
     }
 }
