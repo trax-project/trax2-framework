@@ -21,6 +21,7 @@
         "create": "Create",
         "credentials": "Credentials",
         "data": "Data",
+        "delete-data": "Delete Data",
         "description": "Description",
         "email": "Email",
         "endpoint": "Endpoint",
@@ -153,6 +154,8 @@
             "object": "Object",
             "profile": "Profile",
             "profile-id": "Profile ID",
+            "profiles": "Profiles",
+            "registration": "Registration",
             "result": "Result",
             "search": {
                 "magic-id-placeholder": "Full or partial ID",
