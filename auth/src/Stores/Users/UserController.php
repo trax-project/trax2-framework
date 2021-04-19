@@ -233,6 +233,21 @@ class UserController extends CrudController
                 return Trax::select((new UserSources)->all());
             case 'csrf-token':
                 return csrf_token();
+            case 'ui-config':
+                return $this->uiConfig();
         }
+    }
+
+    /**
+     * Get UI config.
+     *
+     * @return array
+     */
+    protected function uiConfig()
+    {
+        return ['xapi' => [
+            'tables' => config('trax-xapi-store.tables'),
+            'gdpr' => config('trax-xapi-store.gdpr'),
+        ]];
     }
 }
