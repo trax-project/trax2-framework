@@ -8,6 +8,7 @@ export default class Auth {
         this.owner = null
         this.getMeResolve = null
         this.getMeReject = null
+        this.offline = false
     }
 
     config(conf) {
@@ -28,21 +29,29 @@ export default class Auth {
         })
     }
 
-    ifAuthenticated(to, from, next) {
+    ifAuthenticated(to, from, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
-            next()
+            if (offlineRoute && Vue.prototype.$auth.offline) {
+                next({ name: offlineRoute });
+            } else {
+                next()
+            }
         })
         .catch(err => {
             next({ name: err });
         })
     }
 
-    ifHasPermission(permission, next) {
+    ifHasPermission(permission, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasPermission(permission)) {
-                next()
+                if (offlineRoute && Vue.prototype.$auth.offline) {
+                    next({ name: offlineRoute });
+                } else {
+                    next()
+                }
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -52,11 +61,15 @@ export default class Auth {
         })
     }
 
-    ifHasOnePermission(permission, next) {
+    ifHasOnePermission(permission, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasOnePermission(permission)) {
-                next()
+                if (offlineRoute && Vue.prototype.$auth.offline) {
+                    next({ name: offlineRoute });
+                } else {
+                    next()
+                }
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -66,11 +79,15 @@ export default class Auth {
         })
     }
 
-    ifHasAllPermissions(permission, next) {
+    ifHasAllPermissions(permission, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
             if (Vue.prototype.$auth.hasAllPermissions(permission)) {
-                next()
+                if (offlineRoute && Vue.prototype.$auth.offline) {
+                    next({ name: offlineRoute });
+                } else {
+                    next()
+                }
             } else {
                 next({ name: 'unauthorized' });
             }
@@ -101,22 +118,34 @@ export default class Auth {
     }
 
     // Make the "GET ME" request and return a promise.
-    // When "next" is set, check that the user has a selected owner.
+    // When "checkOwner" is set, check that the user has a selected owner.
     // If not, it redirects to the owners selection page.
 
     getMe(checkOwner = false) {
+
+        // Offline mode.
+        // We don't fetch ME anymore.
+        if (Vue.prototype.$auth.offline) {
+            return {
+                then(callback) {
+                    callback()
+                    return { catch(callback) {} }
+                }
+            }
+        }
 
         // Request.
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'xsrf-token'],
+            include: ['owners', 'csrf-token'],
         }})
         .then(resp => {
 
             // Keep user data and XSRF token.
             Vue.prototype.$auth.user = resp.data.data
-            Vue.prototype.$auth['xsrf-token'] = resp.data.included['xsrf-token']
+            Vue.prototype.$auth['csrf-token'] = resp.data.included['csrf-token']
+            Vue.prototype.$auth.offline = resp.data.data.offline == true
 
             // Does the user need to select an owner?
             if (checkOwner && !Vue.prototype.$auth.hasLocalOwner(resp.data.included.owners)) {

@@ -28,6 +28,13 @@ export default class CrudController {
         }
     }
 
+    setRows(data) {
+        this.rows = []
+        data.forEach(item => {
+            this.rows.push(this.mapData(item))
+        });
+    }
+
     list() {
         this.client.list(this.paging).then(resp => {          
             // Set data.
