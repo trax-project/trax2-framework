@@ -31,27 +31,6 @@ class CreateTraxXapiStatesTable extends Migration
                 ->on('trax_owners')
                 ->onDelete('cascade');
 
-            // Entity relation
-            $table->unsignedBigInteger('entity_id')->nullable()->index();
-            $table->foreign('entity_id')
-                ->references('id')
-                ->on('trax_entities')
-                ->onDelete('restrict');
-
-            // Client relation
-            $table->unsignedBigInteger('client_id')->nullable()->index();
-            $table->foreign('client_id')
-                ->references('id')
-                ->on('trax_clients')
-                ->onDelete('restrict');
-
-            // Access relation
-            $table->unsignedBigInteger('access_id')->nullable()->index();
-            $table->foreign('access_id')
-                ->references('id')
-                ->on('trax_accesses')
-                ->onDelete('restrict');
-
             // Unicity.
             $table->unique(['vid', 'activity_id', 'state_id', 'registration', 'owner_id'], 'trax_xapi_states_unique');
         });
@@ -66,9 +45,6 @@ class CreateTraxXapiStatesTable extends Migration
     {
         Schema::table('trax_xapi_states', function (Blueprint $table) {
             $table->dropForeign('trax_xapi_states_owner_id_foreign');
-            $table->dropForeign('trax_xapi_states_entity_id_foreign');
-            $table->dropForeign('trax_xapi_states_client_id_foreign');
-            $table->dropForeign('trax_xapi_states_access_id_foreign');
         });
         Schema::dropIfExists('trax_xapi_states');
     }

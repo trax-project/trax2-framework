@@ -3,9 +3,9 @@
 namespace Trax\XapiStore\Stores\States;
 
 use Trax\Auth\Permissions\PermissionsProvider;
-use Trax\XapiStore\Traits\ContextScopes;
+use Trax\Auth\Traits\OwnerScope;
 
 class StatePermissions extends PermissionsProvider
 {
-    use ContextScopes;
+    use OwnerScope;
 }

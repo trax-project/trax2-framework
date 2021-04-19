@@ -20,9 +20,9 @@ class AllPermission extends Permission
      */
     protected $capabilities = [
         'statement.read.entity', 'statement.write.entity',
-        'state.read.entity', 'state.write.entity', 'state.delete.entity',
-        'activity_profile.read.entity', 'activity_profile.write.entity', 'activity_profile.delete.entity',
-        'agent_profile.read.entity', 'agent_profile.write.entity', 'agent_profile.delete.entity',
+        'state.read.owner', 'state.write.owner', 'state.delete.owner',
+        'activity_profile.read.owner', 'activity_profile.write.owner', 'activity_profile.delete.owner',
+        'agent_profile.read.owner', 'agent_profile.write.owner', 'agent_profile.delete.owner',
         'activity.read.owner', 'activity.write.owner',  // Write permission checked by the Statement service.
         'agent.read.owner',
     ];

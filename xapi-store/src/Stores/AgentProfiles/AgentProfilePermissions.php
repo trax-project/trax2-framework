@@ -3,9 +3,9 @@
 namespace Trax\XapiStore\Stores\AgentProfiles;
 
 use Trax\Auth\Permissions\PermissionsProvider;
-use Trax\XapiStore\Traits\ContextScopes;
+use Trax\Auth\Traits\OwnerScope;
 
 class AgentProfilePermissions extends PermissionsProvider
 {
-    use ContextScopes;
+    use OwnerScope;
 }

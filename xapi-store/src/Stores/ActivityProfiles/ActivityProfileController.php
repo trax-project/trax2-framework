@@ -45,9 +45,6 @@ class ActivityProfileController extends CrudController
             'data.content' => 'required',
             'data.type' => 'required|content_type',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',
-            'entity_id' => 'nullable|integer|exists:trax_entities,id',
-            'client_id' => 'nullable|integer|exists:trax_clients,id',
-            'access_id' => 'nullable|integer|exists:trax_accesses,id',
         ];
     }
 
