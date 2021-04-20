@@ -17,7 +17,6 @@ class State extends Model
      * @var array
      */
     protected $casts = [
-        'agent' => 'object',
         'data' => 'object',
     ];
 
@@ -26,5 +25,5 @@ class State extends Model
      *
      * @var array
      */
-    protected $fillable = ['state_id', 'activity_id', 'agent', 'registration', 'data'];
+    protected $fillable = ['state_id', 'activity_id', 'registration', 'data'];
 }

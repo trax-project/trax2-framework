@@ -44,10 +44,10 @@ class AgentService extends AgentRepository
      * @param  integer|null  $ownerId
      * @return array
      */
-    public function newPseudoData(string $objectType, int $personId, $ownerId = null): array
+    public function newPseudoData(string $objectType, $personId, $ownerId = null): array
     {
         return [
-            'data' => [
+            'agent' => [
                 'objectType' => $objectType,
                 'account' => [
                     'name' => \Str::uuid(),
@@ -72,42 +72,11 @@ class AgentService extends AgentRepository
     public function newAgentData(object $agent, $personId, $pseudoId = null, $ownerId = null): array
     {
         return [
-            'data' => $agent,
+            'agent' => $agent,
             'person_id' => $personId,
             'pseudo_id' => $pseudoId,
             'owner_id' => $ownerId
         ];
-    }
-
-    /**
-     * Check that an agent has a pseudonymized equivalent.
-     *
-     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
-     * @return void
-     */
-    public function checkAgentWithPerson(Agent $agent): void
-    {
-        // Create a pseudonymized agent and update the native agent.
-        if (config('trax-xapi-store.gdpr.pseudonymization', false) && empty($agent->pseudo_id)) {
-            $pseudo = $this->createPseudoAgent($agent->data->objectType, $agent->person->id, $agent->owner_id);
-            $agent->pseudo_id = $pseudo->id;
-            $agent->save();
-        }
-    }
-
-    /**
-     * Create a pseudonymized agent.
-     *
-     * @param  string  $objectType
-     * @param  int  $personId
-     * @param  int  $ownerId
-     * @return \Trax\XapiStore\Stores\Agents\Agent
-     */
-    public function createPseudoAgent(string $objectType, $personId, $ownerId): Agent
-    {
-        return $this->create(
-            $this->newPseudoData($objectType, $personId, $ownerId)
-        );
     }
 
    /**
@@ -121,13 +90,22 @@ class AgentService extends AgentRepository
         $person = (object)[];
         $agents = $agent->person->agents;
         foreach ($agents as $agent) {
-            foreach ((array)$agent->data as $prop => $value) {
-                if (in_array($prop, ['mbox', 'mbox_sha1sum', 'openid', 'account', 'name'])) {
-                    if (!isset($person->$prop)) {
-                        $person->$prop = [];
-                    }
-                    $person->$prop[] = $value;
+
+            // VID props.
+            $agentProps = AgentFactory::agentPropsFromVid($agent->vid);
+            foreach ($agentProps as $prop => $value) {
+                if (!isset($person->$prop)) {
+                    $person->$prop = [];
                 }
+                $person->$prop[] = $value;
+            }
+
+            // Name.
+            if (!is_null($agent->name)) {
+                if (!isset($person->name)) {
+                    $person->name = [];
+                }
+                $person->name[] = $agent->name;
             }
         }
         $person->objectType = 'Person';

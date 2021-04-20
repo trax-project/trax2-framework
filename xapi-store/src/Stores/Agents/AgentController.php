@@ -40,7 +40,7 @@ class AgentController extends CrudController
     protected function validationRules(Request $request)
     {
         return [
-            'data' => 'required|array',
+            'agent' => 'required|array',
             'person_id' => 'required|integer|exists:trax_xapi_persons,id',
             'pseudonymized' => 'boolean',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',

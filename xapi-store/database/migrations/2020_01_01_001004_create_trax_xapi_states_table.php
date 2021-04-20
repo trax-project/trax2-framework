@@ -18,7 +18,6 @@ class CreateTraxXapiStatesTable extends Migration
             $table->string('state_id');
             $table->string('activity_id')->index();
             $table->string('vid')->index();    // A virtual ID based on the xAPI identification.
-            $table->json('agent');
             $table->uuid('registration')->nullable();
             $table->json('data');
             $table->string('timestamp');

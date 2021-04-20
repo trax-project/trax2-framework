@@ -31,7 +31,7 @@ class AgentProfileFactory extends XapiDocumentFactory
 
         // Required data.
         $model->profile_id = $data['profile_id'];
-        $model->agent = is_string($data['agent']) ? json_decode($data['agent'], true) : $data['agent'];
+        $model->vid = AgentFactory::virtualId($data['agent']);
         $model->data = $data['data'];
 
         // Nullable owner_id.
@@ -41,9 +41,6 @@ class AgentProfileFactory extends XapiDocumentFactory
 
         // Generated data.
         $model->timestamp = XapiDate::now();
-
-        // VID.
-        $model->vid = AgentFactory::virtualId($model->agent);
 
         return $model;
     }

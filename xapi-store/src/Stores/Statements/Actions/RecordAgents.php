@@ -23,9 +23,6 @@ trait RecordAgents
         // Get existing agents.
         $existingAgents = $this->getExistingAgents($agentsInfo, $context);
 
-        // Check existing agents.
-        $this->checkExistingAgents($existingAgents);
-
         // Insert the new agents.
         try {
             $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo, $context);
@@ -55,20 +52,6 @@ trait RecordAgents
             'vid' => ['$in' => $vids],
             'owner_id' => $context['owner_id']
         ])->get();
-    }
-
-    /**
-     * Check existing agents.
-     *
-     * @param  \Illuminate\Support\Collection  $existingAgents
-     * @param  array  $agentsInfo
-     * @return void
-     */
-    protected function checkExistingAgents(Collection $existingAgents)
-    {
-        $existingAgents->each(function ($model) {
-            $this->agents->checkAgentWithPerson($model);
-        });
     }
 
     /**

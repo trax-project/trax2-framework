@@ -17,7 +17,6 @@ class CreateTraxXapiAgentProfilesTable extends Migration
             $table->bigIncrements('id');
             $table->string('profile_id');
             $table->string('vid')->index();    // A virtual ID based on the xAPI identification.
-            $table->json('agent');
             $table->json('data');
             $table->string('timestamp');
             $table->timestamps();

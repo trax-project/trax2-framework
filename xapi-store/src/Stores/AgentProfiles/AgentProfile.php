@@ -17,7 +17,6 @@ class AgentProfile extends Model
      * @var array
      */
     protected $casts = [
-        'agent' => 'object',
         'data' => 'object',
     ];
 
