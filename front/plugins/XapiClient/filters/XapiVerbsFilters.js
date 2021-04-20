@@ -20,7 +20,7 @@ export default class XapiVerbsFilters extends XapiFilters {
         if (!this.id) {
             return false
         }
-        params.filters['magic'] = this.id.trim()
+        params.filters['uiCombo'] = this.id.trim()
         return true
     }
 }

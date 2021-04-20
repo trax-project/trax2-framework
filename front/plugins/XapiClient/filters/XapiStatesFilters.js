@@ -24,7 +24,7 @@ export default class XapiStatesFilters extends XapiFilters {
         if (!this.activityId) {
             return false
         }
-        params.filters['magicActivity'] = this.activityId.trim()
+        params.filters['uiActivity'] = this.activityId.trim()
         return true
     }
 
@@ -32,7 +32,7 @@ export default class XapiStatesFilters extends XapiFilters {
         if (!this.agentId) {
             return false
         }
-        params.filters['magicAgent'] = this.agentId.trim()
+        params.filters['uiAgent'] = this.agentId.trim()
         return true
     }
 
@@ -40,7 +40,7 @@ export default class XapiStatesFilters extends XapiFilters {
         if (!this.stateId) {
             return false
         }
-        params.filters['magicState'] = this.stateId.trim()
+        params.filters['uiState'] = this.stateId.trim()
         return true
     }
 }

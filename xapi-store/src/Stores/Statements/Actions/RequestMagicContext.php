@@ -21,17 +21,17 @@ trait RequestMagicContext
     protected function requestMagicContext(Query $query = null, $ownerId = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
-        if (!$query->hasFilter('magicContext')) {
+        if (!$query->hasFilter('uiContext')) {
             return true;
         }
 
-        // Only some magic filters support relational requests.
-        $magicContext = $query->filter('magicContext');
-        if (!$this->relationalMagicContext($magicContext)) {
+        // Only some UI filters support relational requests.
+        $uiContext = $query->filter('uiContext');
+        if (!$this->relationalMagicContext($uiContext)) {
             return true;
         }
 
-        if (!empty($this->getMagicContextAgentFilter($magicContext))) {
+        if (!empty($this->getMagicContextAgentFilter($uiContext))) {
             return $this->requestMagicContextAgent($query, $ownerId, $reveal);
         } else {
             return $this->requestMagicContextActivity($query, $ownerId);
@@ -57,9 +57,9 @@ trait RequestMagicContext
         }
 
         // Get the matching agents.
-        $magicContext = $query->filter('magicContext');
+        $uiContext = $query->filter('uiContext');
         $agents = resolve(AgentService::class)->addFilter([
-            'magic' => $magicContext,
+            'uiCombo' => $uiContext,
             'owner_id' => $ownerId
         ])->get();
 
@@ -69,8 +69,8 @@ trait RequestMagicContext
         }
 
         // Modify the filters.
-        $callback = $this->magicContextAgentCallback($agents);
-        $query->removeFilter('magicContext');
+        $callback = $this->uiContextAgentCallback($agents);
+        $query->removeFilter('uiContext');
         $query->addFilter(['agentRelations' => ['$has' => $callback]]);
         return true;
     }
@@ -81,7 +81,7 @@ trait RequestMagicContext
      * @param  \Illuminate\Support\Collection  $agents
      * @return callable
      */
-    protected function magicContextAgentCallback(Collection $agents): callable
+    protected function uiContextAgentCallback(Collection $agents): callable
     {
         return function ($query) use ($agents) {
             return $query
@@ -105,12 +105,12 @@ trait RequestMagicContext
         }
 
         // Get the matching activities.
-        $magicContext = $query->filter('magicContext');
-        $prefix = \Str::before($magicContext, ':');
+        $uiContext = $query->filter('uiContext');
+        $prefix = \Str::before($uiContext, ':');
         if (in_array($prefix, ['parent', 'grouping', 'category'])) {
-            $activityId = \Str::after($magicContext, $prefix.':');
+            $activityId = \Str::after($uiContext, $prefix.':');
         } else {
-            $activityId = $magicContext;
+            $activityId = $uiContext;
             $prefix = null;
         }
         $activity = resolve(ActivityRepository::class)->addFilter([
@@ -124,8 +124,8 @@ trait RequestMagicContext
         }
 
         // Modify the filters.
-        $callback = $this->magicContextActivityCallback($activity, $prefix);
-        $query->removeFilter('magicContext');
+        $callback = $this->uiContextActivityCallback($activity, $prefix);
+        $query->removeFilter('uiContext');
         $query->addFilter(['activityRelations' => ['$has' => $callback]]);
         return true;
     }
@@ -137,7 +137,7 @@ trait RequestMagicContext
      * @param  string  $prefix
      * @return callable
      */
-    protected function magicContextActivityCallback(Activity $activity, $relation = null): callable
+    protected function uiContextActivityCallback(Activity $activity, $relation = null): callable
     {
         return function ($query) use ($activity, $relation) {
             if (!isset($relation)) {

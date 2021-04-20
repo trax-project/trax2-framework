@@ -100,7 +100,7 @@ class StatementService extends StatementRepository
     }
 
     /**
-     * Try to use relational requests first on standard and magic filters.
+     * Try to use relational requests first on standard and UI filters.
      *
      * @param \Trax\Repo\Querying\Query  $query
      * @param bool  $reveal

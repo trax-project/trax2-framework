@@ -37,7 +37,7 @@ export default class XapiStatementsFilters extends XapiFilters {
         if (!this.actor) {
             return false
         }
-        params.filters['magicActor'] = this.actor.trim()
+        params.filters['uiActor'] = this.actor.trim()
         return true
     }
 
@@ -45,7 +45,7 @@ export default class XapiStatementsFilters extends XapiFilters {
         if (!this.verb) {
             return false
         }
-        params.filters['magicVerb'] = this.verb.trim()
+        params.filters['uiVerb'] = this.verb.trim()
         return true
     }
 
@@ -53,7 +53,7 @@ export default class XapiStatementsFilters extends XapiFilters {
         if (!this.object) {
             return false
         }
-        params.filters['magicObject'] = this.object.trim()
+        params.filters['uiObject'] = this.object.trim()
         return true
     }
 
@@ -61,7 +61,7 @@ export default class XapiStatementsFilters extends XapiFilters {
         if (!this.context) {
             return false
         }
-        params.filters['magicContext'] = this.context.trim()
+        params.filters['uiContext'] = this.context.trim()
         return true
     }
 

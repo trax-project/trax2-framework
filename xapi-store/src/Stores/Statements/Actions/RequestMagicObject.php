@@ -20,10 +20,10 @@ trait RequestMagicObject
     protected function requestMagicObject(Query $query = null, $ownerId = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
-        if (!$query->hasFilter('magicObject')) {
+        if (!$query->hasFilter('uiObject')) {
             return true;
         }
-        if ($this->hasMagicAgentFilter($query->filter('magicObject'))) {
+        if ($this->hasMagicAgentFilter($query->filter('uiObject'))) {
             return $this->requestMagicObjectAgent($query, $ownerId, $reveal);
         } else {
             return $this->requestMagicObjectActivity($query, $ownerId);
@@ -48,15 +48,15 @@ trait RequestMagicObject
             return true;
         }
 
-        // Only some magic filters support relational requests.
-        $magicObject = $query->filter('magicObject');
-        if (!$this->relationalMagicAgent($magicObject)) {
+        // Only some UI filters support relational requests.
+        $uiObject = $query->filter('uiObject');
+        if (!$this->relationalMagicAgent($uiObject)) {
             return true;
         }
 
         // Get the matching agents.
         $agents = resolve(AgentService::class)->addFilter([
-            'magic' => $magicObject,
+            'uiCombo' => $uiObject,
             'owner_id' => $ownerId
         ])->get();
 
@@ -66,8 +66,8 @@ trait RequestMagicObject
         }
 
         // Modify the filters.
-        $callback = $this->magicObjectAgentCallback($agents);
-        $query->removeFilter('magicObject');
+        $callback = $this->uiObjectAgentCallback($agents);
+        $query->removeFilter('uiObject');
         $query->addFilter(['agentRelations' => ['$has' => $callback]]);
         return true;
     }
@@ -78,7 +78,7 @@ trait RequestMagicObject
      * @param  \Illuminate\Support\Collection  $agents
      * @return callable
      */
-    protected function magicObjectAgentCallback(Collection $agents): callable
+    protected function uiObjectAgentCallback(Collection $agents): callable
     {
         return function ($query) use ($agents) {
             return $query
@@ -101,15 +101,15 @@ trait RequestMagicObject
             return true;
         }
 
-        // Only some magic filters support relational requests.
-        $magicObject = $query->filter('magicObject');
-        if (!$this->relationalMagicActivity($magicObject)) {
+        // Only some UI filters support relational requests.
+        $uiObject = $query->filter('uiObject');
+        if (!$this->relationalMagicActivity($uiObject)) {
             return true;
         }
 
         // Get the matching axtivities.
         $activities = resolve(ActivityRepository::class)->addFilter([
-            'magic' => $magicObject,
+            'uiCombo' => $uiObject,
             'owner_id' => $ownerId
         ])->get();
 
@@ -119,8 +119,8 @@ trait RequestMagicObject
         }
 
         // Modify the filters.
-        $callback = $this->magicObjectActivityCallback($activities);
-        $query->removeFilter('magicObject');
+        $callback = $this->uiObjectActivityCallback($activities);
+        $query->removeFilter('uiObject');
         $query->addFilter(['activityRelations' => ['$has' => $callback]]);
         return true;
     }
@@ -131,7 +131,7 @@ trait RequestMagicObject
      * @param  \Illuminate\Support\Collection  $activities
      * @return callable
      */
-    protected function magicObjectActivityCallback(Collection $activities): callable
+    protected function uiObjectActivityCallback(Collection $activities): callable
     {
         return function ($query) use ($activities) {
             return $query

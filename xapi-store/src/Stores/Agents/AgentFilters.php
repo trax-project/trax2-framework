@@ -20,20 +20,20 @@ trait AgentFilters
     public function dynamicFilters(): array
     {
         return array_merge($this->xapiDynamicFilters(), [
-            'magic',
-            'xapiObjectType',
-            'xapiName',
+            'uiCombo',
+            'uiObjectType',
+            'uiName',
         ]);
     }
 
     /**
-     * Filter: magic.
+     * Filter: uiCombo.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicFilter($field, Query $query = null)
+    public function uiComboFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -43,48 +43,38 @@ trait AgentFilters
     }
 
     /**
-     * Filter: xapiObjectType.
+     * Filter: uiObjectType.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function xapiObjectTypeFilter($field, Query $query = null)
-    {
-        // Check if null. This may happen when the UI field is empty.
-        if (is_null($field)) {
-            return [];
-        }
-
-        // Group.
-        if ($field == 'Group') {
-            return [
-                ['data->objectType' => 'Group'],
-            ];
-        }
-        
-        // Agent.
-        return ['$or' => [
-            ['data->objectType' => ['$exists' => false]],
-            ['data->objectType' => 'Agent'],
-        ]];
-    }
-
-    /**
-     * Filter: xapiName.
-     *
-     * @param  string  $field
-     * @param  \Trax\Repo\Querying\Query  $query
-     * @return array
-     */
-    public function xapiNameFilter($field, Query $query = null)
+    public function uiObjectTypeFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
         return [
-            ['data->name' => ['$text' => $field]],
+            ['is_group' => ($field == 'Group' ? 1 : 0)],
+        ];
+    }
+
+    /**
+     * Filter: uiName.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function uiNameFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['name' => ['$text' => $field]],
         ];
     }
 }

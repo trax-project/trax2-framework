@@ -158,9 +158,9 @@
             "registration": "Registration",
             "result": "Result",
             "search": {
-                "magic-id-placeholder": "Full or partial ID",
-                "magic-iri-placeholder": "Full or partial IRI",
-                "magic-name-placeholder": "Full or partial name",
+                "id-placeholder": "Full or partial ID",
+                "iri-placeholder": "Full IRI or last segments(s)",
+                "name-placeholder": "Full or partial name",
                 "no-result": "There is no result with these filters :-("
             },
             "scopes": "Scopes",
@@ -175,7 +175,7 @@
         },
         "statements": {
             "search": {
-                "actor-placeholder": "'john@doe.com'  'account:jdoe'  'account:jdoe@http://homePage.com'",
+                "actor-placeholder": "'john@doe.com'  'account:jdoe'  'account:jdoe@http://homePage.com'  'openid:http://openid.org/21'  'sha1sum:kdhrnfj'",
                 "verb-placeholder": "'completed'  'http://adlnet.gov/expapi/verbs/completed'",
                 "verb-error": "Only one word, please",
                 "object-placeholder": "'act/xapi101'  'name:xAPI'  'type:scorm'  'john@doe.com'  'account:jdoe'",

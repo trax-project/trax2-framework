@@ -24,7 +24,7 @@ export default class XapiActivitiesFilters extends XapiFilters {
         if (!this.id) {
             return false
         }
-        params.filters['xapiId'] = this.id.trim()
+        params.filters['uiId'] = this.id.trim()
         return true
     }
 
@@ -32,7 +32,7 @@ export default class XapiActivitiesFilters extends XapiFilters {
         if (!this.type) {
             return false
         }
-        params.filters['xapiType'] = this.type.trim()
+        params.filters['uiType'] = this.type.trim()
         return true
     }
 
@@ -40,7 +40,7 @@ export default class XapiActivitiesFilters extends XapiFilters {
         if (!this.name) {
             return false
         }
-        params.filters['xapiName'] = this.name.trim()
+        params.filters['uiName'] = this.name.trim()
         return true
     }
 }

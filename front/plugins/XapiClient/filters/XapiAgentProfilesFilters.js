@@ -22,7 +22,7 @@ export default class XapiAgentProfilesFilters extends XapiFilters {
         if (!this.agentId) {
             return false
         }
-        params.filters['magicAgent'] = this.agentId.trim()
+        params.filters['uiAgent'] = this.agentId.trim()
         return true
     }
 
@@ -30,7 +30,7 @@ export default class XapiAgentProfilesFilters extends XapiFilters {
         if (!this.profileId) {
             return false
         }
-        params.filters['magicProfile'] = this.profileId.trim()
+        params.filters['uiProfile'] = this.profileId.trim()
         return true
     }
 }

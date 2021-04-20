@@ -20,21 +20,21 @@ trait ActivityFilters
     public function dynamicFilters(): array
     {
         return array_merge($this->xapiDynamicFilters(), [
-            'magic',
-            'xapiId',
-            'xapiType',
-            'xapiName',
+            'uiCombo',
+            'uiId',
+            'uiType',
+            'uiName',
         ]);
     }
 
     /**
-     * Filter: magic.
+     * Filter: uiCombo.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicFilter($field, Query $query = null)
+    public function uiComboFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -44,13 +44,13 @@ trait ActivityFilters
     }
 
     /**
-     * Filter: xapiId.
+     * Filter: uiId.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function xapiIdFilter($field, Query $query = null)
+    public function uiIdFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -60,13 +60,13 @@ trait ActivityFilters
     }
 
     /**
-     * Filter: xapiType.
+     * Filter: uiType.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function xapiTypeFilter($field, Query $query = null)
+    public function uiTypeFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -76,13 +76,13 @@ trait ActivityFilters
     }
 
     /**
-     * Filter: xapiName.
+     * Filter: uiName.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function xapiNameFilter($field, Query $query = null)
+    public function uiNameFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {

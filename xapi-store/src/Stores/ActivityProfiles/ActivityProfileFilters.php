@@ -22,18 +22,18 @@ trait ActivityProfileFilters
             'profileId', 'activityId', 'since',
 
             // Additional filters.
-            'magicActivity', 'magicProfile',
+            'uiActivity', 'uiProfile',
         ];
     }
 
     /**
-     * Filter: magicActivity.
+     * Filter: uiActivity.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicActivityFilter($field, Query $query = null)
+    public function uiActivityFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -43,13 +43,13 @@ trait ActivityProfileFilters
     }
 
     /**
-     * Filter: magicProfile.
+     * Filter: uiProfile.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicProfileFilter($field, Query $query = null)
+    public function uiProfileFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {

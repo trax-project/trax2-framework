@@ -22,7 +22,7 @@ export default class XapiActivityProfilesFilters extends XapiFilters {
         if (!this.activityId) {
             return false
         }
-        params.filters['magicActivity'] = this.activityId.trim()
+        params.filters['uiActivity'] = this.activityId.trim()
         return true
     }
 
@@ -30,7 +30,7 @@ export default class XapiActivityProfilesFilters extends XapiFilters {
         if (!this.profileId) {
             return false
         }
-        params.filters['magicProfile'] = this.profileId.trim()
+        params.filters['uiProfile'] = this.profileId.trim()
         return true
     }
 }

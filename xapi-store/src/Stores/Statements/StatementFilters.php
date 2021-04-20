@@ -20,21 +20,21 @@ trait StatementFilters
     public function dynamicFilters(): array
     {
         return array_merge($this->xapiDynamicFilters(), [
-            'magicActor',
-            'magicVerb',
-            'magicObject',
-            'magicContext',
+            'uiActor',
+            'uiVerb',
+            'uiObject',
+            'uiContext',
         ]);
     }
 
     /**
-     * Filter: magicActor.
+     * Filter: uiActor.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicActorFilter($field, Query $query)
+    public function uiActorFilter($field, Query $query)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -44,13 +44,13 @@ trait StatementFilters
     }
 
     /**
-     * Filter: magicVerb.
+     * Filter: uiVerb.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicVerbFilter($field, Query $query)
+    public function uiVerbFilter($field, Query $query)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -61,13 +61,13 @@ trait StatementFilters
     }
 
     /**
-     * Filter: magicObject.
+     * Filter: uiObject.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicObjectFilter($field, Query $query)
+    public function uiObjectFilter($field, Query $query)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -103,13 +103,13 @@ trait StatementFilters
     }
 
     /**
-     * Filter: magicContext.
+     * Filter: uiContext.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicContextFilter($field, Query $query)
+    public function uiContextFilter($field, Query $query)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {

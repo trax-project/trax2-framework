@@ -31,7 +31,7 @@ export default class XapiAgentsFilters extends XapiFilters {
         if (!this.id) {
             return false
         }
-        params.filters['magic'] = this.id.trim()
+        params.filters['uiCombo'] = this.id.trim()
         return true
     }
 
@@ -39,7 +39,7 @@ export default class XapiAgentsFilters extends XapiFilters {
         if (!this.objectType) {
             return false
         }
-        params.filters['xapiObjectType'] = this.objectType
+        params.filters['uiObjectType'] = this.objectType
         return true
     }
 
@@ -47,7 +47,7 @@ export default class XapiAgentsFilters extends XapiFilters {
         if (!this.name) {
             return false
         }
-        params.filters['xapiName'] = this.name.trim()
+        params.filters['uiName'] = this.name.trim()
         return true
     }
 }

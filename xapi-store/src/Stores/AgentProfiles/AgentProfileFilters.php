@@ -22,34 +22,34 @@ trait AgentProfileFilters
             'profileId', 'agent', 'since',
 
             // Additional filters.
-            'magicAgent', 'magicProfile',
+            'uiAgent', 'uiProfile',
         ];
     }
 
     /**
-     * Filter: magic.
+     * Filter: uiAgent.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicAgentFilter($field, Query $query = null)
+    public function uiAgentFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
             return [];
         }
-        return $this->getMagicAgentFilter($field, 'agent');
+        return $this->getMagicAgentFilter($field);
     }
 
     /**
-     * Filter: magicProfile.
+     * Filter: uiProfile.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicProfileFilter($field, Query $query = null)
+    public function uiProfileFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {

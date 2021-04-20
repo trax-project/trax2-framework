@@ -13,6 +13,8 @@ trait MagicFilters
     protected function relationalMagicAgent($field)
     {
         return $this->getMagicPrefixedField($field, 'account')
+            || $this->getMagicPrefixedField($field, 'openid')
+            || $this->getMagicPrefixedField($field, 'sha1sum')
             || $this->getMagicAgentMbox($field);
     }
 
@@ -57,6 +59,16 @@ trait MagicFilters
             return true;
         }
 
+        // Openid filter.
+        if ($openid = $this->getMagicPrefixedField($field, 'openid')) {
+            return true;
+        }
+
+        // Sha1sum filter.
+        if ($sha1sum = $this->getMagicPrefixedField($field, 'sha1sum')) {
+            return true;
+        }
+
         // Fulltext search on name has been removed because it can't be used
         // on pseudonymized agents with the reveal option.
         return false;
@@ -69,31 +81,78 @@ trait MagicFilters
      * @param  string  $target
      * @return array
      */
-    protected function getMagicAgentFilter($field, string $target = 'data')
+    protected function getMagicAgentFilter($field, string $target = 'vid')
     {
         // Account filter.
         if ($account = $this->getMagicPrefixedField($field, 'account')) {
             $parts = explode('@', $account);
-            $filter = [
-                [$target.'->account->name' => $parts[0]],
-            ];
             if (count($parts) > 1) {
-                $filter[] = [$target.'->account->homePage' => $parts[1]];
+                // Name + homePage.
+                if ($target == 'vid') {
+                    return [
+                        ['vid' => 'account::' . $parts[0] . '@' . $parts[1]],
+                    ];
+                } else {
+                    return [
+                        [$target.'->account->name' => $parts[0]],
+                        [$target.'->account->homePage' => $parts[1]]
+                    ];
+                }
+            } else {
+                // Name only.
+                if ($target == 'vid') {
+                    return [
+                        ['vid' => ['$text' => 'account::' . $parts[0] . '@']],
+                    ];
+                } else {
+                    return [
+                        [$target.'->account->name' => $parts[0]],
+                    ];
+                }
             }
-            return $filter;
         }
 
         // Mbox filter.
-        if ($mbox = $this->getMagicAgentMbox($field)) {
-            return [
-                [$target.'->mbox' => 'mailto:' . $mbox],
-            ];
+        if ($email = $this->getMagicAgentMbox($field)) {
+            if ($target == 'vid') {
+                return [
+                    ['vid' => 'mbox::mailto:' . $email],
+                ];
+            } else {
+                return [
+                    [$target.'->mbox' => 'mailto:' . $email],
+                ];
+            }
         }
 
-        // Fulltext search on name has been removed because it can't be used
-        // on pseudonymized agents with the reveal option.
+        // Mbox_sha1sum filter.
+        if ($sha1sum = $this->getMagicPrefixedField($field, 'sha1sum')) {
+            if ($target == 'vid') {
+                return [
+                    ['vid' => 'mbox_sha1sum::' . $sha1sum],
+                ];
+            } else {
+                return [
+                    [$target.'->mbox_sha1sum' => $sha1sum],
+                ];
+            }
+        }
+
+        // Openid filter.
+        if ($openid = $this->getMagicPrefixedField($field, 'openid')) {
+            if ($target == 'vid') {
+                return [
+                    ['vid' => 'openid::' . $openid],
+                ];
+            } else {
+                return [
+                    [$target.'->openid' => $openid],
+                ];
+            }
+        }
+
         return [
-            [$target.'->mbox' => 'mailto:no-one'],
+            [$target.'->mbox' => 'no-one'],
         ];
     }
 
@@ -161,7 +220,7 @@ trait MagicFilters
     }
 
     /**
-     * Get magic activity name.
+     * Get activity name.
      *
      * @param  string  $field
      * @param  string  $prefix
@@ -179,7 +238,7 @@ trait MagicFilters
     }
 
     /**
-     * Get magic agent mbox.
+     * Get agent mbox.
      *
      * @param  string  $field
      * @return string|false
@@ -194,7 +253,7 @@ trait MagicFilters
     }
 
     /**
-     * Get magic activity id.
+     * Get HTTP field.
      *
      * @param  string  $field
      * @return string|false
