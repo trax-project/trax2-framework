@@ -18,7 +18,7 @@ class XapiBadRequestException extends XapiException
      * @param  array  $errors
      * @return void
      */
-    public function __construct($message = 'xAPI Bad Request.', array $errors = [])
+    public function __construct($message = 'xAPI Bad Request Exception.', array $errors = [])
     {
         parent::__construct($message);
         $this->setErrors($errors);

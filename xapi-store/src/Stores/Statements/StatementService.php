@@ -152,12 +152,13 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
+     * @param  array  $context
      * @return array
      */
-    public function createStatements($statements, array $attachments = [])
+    public function createStatements($statements, array $attachments, array $context)
     {
-        return DB::transaction(function () use ($statements, $attachments) {
-            return $this->createStatementsWithoutTransaction($statements, $attachments);
+        return DB::transaction(function () use ($statements, $attachments, $context) {
+            return $this->createStatementsWithoutTransaction($statements, $attachments, $context);
         });
     }
 
@@ -167,9 +168,10 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
+     * @param  array  $context
      * @return array
      */
-    public function createStatementsWithoutTransaction($statements, array $attachments = [])
+    public function createStatementsWithoutTransaction($statements, array $attachments, array $context)
     {
         if (!is_array($statements)) {
             $statements = [$statements];
@@ -180,20 +182,6 @@ class StatementService extends StatementRepository
             if ($statement->verb->id == 'http://adlnet.gov/expapi/verbs/voided') {
                 $this->voidStatement($statement->object->id);
             }
-        }
-
-        // Context.
-        $context = [
-            'owner_id' => null  // Because they all need an owner_id in the context, be it null.
-        ];
-        $access = TraxAuth::access();
-        if (!is_null($access)) {
-            $context = [
-                'access_id' => $access->id,
-                'client_id' => $access->client->id,
-                'entity_id' => $access->client->entity_id,
-                'owner_id' => $access->client->owner_id,
-            ];
         }
 
         // Get the authority.

@@ -16,5 +16,5 @@ class XapiAuthorizationException extends XapiException
      *
      * @var string
      */
-    protected $message = 'xAPI Operation Forbidden.';
+    protected $message = 'xAPI Authorization Exception.';
 }

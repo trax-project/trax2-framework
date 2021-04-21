@@ -3,9 +3,11 @@
 namespace Trax\XapiStore\Stores\Agents;
 
 use Illuminate\Http\Request;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Agents\AgentService;
+use Trax\XapiStore\XapiLogging\XapiLogger;
 
 class XapiAgentController extends XapiController
 {
@@ -89,6 +91,9 @@ class XapiAgentController extends XapiController
                 json_decode($xapiRequest->param('agent'))
             );
         }
+
+        // Logging.
+        XapiLogger::log($this->permissionsDomain, 'GET');
 
         // Response.
         return $this->response($person);

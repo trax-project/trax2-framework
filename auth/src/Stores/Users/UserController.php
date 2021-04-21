@@ -248,6 +248,7 @@ class UserController extends CrudController
         return ['xapi' => [
             'tables' => config('trax-xapi-store.tables'),
             'gdpr' => config('trax-xapi-store.gdpr'),
+            'logging' => config('trax-xapi-store.logging'),
         ]];
     }
 }

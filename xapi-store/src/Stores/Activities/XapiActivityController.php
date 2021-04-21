@@ -3,9 +3,11 @@
 namespace Trax\XapiStore\Stores\Activities;
 
 use Illuminate\Http\Request;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
+use Trax\XapiStore\XapiLogging\XapiLogger;
 
 class XapiActivityController extends XapiController
 {
@@ -80,6 +82,11 @@ class XapiActivityController extends XapiController
                 'id' => $xapiRequest->param('activityId')]
             ];
         }
+
+        // Logging.
+        XapiLogger::log($this->permissionsDomain, 'GET');
+
+        // Response.
         return $this->response($resource->data);
     }
 

@@ -3,8 +3,9 @@
 namespace Trax\XapiStore\Abstracts;
 
 use Illuminate\Http\Request;
-use Trax\XapiStore\Exceptions\XapiNotFoundException;
 use Trax\Auth\TraxAuth;
+use Trax\XapiStore\Exceptions\XapiNotFoundException;
+use Trax\XapiStore\XapiLogging\XapiLogger;
 
 abstract class XapiDocumentController extends XapiController
 {
@@ -42,6 +43,9 @@ abstract class XapiDocumentController extends XapiController
             $this->createWithContext($xapiRequest->data());
         }
 
+        // Logging.
+        XapiLogger::log($this->permissionsDomain, 'POST');
+
         // Response.
         return response('', 204);
     }
@@ -71,6 +75,9 @@ abstract class XapiDocumentController extends XapiController
             $this->createWithContext($xapiRequest->data());
         }
 
+        // Logging.
+        XapiLogger::log($this->permissionsDomain, 'PUT');
+
         // Response.
         return response('', 204);
     }
@@ -95,10 +102,18 @@ abstract class XapiDocumentController extends XapiController
             if (!$resource = $this->getResources($xapiRequest)->last()) {
                 throw new XapiNotFoundException();
             }
+
+            // Logging.
+            XapiLogger::log($this->permissionsDomain, 'GET');
+
             return $this->response($resource->data->content, $resource->data->type);
         } else {
             // Multiple GET.
             $content = $this->getResources($xapiRequest)->pluck(\Str::snake($identifier))->all();
+
+            // Logging.
+            XapiLogger::log($this->permissionsDomain, 'GET');
+
             return $this->response($content);
         }
     }
@@ -122,6 +137,9 @@ abstract class XapiDocumentController extends XapiController
         // Perform request.
         $this->repository->deleteModels($resources);
 
+        // Logging.
+        XapiLogger::log($this->permissionsDomain, 'DELETE');
+
         // Response.
         return response('', 204);
     }
@@ -134,17 +152,7 @@ abstract class XapiDocumentController extends XapiController
      */
     protected function createWithContext(array $data)
     {
-        $access = TraxAuth::access();
-        $context = [];
-        if (!is_null($access)) {
-            $context = [
-                'access_id' => $access->id,
-                'client_id' => $access->client->id,
-                'entity_id' => $access->client->entity_id,
-                'owner_id' => $access->client->owner_id,
-            ];
-        }
-        $data = array_merge($data, $context);
+        $data = array_merge($data, TraxAuth::context());
         $this->repository->create($data);
     }
 

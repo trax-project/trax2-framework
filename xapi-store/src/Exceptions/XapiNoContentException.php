@@ -16,5 +16,5 @@ class XapiNoContentException extends XapiException
      *
      * @var string
      */
-    protected $message = 'xAPI No Content Returned.';
+    protected $message = 'xAPI No Content.';
 }

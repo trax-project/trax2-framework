@@ -452,6 +452,40 @@ class Authentifier
     }
 
     /**
+     * Get the consumer context.
+     *
+     * @return array
+     */
+    public function context(): array
+    {
+        // A context should always have an owner_id, be it null.
+        $context = [
+            'owner_id' => null
+        ];
+
+        // Common context to consumers (both users and accesses).
+        $consumer = $this->consumer();
+        if (!is_null($consumer)) {
+            $context = [
+                'entity_id' => $consumer->entity_id,
+                'owner_id' => $consumer->owner_id,
+            ];
+        }
+
+        // When the consumer is an access.
+        $access = $this->access();
+        if (!is_null($access)) {
+            $context = [
+                'access_id' => $access->id,
+                'client_id' => $access->client->id,
+                'entity_id' => $access->client->entity_id,
+                'owner_id' => $access->client->owner_id,
+            ];
+        }
+        return $context;
+    }
+
+    /**
      * Get an access guard given its type.
      *
      * @param  string  $type
