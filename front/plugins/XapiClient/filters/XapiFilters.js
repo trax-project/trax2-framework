@@ -26,6 +26,7 @@ export default class XapiFilters {
     get(params) {
         this.errors.clearAll()
         params = this.contextFilters.get(params)
+        params.sort = ['id']    // Default value. Needed!
         this.addParams(params)
         return this.errors.added() ? false : params
     }

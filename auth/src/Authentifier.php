@@ -297,9 +297,14 @@ class Authentifier
         Route::middleware($middlewares)->group(function () use ($endpoint, $controllerClass, $options) {
             
             // Standard CRUD routes.
-            Route::apiResource($endpoint, $controllerClass, ['names' => [
-                'index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>''
-            ]]);
+            $apiOptions = [
+                // We remove all the route names to avoid some conflicts.
+                'names' => ['index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>'']
+            ];
+            if (isset($options['except'])) {
+                $apiOptions['except'] = $options['except'];
+            }
+            Route::apiResource($endpoint, $controllerClass, $apiOptions);
             $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
 
             // Determine the name of the resource param.

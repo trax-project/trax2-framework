@@ -5,7 +5,7 @@ namespace Trax\XapiStore\Abstracts;
 use Illuminate\Http\Request;
 use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Exceptions\XapiNotFoundException;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 abstract class XapiDocumentController extends XapiController
 {
@@ -44,7 +44,7 @@ abstract class XapiDocumentController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'POST');
+        Logger::log($this->permissionsDomain, 'POST');
 
         // Response.
         return response('', 204);
@@ -76,7 +76,7 @@ abstract class XapiDocumentController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'PUT');
+        Logger::log($this->permissionsDomain, 'PUT');
 
         // Response.
         return response('', 204);
@@ -104,7 +104,7 @@ abstract class XapiDocumentController extends XapiController
             }
 
             // Logging.
-            XapiLogger::log($this->permissionsDomain, 'GET');
+            Logger::log($this->permissionsDomain, 'GET');
 
             return $this->response($resource->data->content, $resource->data->type);
         } else {
@@ -112,7 +112,7 @@ abstract class XapiDocumentController extends XapiController
             $content = $this->getResources($xapiRequest)->pluck(\Str::snake($identifier))->all();
 
             // Logging.
-            XapiLogger::log($this->permissionsDomain, 'GET');
+            Logger::log($this->permissionsDomain, 'GET');
 
             return $this->response($content);
         }
@@ -138,7 +138,7 @@ abstract class XapiDocumentController extends XapiController
         $this->repository->deleteModels($resources);
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'DELETE');
+        Logger::log($this->permissionsDomain, 'DELETE');
 
         // Response.
         return response('', 204);

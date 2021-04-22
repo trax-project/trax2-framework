@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Throwable;
 use Trax\Auth\TraxAuth;
 use Trax\XapiValidation\Exceptions\XapiValidationException;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 use Trax\Core\Contracts\HttpException;
 
 class XapiExceptionHandler extends ExceptionHandler
@@ -94,10 +94,15 @@ class XapiExceptionHandler extends ExceptionHandler
         // When the exception returns an error.
         // XapiNoContentException does not!
         if ($status != 200 && $status != 204) {
+
+            // Request.
+            $headers = array_map(function ($header) {
+                return implode(',', $header);
+            }, $request->headers->all());
+
             $data = [
                 'request' => [
-                    'params' => $request->query(),
-                    'headers' => $request->headers->all(),
+                    'headers' => $headers,
                 ],
                 'response' => [
                     'status' => $status,
@@ -105,9 +110,16 @@ class XapiExceptionHandler extends ExceptionHandler
                 ],
                 'details' => [
                     'exception' => get_class($exception),
-                    'errors' => $exception->errors(),
                 ]
             ];
+
+            if (!empty($request->query())) {
+                $data['request']['params'] = $request->query();
+            }
+
+            if (!empty($exception->errors())) {
+                $data['details']['errors'] = $exception->errors();
+            }
         }
 
         // xAPI exceptions.
@@ -116,6 +128,6 @@ class XapiExceptionHandler extends ExceptionHandler
         }
 
         // Logging.
-        XapiLogger::log($api, $method, null, $data);
+        Logger::log($api, $method, null, $data);
     }
 }

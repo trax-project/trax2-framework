@@ -7,6 +7,7 @@ import XapiActivityProfilesFilters from "./filters/XapiActivityProfilesFilters";
 import XapiAgentProfilesFilters from "./filters/XapiAgentProfilesFilters";
 import XapiStatesFilters from "./filters/XapiStatesFilters";
 import XapiVerbsFilters from "./filters/XapiVerbsFilters";
+import XapiLogsFilters from "./filters/XapiLogsFilters";
 
 // Loaders.
 import XapiLoader from "./loaders/XapiLoader";
@@ -25,6 +26,7 @@ export default {
             agentProfiles: new XapiAgentProfilesFilters(contextFilters),
             states: new XapiStatesFilters(contextFilters),
             verbs: new XapiVerbsFilters(contextFilters),
+            logs: new XapiLogsFilters(contextFilters),
         }
 
         Vue.prototype.$xapi = {
@@ -37,6 +39,7 @@ export default {
                 agentProfiles: new XapiLoader('/trax/api/front/xapi/ext/agent_profiles', filters.agentProfiles),
                 states: new XapiLoader('/trax/api/front/xapi/ext/states', filters.states),
                 verbs: new XapiLoader('/trax/api/front/xapi/ext/verbs', filters.verbs),
+                logs: new XapiLoader('/trax/api/front/xapi/ext/logs', filters.logs),
             }
         }
     }

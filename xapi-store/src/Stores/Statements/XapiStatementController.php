@@ -8,7 +8,7 @@ use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiNotFoundException;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Statements\StatementService;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiStatementController extends XapiController
 {
@@ -67,7 +67,7 @@ class XapiStatementController extends XapiController
         );
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'POST', count($ids));
+        Logger::log($this->permissionsDomain, 'POST', count($ids));
 
         // Response.
         return $this->response($ids);
@@ -95,7 +95,7 @@ class XapiStatementController extends XapiController
         );
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'PUT', 1);
+        Logger::log($this->permissionsDomain, 'PUT', 1);
 
         // Response.
         return response('', 204);
@@ -129,7 +129,7 @@ class XapiStatementController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'GET', count($response['statements']));
+        Logger::log($this->permissionsDomain, 'GET', count($response['statements']));
 
         // Response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';
@@ -161,7 +161,7 @@ class XapiStatementController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'GET', 1);
+        Logger::log($this->permissionsDomain, 'GET', 1);
 
         // Prepare response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';

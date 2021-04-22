@@ -1,10 +1,10 @@
 <?php
 
-namespace Trax\XapiStore\XapiLogging;
+namespace Trax\XapiStore\Stores\Logs;
 
 use Illuminate\Database\Eloquent\Model;
 
-class XapiLog extends Model
+class Log extends Model
 {
     /**
      * The table associated with the model.

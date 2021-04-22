@@ -29,6 +29,7 @@ class XapiStoreServiceProvider extends ServiceProvider
         \Trax\XapiStore\Services\GlobalService::class => \Trax\XapiStore\Services\GlobalService::class,
         \Trax\XapiStore\Stores\Statements\StatementService::class => \Trax\XapiStore\Stores\Statements\StatementService::class,
         \Trax\XapiStore\Stores\Agents\AgentService::class => \Trax\XapiStore\Stores\Agents\AgentService::class,
+        \Trax\XapiStore\Stores\Logs\LogRepository::class => \Trax\XapiStore\Stores\Logs\LogRepository::class,
     ];
 
     /**
@@ -48,6 +49,7 @@ class XapiStoreServiceProvider extends ServiceProvider
         'attachment' => \Trax\XapiStore\Stores\Attachments\AttachmentPermissions::class,
         'person' => \Trax\XapiStore\Stores\Persons\PersonPermissions::class,
         'verb' => \Trax\XapiStore\Stores\Verbs\VerbPermissions::class,
+        'log' => \Trax\XapiStore\Stores\Logs\LogPermissions::class,
     ];
 
     /**

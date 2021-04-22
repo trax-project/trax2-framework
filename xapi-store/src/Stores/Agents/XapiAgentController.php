@@ -7,7 +7,7 @@ use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Agents\AgentService;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiAgentController extends XapiController
 {
@@ -93,7 +93,7 @@ class XapiAgentController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'GET');
+        Logger::log($this->permissionsDomain, 'GET');
 
         // Response.
         return $this->response($person);

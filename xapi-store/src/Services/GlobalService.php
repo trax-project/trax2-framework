@@ -4,7 +4,7 @@ namespace Trax\XapiStore\Services;
 
 use Illuminate\Container\Container;
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class GlobalService
 {
@@ -92,7 +92,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
-        XapiLogger::clear();
+        Logger::clear();
     }
 
     /**
@@ -113,7 +113,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
-        XapiLogger::clear($ownerId);
+        Logger::clear($ownerId);
     }
 
     /**

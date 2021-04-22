@@ -7,7 +7,7 @@ use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
-use Trax\XapiStore\XapiLogging\XapiLogger;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiActivityController extends XapiController
 {
@@ -84,7 +84,7 @@ class XapiActivityController extends XapiController
         }
 
         // Logging.
-        XapiLogger::log($this->permissionsDomain, 'GET');
+        Logger::log($this->permissionsDomain, 'GET');
 
         // Response.
         return $this->response($resource->data);

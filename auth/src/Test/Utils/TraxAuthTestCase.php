@@ -4,6 +4,7 @@ namespace Trax\Auth\Test\Utils;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Trax\Test\XapiStore\Utils\ActivityFactory;
 
 class TraxAuthTestCase extends TestCase
 {
@@ -109,11 +110,10 @@ class TraxAuthTestCase extends TestCase
         $userFactory->setRoleFactory($this->roles->factory);
         $this->users = new ResourceApi('users', $userFactory, $this);
 
-        // Statements API.
-        $statementFactory = new StatementFactory($this->app, $this->faker);
-        $statementFactory->setOwnerFactory($this->owners->factory);
-        $statementFactory->setEntityFactory($this->entities->factory);
-        $this->statements = new ResourceApi('xapi/ext/statements', $statementFactory, $this);
+        // Activities API (to make some tests on the xAPI store).
+        $activityFactory = new ActivityFactory($this->app, $this->faker);
+        $activityFactory->setOwnerFactory($this->owners->factory);
+        $this->xactivities = new ResourceApi('xapi/ext/activities', $activityFactory, $this);
 
         // Create an admin user when needed.
         if ($this->asUser) {
