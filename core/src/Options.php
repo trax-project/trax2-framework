@@ -21,8 +21,18 @@ abstract class Options
      */
     public function rule(): string
     {
-        $values = collect($this->data())->implode('id', ',');
+        $values = $this->all()->implode('id', ',');
         return 'string|in:' . $values;
+    }
+
+    /**
+     * Return the data collection.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function get(): Collection
+    {
+        return collect($this->data());
     }
 
     /**
