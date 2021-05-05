@@ -77,39 +77,39 @@ export default class CrudController {
         }
     }
 
-    create() {
-        this.modals.open('edit')
+    create(modal = 'edit') {
+        this.modals.open(modal)
         this.form.create().then(resp => {
             if (this.callbacks.created) {
                 this.callbacks.created(resp)
             }
-            this.modals.close('edit')
+            this.modals.close(modal)
             if (this.autolist) {
                 this.list()
             }
         })
     }
     
-    update(id) {
-        this.modals.open('edit')
+    update(id, modal = 'edit') {
+        this.modals.open(modal)
         this.form.update(id).then(resp => {
             if (this.callbacks.updated) {
                 this.callbacks.updated(resp)
             }
-            this.modals.close('edit')
+            this.modals.close(modal)
             if (this.autolist) {
                 this.list()
             }
         })
     }
 
-    duplicate(id) {
-        this.modals.open('edit')
+    duplicate(id, modal = 'edit') {
+        this.modals.open(modal)
         this.form.duplicate(id).then(resp => {
             if (this.callbacks.duplicated) {
                 this.callbacks.duplicated(resp)
             }
-            this.modals.close('edit')
+            this.modals.close(modal)
             if (this.autolist) {
                 this.list()
             }
