@@ -4,6 +4,7 @@ namespace Trax\Auth\Stores\Users;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Trax\Repo\CrudRequest;
 use Trax\Auth\Controllers\CrudController;
 use Trax\Auth\Stores\Owners\OwnerRepository;
@@ -196,22 +197,19 @@ class UserController extends CrudController
     }
 
     /**
-     * Remove the specified resource.
+     * Hook before a destroy request.
      *
+     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return void
      */
-    public function destroy(Request $request)
+    protected function beforeDestroy(Model $resource, CrudRequest $crudRequest, Request $request)
     {
         // We can't delete our own account.
-        if ($this->authentifier->isUser()
-            && $this->authentifier->consumer()->id == $request->route($this->routeParameter)
-        ) {
+        if ($this->authentifier->isUser() && $this->authentifier->consumer()->id == $resource->id) {
             throw new AuthorizationException("Forbidden: you can't delete your own account.");
         }
-        return parent::destroy($request);
     }
 
     /**
