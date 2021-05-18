@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Trax\Repo\Contracts\CrudRepositoryContract;
 use Trax\Repo\CrudRequest;
 use Trax\Auth\Authorizer;
@@ -71,13 +72,15 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request, true);
-        $this->beforeRequest($crudRequest, $request);
-        $this->beforeWrite($crudRequest, $request);
-        $this->beforeStore($crudRequest, $request);
         $include = $this->validateIncludeRequest($request);
 
         // Check permissions.
         $this->authorizer->must($this->permissionsDomain . '.write');
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeWrite($crudRequest, $request);
+        $this->beforeStore($crudRequest, $request);
 
         // Perform task.
         $resource = $this->repository->create($crudRequest->content());
@@ -95,15 +98,17 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request, true);
-        $this->beforeRequest($crudRequest, $request);
-        $this->beforeWrite($crudRequest, $request);
-        $this->beforeUpdate($crudRequest, $request);
         $include = $this->validateIncludeRequest($request);
 
         // Check permissions.
         $id = $request->route($this->routeParameter);
         $resource = $this->repository->findOrFail($id);
         $this->authorizer->must($this->permissionsDomain . '.write', $resource);
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeWrite($crudRequest, $request);
+        $this->beforeUpdate($resource, $crudRequest, $request);
 
         // Perform task.
         $resource = $this->repository->updateModel($resource, $crudRequest->content());
@@ -121,9 +126,6 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateDuplicateRequest($request);
-        $this->beforeRequest($crudRequest, $request);
-        $this->beforeWrite($crudRequest, $request);
-        $this->beforeDuplicate($crudRequest, $request);
         $include = $this->validateIncludeRequest($request);
 
         // Check permissions.
@@ -131,6 +133,11 @@ abstract class CrudController extends Controller
         $resource = $this->repository->findOrFail($id);
         $this->authorizer->must($this->permissionsDomain . '.read', $resource);
         $this->authorizer->must($this->permissionsDomain . '.write');
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeWrite($crudRequest, $request);
+        $this->beforeDuplicate($resource, $crudRequest, $request);
 
         // Perform task.
         $copy = DB::transaction(function () use ($resource, $crudRequest) {
@@ -150,13 +157,15 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request);
-        $this->beforeRequest($crudRequest, $request);
         $include = $this->validateIncludeRequest($request);
 
         // Check permissions.
         $id = $request->route($this->routeParameter);
         $resource = $this->repository->findOrFail($id, $crudRequest->query());
         $this->authorizer->must($this->permissionsDomain . '.read', $resource);
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
 
         // Perform task.
         $responseData = $this->responseData($resource);
@@ -171,10 +180,17 @@ abstract class CrudController extends Controller
      */
     public function destroy(Request $request)
     {
+        // Validate request.
+        $crudRequest = $this->validateRequest($request);
+
         // Check permissions.
         $id = $request->route($this->routeParameter);
         $resource = $this->repository->findOrFail($id);
         $this->authorizer->must($this->permissionsDomain . '.delete', $resource);
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeDestroy($resource, $crudRequest, $request);
 
         // Perform task.
         $this->repository->deleteModel($resource);
@@ -191,6 +207,8 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request);
+
+        // Hooks.
         $this->beforeRequest($crudRequest, $request);
 
         // Perform task.
@@ -211,8 +229,10 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request);
-        $this->beforeRequest($crudRequest, $request);
         $include = $this->validateIncludeRequest($request);
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
 
         // Perform task.
         $resources = $this->getResources($this->permissionsDomain, $this->repository, $crudRequest);
@@ -232,6 +252,8 @@ abstract class CrudController extends Controller
     {
         // Validate request.
         $crudRequest = $this->validateRequest($request);
+
+        // Hooks.
         $this->beforeRequest($crudRequest, $request);
 
         // Perform task.
@@ -258,6 +280,18 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Hook before a store or update request.
+     *
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeWrite(CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
      * Hook before a store request.
      *
      * @param  \Trax\Repo\CrudRequest  $crudRequest
@@ -272,23 +306,12 @@ abstract class CrudController extends Controller
     /**
      * Hook before an update request.
      *
+     * @param  \Illuminate\Database\Eloquent\Model
      * @param  \Trax\Repo\CrudRequest  $crudRequest
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    protected function beforeUpdate(CrudRequest $crudRequest, Request $request)
-    {
-        // You may override this in your controller.
-    }
-
-    /**
-     * Hook before a store or update request.
-     *
-     * @param  \Trax\Repo\CrudRequest  $crudRequest
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    protected function beforeWrite(CrudRequest $crudRequest, Request $request)
+    protected function beforeUpdate(Model $resource, CrudRequest $crudRequest, Request $request)
     {
         // You may override this in your controller.
     }
@@ -296,11 +319,25 @@ abstract class CrudController extends Controller
     /**
      * Hook before a duplicate request.
      *
+     * @param  \Illuminate\Database\Eloquent\Model
      * @param  \Trax\Repo\CrudRequest  $crudRequest
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    protected function beforeDuplicate(CrudRequest $crudRequest, Request $request)
+    protected function beforeDuplicate(Model $resource, CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
+     * Hook before a destroy request.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeDestroy(Model $resource, CrudRequest $crudRequest, Request $request)
     {
         // You may override this in your controller.
     }
