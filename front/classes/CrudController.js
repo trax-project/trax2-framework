@@ -16,6 +16,15 @@ export default class CrudController {
         this.paging.currentPage = 1
         this.callbacks = args.callbacks ? args.callbacks : {}
         this.autolist = args.autolist !== undefined ? args.autolist : true
+
+        // Errors tags.
+        this.errors = {
+            '403-delete': 'errors.403-delete',
+            '423-delete': 'errors.423-delete',
+        }
+        if (args.errors) {
+            this.errors = {...this.errors, ...args.errors}
+        }
     }
 
     init(component, target) {
@@ -140,9 +149,9 @@ export default class CrudController {
                 })
                 .catch(err => {
                     if (err.response.status == 423) {
-                        this.vm.$notify({type: 'danger', message: this.vm.$t('errors.423-delete') })
+                        this.vm.$notify({type: 'danger', message: this.vm.$t(this.errors['423-delete']) })
                     } else if (err.response.status == 403) {
-                        this.vm.$notify({type: 'danger', message: this.vm.$t('errors.403-delete') })
+                        this.vm.$notify({type: 'danger', message: this.vm.$t(this.errors['403-delete']) })
                     }
                 })        
             }
