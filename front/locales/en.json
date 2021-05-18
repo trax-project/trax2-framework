@@ -63,7 +63,7 @@
     },
     "errors": {
         "403-delete": "You are not allowed to delete this item!",
-        "423-delete": "This item can't be deleted because there is some data associated!"
+        "423-delete": "This item can't be deleted because it is used somewhere!"
     },
     "auth": {
         "change-password": "Change password",
