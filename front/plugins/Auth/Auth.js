@@ -138,13 +138,14 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'csrf-token'],
+            include: ['owners', 'csrf-token', 'ui-config'],
         }})
         .then(resp => {
 
             // Keep user data and XSRF token.
             Vue.prototype.$auth.user = resp.data.data
             Vue.prototype.$auth['csrf-token'] = resp.data.included['csrf-token']
+            Vue.prototype.$auth['ui-config'] = resp.data.included['ui-config']
             Vue.prototype.$auth.offline = resp.data.data.offline == true
 
             // Does the user need to select an owner?
