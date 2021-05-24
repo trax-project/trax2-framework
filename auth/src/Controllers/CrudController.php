@@ -210,6 +210,7 @@ abstract class CrudController extends Controller
 
         // Hooks.
         $this->beforeRequest($crudRequest, $request);
+        $this->beforeDestroyByQuery($crudRequest, $request);
 
         // Perform task.
         $scopeFilter = $this->authorizer->scopeFilter($this->permissionsDomain);
@@ -338,6 +339,18 @@ abstract class CrudController extends Controller
      * @return void
      */
     protected function beforeDestroy(Model $resource, CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
+     * Hook before a destroy by query request.
+     *
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeDestroyByQuery(CrudRequest $crudRequest, Request $request)
     {
         // You may override this in your controller.
     }
