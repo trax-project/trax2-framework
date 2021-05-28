@@ -4,6 +4,7 @@ namespace Trax\Auth\Stores\Users;
 
 use Illuminate\Support\Facades\Hash;
 use Trax\Repo\Contracts\ModelFactoryContract;
+use Trax\Auth\Events\PasswordChanged;
 
 class UserFactory implements ModelFactoryContract
 {
@@ -103,9 +104,12 @@ class UserFactory implements ModelFactoryContract
      */
     public static function update($model, array $data)
     {
+        $passwordChanged = false;
+
         // Encrypt password!
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
+            $passwordChanged = true;
         }
         
         // Empty but not null.
@@ -114,6 +118,11 @@ class UserFactory implements ModelFactoryContract
         }
 
         $model->update($data);
+
+        if ($passwordChanged) {
+            event(new PasswordChanged($model));
+        }
+
         return $model;
     }
 

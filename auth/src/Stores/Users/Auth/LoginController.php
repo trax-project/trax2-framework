@@ -7,11 +7,16 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
 use Trax\Auth\Stores\Users\UserRepository;
+use Trax\Auth\Events\LoggedIn;
+use Trax\Auth\Events\LogInFailed;
+use Trax\Auth\Events\LoggedOut;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers {
         attemptLogin as nativeAttemptLogin;
+        sendFailedLoginResponse as nativeSendFailedLoginResponse;
+        logout as nativeLogout;
     }
 
     /**
@@ -78,5 +83,45 @@ class LoginController extends Controller
         
         // Finally, we can attempt to login.
         return $this->nativeAttemptLogin($request);
+    }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        event(new LoggedIn($user));
+        return false;   // Don't return a specific response.
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        event(new LogInFailed($this->username()));
+        return $this->nativeSendFailedLoginResponse($request);
+    }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        $user = app(\Trax\Auth\Authentifier::class)->user();
+        event(new LoggedOut($user));
+        return $this->nativeLogout($request);
     }
 }
