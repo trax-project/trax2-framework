@@ -148,6 +148,30 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        // Validate request.
+        $crudRequest = $this->validateRequest($request);
+        $include = $this->validateIncludeRequest($request);
+
+        // Hooks.
+        $this->beforeRequest($crudRequest, $request);
+        $this->beforeIndex($crudRequest, $request);
+
+        // Perform task.
+        $resources = $this->getResources($this->permissionsDomain, $this->repository, $crudRequest);
+
+        $responseData = $this->responseData($resources);
+        $this->addPagingData($responseData, $crudRequest);
+        return $this->responseWithIncludedData($responseData, $include);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -159,13 +183,16 @@ abstract class CrudController extends Controller
         $crudRequest = $this->validateRequest($request);
         $include = $this->validateIncludeRequest($request);
 
+        // Hooks: do it now because they may affect the CRUD request.
+        $this->beforeRequest($crudRequest, $request);
+
         // Check permissions.
         $id = $request->route($this->routeParameter);
         $resource = $this->repository->findOrFail($id, $crudRequest->query());
         $this->authorizer->must($this->permissionsDomain . '.read', $resource);
 
-        // Hooks.
-        $this->beforeRequest($crudRequest, $request);
+        // Hooks: do it now because they may affect the CRUD request.
+        $this->beforeShow($resource, $crudRequest, $request);
 
         // Perform task.
         $responseData = $this->responseData($resource);
@@ -218,29 +245,6 @@ abstract class CrudController extends Controller
             $this->repository->addFilter($scopeFilter)->deleteByQuery($crudRequest->query());
         }
         return response('', 204);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        // Validate request.
-        $crudRequest = $this->validateRequest($request);
-        $include = $this->validateIncludeRequest($request);
-
-        // Hooks.
-        $this->beforeRequest($crudRequest, $request);
-
-        // Perform task.
-        $resources = $this->getResources($this->permissionsDomain, $this->repository, $crudRequest);
-
-        $responseData = $this->responseData($resources);
-        $this->addPagingData($responseData, $crudRequest);
-        return $this->responseWithIncludedData($responseData, $include);
     }
 
     /**
@@ -326,6 +330,31 @@ abstract class CrudController extends Controller
      * @return void
      */
     protected function beforeDuplicate(Model $resource, CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
+     * Hook before a show request.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeShow(Model $resource, CrudRequest $crudRequest, Request $request)
+    {
+        // You may override this in your controller.
+    }
+
+    /**
+     * Hook before an index request.
+     *
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeIndex(CrudRequest $crudRequest, Request $request)
     {
         // You may override this in your controller.
     }
