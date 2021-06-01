@@ -61,10 +61,10 @@ export default class Auth {
         })
     }
 
-    ifHasOnePermission(permission, next, offlineRoute) {
+    ifHasOnePermission(permissions, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
-            if (Vue.prototype.$auth.hasOnePermission(permission)) {
+            if (Vue.prototype.$auth.hasOnePermission(permissions)) {
                 if (offlineRoute && Vue.prototype.$auth.offline) {
                     next({ name: offlineRoute });
                 } else {
@@ -79,10 +79,10 @@ export default class Auth {
         })
     }
 
-    ifHasAllPermissions(permission, next, offlineRoute) {
+    ifHasAllPermissions(permissions, next, offlineRoute) {
         Vue.prototype.$auth.getMe(true)
         .then(resp => {
-            if (Vue.prototype.$auth.hasAllPermissions(permission)) {
+            if (Vue.prototype.$auth.hasAllPermissions(permissions)) {
                 if (offlineRoute && Vue.prototype.$auth.offline) {
                     next({ name: offlineRoute });
                 } else {
@@ -214,8 +214,8 @@ export default class Auth {
         if (Vue.prototype.$auth.user.admin) {
             return true
         }
-        let commonPermissions = Vue.prototype.$auth.user.permissions.filter(x => permissions.includes(x))
-        return commonPermissions.length > 0
+        let foundPermissions = Vue.prototype.$auth.user.permissions.filter(x => permissions.includes(x))
+        return foundPermissions.length > 0
     }
 
     hasAllPermissions(permissions) {
@@ -225,8 +225,8 @@ export default class Auth {
         if (Vue.prototype.$auth.user.admin) {
             return true
         }
-        let missingPermissions = Vue.prototype.$auth.user.permissions.filter(x => !permissions.includes(x));
-        return missingPermissions.length == 0
+        let foundPermissions = Vue.prototype.$auth.user.permissions.filter(x => permissions.includes(x))
+        return foundPermissions.length == permissions.length
     }
 
     reset() {
