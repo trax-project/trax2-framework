@@ -2,6 +2,7 @@
 
 namespace Trax\Auth\Stores\Users;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Trax\Repo\Contracts\ModelFactoryContract;
 use Trax\Auth\Events\PasswordChanged;
@@ -38,9 +39,13 @@ class UserFactory implements ModelFactoryContract
 
         // Encrypt password when provided!
         // In other cases, define a random password.
-        $user->password = isset($data['password'])
-            ? Hash::make($data['password'])
-            : Hash::make(\Str::random(20));
+        if (isset($data['password'])) {
+            $user->password = Hash::make($data['password']);
+        } elseif (App::environment('local')) {
+            $user->password = Hash::make('aaaaaaaa');
+        } else {
+            $user->password = Hash::make(\Str::random(20));
+        }
 
         // Required firstname.
         $user->firstname = $data['firstname'];
