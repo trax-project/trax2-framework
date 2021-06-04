@@ -41,8 +41,8 @@ class UserFactory implements ModelFactoryContract
         // In other cases, define a random password.
         if (isset($data['password'])) {
             $user->password = Hash::make($data['password']);
-        } elseif (App::environment('local')) {
-            $user->password = Hash::make('aaaaaaaa');
+        } elseif (App::environment('local') && !empty(config('trax-auth.user.default-password', ''))) {
+            $user->password = Hash::make(config('trax-auth.user.default-password'));
         } else {
             $user->password = Hash::make(\Str::random(20));
         }
