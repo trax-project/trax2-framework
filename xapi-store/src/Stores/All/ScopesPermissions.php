@@ -3,8 +3,6 @@
 namespace Trax\XapiStore\Stores\All;
 
 use Trax\Auth\Permissions\PermissionsProvider;
-use Trax\Auth\Contracts\HasPermissionsContract;
-use Trax\XapiStore\Stores\Statements\Statement;
 
 class ScopesPermissions extends PermissionsProvider
 {
@@ -31,12 +29,8 @@ class ScopesPermissions extends PermissionsProvider
         'xapi-scope.statements-read-mine-client' => \Trax\XapiStore\Permissions\StatementsReadMineClientPermission::class,
         'xapi-scope.statements-read-mine-access' => \Trax\XapiStore\Permissions\StatementsReadMineAccessPermission::class,
 
-        'xapi-scope.state-mine-client' => \Trax\XapiStore\Permissions\StateMineClientPermission::class,
-        'xapi-scope.state-mine-access' => \Trax\XapiStore\Permissions\StateMineAccessPermission::class,
-
-        'xapi-scope.profile-mine-client' => \Trax\XapiStore\Permissions\ProfileMineClientPermission::class,
-        'xapi-scope.profile-mine-access' => \Trax\XapiStore\Permissions\ProfileMineAccessPermission::class,
-
+        'xapi-scope.state' => \Trax\XapiStore\Permissions\StatePermission::class,
+        'xapi-scope.profile' => \Trax\XapiStore\Permissions\ProfilePermission::class,
         'xapi-scope.define' => \Trax\XapiStore\Permissions\DefinePermission::class,
     ];
 }

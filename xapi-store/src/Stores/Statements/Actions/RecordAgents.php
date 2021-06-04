@@ -23,9 +23,6 @@ trait RecordAgents
         // Get existing agents.
         $existingAgents = $this->getExistingAgents($agentsInfo, $context);
 
-        // Check existing agents.
-        $this->checkExistingAgents($existingAgents);
-
         // Insert the new agents.
         try {
             $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo, $context);
@@ -55,20 +52,6 @@ trait RecordAgents
             'vid' => ['$in' => $vids],
             'owner_id' => $context['owner_id']
         ])->get();
-    }
-
-    /**
-     * Check existing agents.
-     *
-     * @param  \Illuminate\Support\Collection  $existingAgents
-     * @param  array  $agentsInfo
-     * @return void
-     */
-    protected function checkExistingAgents(Collection $existingAgents)
-    {
-        $existingAgents->each(function ($model) {
-            $this->agents->checkAgentWithPerson($model);
-        });
     }
 
     /**
@@ -184,9 +167,17 @@ trait RecordAgents
                 $agentsInfo = array_merge($agentsInfo, $this->statementAgentsInfo($statement->object, true));
             }
         }
-        // Authority.
-        $authorityInfo = $this->agentInfo($authority);
-        $agentsInfo[$authorityInfo->vid] = $authorityInfo;
+
+        // Authority agent.
+        if (!isset($authority->objectType) || $authority->objectType == 'Agent') {
+            $agentInfo = $this->agentInfo($authority);
+            $agentsInfo[$agentInfo->vid] = $agentInfo;
+        }
+
+        // Authority group.
+        if (isset($authority->objectType) && $authority->objectType == 'Group') {
+            $agentsInfo = array_merge($agentsInfo, $this->groupAgentsInfo($authority));
+        }
         
         return $agentsInfo;
     }

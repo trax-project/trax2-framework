@@ -6,7 +6,6 @@ use Trax\Repo\CrudRequest;
 
 /**
  * This trait can be used with repo controllers when the model has an owner relation.
- * The entities repository must be set to the `entities` property by the controller.
  */
 trait HasOwner
 {

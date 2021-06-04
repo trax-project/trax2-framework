@@ -20,19 +20,61 @@ trait AgentFilters
     public function dynamicFilters(): array
     {
         return array_merge($this->xapiDynamicFilters(), [
-            'magic',
+            'uiCombo',
+            'uiObjectType',
+            'uiName',
         ]);
     }
 
     /**
-     * Filter: magic.
+     * Filter: uiCombo.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicFilter($field, Query $query = null)
+    public function uiComboFilter($field, Query $query = null)
     {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field);
+    }
+
+    /**
+     * Filter: uiObjectType.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function uiObjectTypeFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['is_group' => ($field == 'Group' ? 1 : 0)],
+        ];
+    }
+
+    /**
+     * Filter: uiName.
+     *
+     * @param  string  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function uiNameFilter($field, Query $query = null)
+    {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+        return [
+            ['name' => ['$text' => $field]],
+        ];
     }
 }

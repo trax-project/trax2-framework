@@ -4,6 +4,7 @@ namespace Trax\XapiStore\Services;
 
 use Illuminate\Container\Container;
 use Trax\Repo\Querying\Query;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class GlobalService
 {
@@ -18,7 +19,7 @@ class GlobalService
     protected $activities;
 
     /**
-     * @var \Trax\XapiStore\Stores\Agents\AgentRepository
+     * @var \Trax\XapiStore\Stores\Agents\AgentService
      */
     protected $agents;
 
@@ -63,7 +64,7 @@ class GlobalService
     {
         $this->statements = $container->make(\Trax\XapiStore\Stores\Statements\StatementService::class);
         $this->activities = $container->make(\Trax\XapiStore\Stores\Activities\ActivityRepository::class);
-        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentRepository::class);
+        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentService::class);
         $this->states = $container->make(\Trax\XapiStore\Stores\States\StateRepository::class);
         $this->activityProfiles = $container->make(\Trax\XapiStore\Stores\ActivityProfiles\ActivityProfileRepository::class);
         $this->agentProfiles = $container->make(\Trax\XapiStore\Stores\AgentProfiles\AgentProfileRepository::class);
@@ -91,6 +92,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
+        Logger::clear();
     }
 
     /**
@@ -111,6 +113,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
+        Logger::clear($ownerId);
     }
 
     /**

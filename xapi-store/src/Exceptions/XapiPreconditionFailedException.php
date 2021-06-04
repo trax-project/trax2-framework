@@ -18,7 +18,7 @@ class XapiPreconditionFailedException extends XapiException
      * @param  array  $errors
      * @return void
      */
-    public function __construct($message = 'xAPI Conflict.')
+    public function __construct($message = 'xAPI Precondition Failed.')
     {
         parent::__construct($message);
     }

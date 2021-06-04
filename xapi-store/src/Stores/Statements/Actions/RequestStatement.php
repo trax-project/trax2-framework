@@ -41,22 +41,22 @@ trait RequestStatement
             return false;
         }
 
-        // Request magic actor.
+        // Request UI actor.
         if (!$match = $this->requestMagicActor($query, $ownerId, $reveal)) {
             return false;
         }
 
-        // Request magic verb.
+        // Request UI verb.
         if (!$match = $this->requestMagicVerb($query, $ownerId)) {
             return false;
         }
 
-        // Request magic object.
+        // Request UI object.
         if (!$match = $this->requestMagicObject($query, $ownerId, $reveal)) {
             return false;
         }
 
-        // Request magic context.
+        // Request UI context.
         if (!$match = $this->requestMagicContext($query, $ownerId, $reveal)) {
             return false;
         }

@@ -3,10 +3,12 @@
 namespace Trax\XapiStore\Stores\Statements;
 
 use Illuminate\Http\Request;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiNotFoundException;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Statements\StatementService;
+use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiStatementController extends XapiController
 {
@@ -60,8 +62,12 @@ class XapiStatementController extends XapiController
         // Save statements.
         $ids = $this->repository->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments()
+            $xapiRequest->attachments(),
+            TraxAuth::context()
         );
+
+        // Logging.
+        Logger::log($this->permissionsDomain, 'POST', count($ids));
 
         // Response.
         return $this->response($ids);
@@ -84,8 +90,12 @@ class XapiStatementController extends XapiController
         // Save statement.
         $this->repository->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments()
+            $xapiRequest->attachments(),
+            TraxAuth::context()
         );
+
+        // Logging.
+        Logger::log($this->permissionsDomain, 'PUT', 1);
 
         // Response.
         return response('', 204);
@@ -118,6 +128,10 @@ class XapiStatementController extends XapiController
             $response['more'] = $more;
         }
 
+        // Logging.
+        Logger::log($this->permissionsDomain, 'GET', count($response['statements']));
+
+        // Response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';
         return $this->repository->responseWithContent((object)$response, $withAttachments);
     }
@@ -145,6 +159,9 @@ class XapiStatementController extends XapiController
                 ['X-Experience-API-Consistent-Through' => $this->repository->consistentThrough()]
             );
         }
+
+        // Logging.
+        Logger::log($this->permissionsDomain, 'GET', 1);
 
         // Prepare response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';

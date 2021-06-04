@@ -6,6 +6,7 @@
         "accounts": "Accounts",
         "actions": "Actions",
         "active": "Active",
+        "activity": "Activity",
         "add": "Add",
         "admin": "Admin",
         "apply": "Apply",
@@ -20,6 +21,7 @@
         "create": "Create",
         "credentials": "Credentials",
         "data": "Data",
+        "delete-data": "Delete Data",
         "description": "Description",
         "email": "Email",
         "endpoint": "Endpoint",
@@ -32,6 +34,7 @@
         "loading": "Loading...",
         "management": "Management",
         "me": "Me",
+        "monitoring": "Monitoring",
         "name": "Name",
         "none": "None",
         "entity": "Entity",
@@ -44,6 +47,7 @@
         "permissions": "Permissions",
         "protocol": "Protocol",
         "refresh": "Refresh",
+        "logs": "Logs",
         "required-fields": "Required fields",
         "reset": "Reset",
         "role": "Role",
@@ -51,7 +55,6 @@
         "save": "Save",
         "search": "Search",
         "settings": "Settings",
-        "status": "Status",
         "store": "Store",
         "stores": "Stores",
         "unauthorized": "You are not allowed to access this page :-(",
@@ -59,7 +62,8 @@
         "upload": "Upload",
         "username": "Username",
         "user": "User",
-        "users": "Users"
+        "users": "Users",
+        "vocab": "Vocab"
     },
     "errors": {
         "403-delete": "You are not allowed to delete this item!",
@@ -132,22 +136,45 @@
     },
     "xapi": {
         "common": {
-            "statements": "Statements",
+            "activities": "Activities",
+            "activity-id": "Activity ID",
+            "activity-profiles": "Activity Profiles",
             "actor": "Actor",
-            "verb": "Verb",
-            "object": "Object",
-            "result": "Result",
-            "context": "Context",
-            "stored": "Stored",
+            "agent-id": "Agent ID",
+            "agents": "Agents",
+            "agent-profiles": "Agent Profiles",
             "authority": "Authority",
-            "homePage": "homePage",
-            "scopes": "Scopes",
             "authorization-scopes": "Authorization scopes",
-            "extra-permissions": "Extra permissions"
+            "context": "Context",
+            "extra-permissions": "Extra permissions",
+            "homePage": "homePage",
+            "id": "ID",
+            "name": "Name",
+            "object": "Object",
+            "profile": "Profile",
+            "profile-id": "Profile ID",
+            "profiles": "Profiles",
+            "registration": "Registration",
+            "result": "Result",
+            "search": {
+                "id-placeholder": "Full or partial ID",
+                "iri-placeholder": "Full IRI or last segments(s)",
+                "name-placeholder": "Full or partial name",
+                "no-result": "There is no result with these filters :-("
+            },
+            "scopes": "Scopes",
+            "statements": "Statements",
+            "state-id": "State ID",
+            "states": "States",
+            "stored": "Stored",
+            "type": "Type",
+            "verb": "Verb",
+            "verb-id": "Verb ID",
+            "verbs": "Verbs"
         },
         "statements": {
             "search": {
-                "actor-placeholder": "'john@doe.com'  'account:jdoe'",
+                "actor-placeholder": "'john@doe.com'  'account:jdoe'  'account:jdoe@http://homePage.com'  'openid:http://openid.org/21'  'sha1sum:kdhrnfj'",
                 "verb-placeholder": "'completed'  'http://adlnet.gov/expapi/verbs/completed'",
                 "verb-error": "Only one word, please",
                 "object-placeholder": "'act/xapi101'  'name:xAPI'  'type:scorm'  'john@doe.com'  'account:jdoe'",
@@ -158,8 +185,7 @@
                 "to-placeholder": "'2020'  '2020-12-01'  '2020-12-01 24:59:59'",
                 "date-error": "This date is invalid",
                 "chronological": "Chronological",
-                "reveal_agents": "Reveal Agents",
-                "no-result": "There is no statement with these filters :-("
+                "reveal_agents": "Reveal Agents"
             }
         },
         "management": {
@@ -177,6 +203,20 @@
                 "confirm": "Do you really want to delete the statements? This is a definitive action!",
                 "error": "Sorry, there was an issue during statements deletion :-("
             }
+        },
+        "log": {
+            "api": "API",
+            "content": "Content",
+            "error": "Error",
+            "errors": "Errors",
+            "headers": "Headers",
+            "message": "Message",
+            "method": "Method",
+            "params": "Params",
+            "request": "Request",
+            "response": "Response",
+            "status": "Status",
+            "time": "Time"
         }
     }
 }

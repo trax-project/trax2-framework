@@ -7,7 +7,10 @@ TraxAuth::mixedCrudRoutes(
     'trax/api',
     'xapi/ext/statements',
     \Trax\XapiStore\Stores\Statements\StatementController::class,
-    ['destroyByQuery' => true]
+    [
+        'except' => ['store', 'update'],
+        'destroyByQuery' => true,
+    ]
 );
 
 TraxAuth::mixedCrudRoutes(
@@ -43,7 +46,10 @@ TraxAuth::mixedCrudRoutes(
 TraxAuth::mixedCrudRoutes(
     'trax/api',
     'xapi/ext/attachments',
-    \Trax\XapiStore\Stores\Attachments\AttachmentController::class
+    \Trax\XapiStore\Stores\Attachments\AttachmentController::class,
+    [
+        'except' => ['store', 'update'],
+    ]
 );
 
 TraxAuth::mixedCrudRoutes(
@@ -57,6 +63,15 @@ TraxAuth::mixedCrudRoutes(
     'xapi/ext/verbs',
     \Trax\XapiStore\Stores\Verbs\VerbController::class
 );
+
+if (config('trax-xapi-store.logging.enabled', false)) {
+    TraxAuth::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/logs',
+        \Trax\XapiStore\Stores\Logs\LogController::class,
+        ['except' => ['store', 'destroy', 'update']]
+    );
+}
 
 Route::namespace('Trax\XapiStore\Controllers')->group(function () {
     TraxAuth::mixedPostRoute('trax/api', 'xapi/ext/stores/clear', 'GlobalController@clearStores');

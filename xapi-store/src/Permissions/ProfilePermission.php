@@ -4,14 +4,14 @@ namespace Trax\XapiStore\Permissions;
 
 use Trax\Auth\Permissions\Permission;
 
-class ProfileMineAccessPermission extends Permission
+class ProfilePermission extends Permission
 {
     /**
      * The permission lang key: you MUST override this property.
      *
      * @var string
      */
-    protected $langKey = 'trax-xapi-store::permissions.profile_mine_access';
+    protected $langKey = 'trax-xapi-store::permissions.profile';
 
     /**
      * The permission capabilities: you MUST override this property.
@@ -19,8 +19,8 @@ class ProfileMineAccessPermission extends Permission
      * @var array
      */
     protected $capabilities = [
-        'activity_profile.read.access', 'activity_profile.write.access', 'activity_profile.delete.access',
-        'agent_profile.read.access', 'agent_profile.write.access', 'agent_profile.delete.access',
+        'activity_profile.read.owner', 'activity_profile.write.owner', 'activity_profile.delete.owner',
+        'agent_profile.read.owner', 'agent_profile.write.owner', 'agent_profile.delete.owner',
     ];
 
     /**

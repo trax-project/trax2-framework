@@ -6,9 +6,9 @@ use Trax\Repo\Querying\Query;
 use Trax\XapiStore\XapiDate;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 
-trait DocumentFilters
+trait XapiDocumentFilters
 {
-    use AgentFilter;
+    use XapiAgentFilter;
     
     /**
      * Filter: stateId.

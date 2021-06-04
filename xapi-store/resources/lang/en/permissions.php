@@ -36,21 +36,11 @@ return [
 If storing a statement when this is not granted, ids will be saved
 but activity definitions will not be saved nor updated.',
 
-    'state_mine_client_name' => 'State/Mine (client)',
-    'state_mine_client_description' => 'Read/Write state data
-initially written by the same client.',
+    'state_name' => 'State',
+    'state_description' => 'Read/Write state data.',
 
-    'state_mine_access_name' => 'State/Mine (access)',
-    'state_mine_access_description' => 'Read/Write state data
-initially written by the same access.',
-
-    'profile_mine_client_name' => 'Profile/Mine (client)',
-    'profile_mine_client_description' => 'Read/Write profile document data
-initially written by the same client.',
-
-    'profile_mine_access_name' => 'Profile/Mine (access)',
-    'profile_mine_access_description' => 'Read/Write profile document data
-initially written by the same access.',
+    'profile_name' => 'Profile',
+    'profile_description' => 'Read/Write profile document data.',
 
 
     // Extra permissions.

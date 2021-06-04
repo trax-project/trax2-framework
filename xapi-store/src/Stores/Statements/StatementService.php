@@ -68,7 +68,7 @@ class StatementService extends StatementRepository
     {
         $this->activities = $container->make(\Trax\XapiStore\Stores\Activities\ActivityRepository::class);
         $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
-        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentRepository::class);
+        $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentService::class);
         $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
 
@@ -96,12 +96,11 @@ class StatementService extends StatementRepository
             $reveal = $query->option('reveal', false);
             return $this->getRelationalFirst($query, $reveal);
         }
-
         return parent::get($query);
     }
 
     /**
-     * Try to use relational requests first on standard and magic filters.
+     * Try to use relational requests first on standard and UI filters.
      *
      * @param \Trax\Repo\Querying\Query  $query
      * @param bool  $reveal
@@ -153,12 +152,13 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
+     * @param  array  $context
      * @return array
      */
-    public function createStatements($statements, array $attachments = [])
+    public function createStatements($statements, array $attachments, array $context)
     {
-        return DB::transaction(function () use ($statements, $attachments) {
-            return $this->createStatementsWithoutTransaction($statements, $attachments);
+        return DB::transaction(function () use ($statements, $attachments, $context) {
+            return $this->createStatementsWithoutTransaction($statements, $attachments, $context);
         });
     }
 
@@ -168,9 +168,10 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
+     * @param  array  $context
      * @return array
      */
-    public function createStatementsWithoutTransaction($statements, array $attachments = [])
+    public function createStatementsWithoutTransaction($statements, array $attachments, array $context)
     {
         if (!is_array($statements)) {
             $statements = [$statements];
@@ -181,20 +182,6 @@ class StatementService extends StatementRepository
             if ($statement->verb->id == 'http://adlnet.gov/expapi/verbs/voided') {
                 $this->voidStatement($statement->object->id);
             }
-        }
-
-        // Context.
-        $context = [
-            'owner_id' => null  // Because they all need an owner_id in the context, be it null.
-        ];
-        $access = TraxAuth::access();
-        if (!is_null($access)) {
-            $context = [
-                'access_id' => $access->id,
-                'client_id' => $access->client->id,
-                'entity_id' => $access->client->entity_id,
-                'owner_id' => $access->client->owner_id,
-            ];
         }
 
         // Get the authority.

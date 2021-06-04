@@ -119,6 +119,8 @@ class EloquentQueryWrapper
 
         //Log::channel('benchmark')->info($builder->toSql());
 
+        //dd($builder->toSql());
+        //dd($builder->getBindings());
         //print_r($builder->toSql());
         //die;
 

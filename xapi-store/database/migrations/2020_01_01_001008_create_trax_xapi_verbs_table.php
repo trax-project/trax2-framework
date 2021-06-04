@@ -15,7 +15,7 @@ class CreateTraxXapiVerbsTable extends Migration
     {
         Schema::create('trax_xapi_verbs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('iri');
+            $table->string('iri')->index();
             $table->timestamps();
 
             // Owner relation

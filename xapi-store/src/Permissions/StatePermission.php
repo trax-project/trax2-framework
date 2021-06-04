@@ -4,14 +4,14 @@ namespace Trax\XapiStore\Permissions;
 
 use Trax\Auth\Permissions\Permission;
 
-class StateMineAccessPermission extends Permission
+class StatePermission extends Permission
 {
     /**
      * The permission lang key: you MUST override this property.
      *
      * @var string
      */
-    protected $langKey = 'trax-xapi-store::permissions.state_mine_access';
+    protected $langKey = 'trax-xapi-store::permissions.state';
 
     /**
      * The permission capabilities: you MUST override this property.
@@ -19,7 +19,7 @@ class StateMineAccessPermission extends Permission
      * @var array
      */
     protected $capabilities = [
-        'state.read.access', 'state.write.access', 'state.delete.access',
+        'state.read.owner', 'state.write.owner', 'state.delete.owner',
     ];
 
     /**

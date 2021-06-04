@@ -17,6 +17,9 @@ class TraxCoreServiceProvider extends ServiceProvider
     {
         // Exceptions handler.
         $this->app->singleton(ExceptionHandler::class, TraxExceptionHandler::class);
+
+        // Helpers.
+        require_once(__DIR__ . '/../helpers.php');
     }
 
     /**

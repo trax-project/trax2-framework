@@ -297,9 +297,14 @@ class Authentifier
         Route::middleware($middlewares)->group(function () use ($endpoint, $controllerClass, $options) {
             
             // Standard CRUD routes.
-            Route::apiResource($endpoint, $controllerClass, ['names' => [
-                'index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>''
-            ]]);
+            $apiOptions = [
+                // We remove all the route names to avoid some conflicts.
+                'names' => ['index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>'']
+            ];
+            if (isset($options['except'])) {
+                $apiOptions['except'] = $options['except'];
+            }
+            Route::apiResource($endpoint, $controllerClass, $apiOptions);
             $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
 
             // Determine the name of the resource param.
@@ -449,6 +454,40 @@ class Authentifier
             throw new AuthorizationException("Forbidden: users can't get the connected app.");
         }
         return $this->currentAccess;
+    }
+
+    /**
+     * Get the consumer context.
+     *
+     * @return array
+     */
+    public function context(): array
+    {
+        // A context should always have an owner_id, be it null.
+        $context = [
+            'owner_id' => null
+        ];
+
+        // Common context to consumers (both users and accesses).
+        $consumer = $this->consumer();
+        if (!is_null($consumer)) {
+            $context = [
+                'entity_id' => $consumer->entity_id,
+                'owner_id' => $consumer->owner_id,
+            ];
+        }
+
+        // When the consumer is an access.
+        $access = $this->access();
+        if (!is_null($access)) {
+            $context = [
+                'access_id' => $access->id,
+                'client_id' => $access->client->id,
+                'entity_id' => $access->client->entity_id,
+                'owner_id' => $access->client->owner_id,
+            ];
+        }
+        return $context;
     }
 
     /**

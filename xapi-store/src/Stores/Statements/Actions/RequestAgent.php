@@ -5,7 +5,7 @@ namespace Trax\XapiStore\Stores\Statements\Actions;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\Agent;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
-use Trax\XapiStore\Stores\Agents\AgentRepository;
+use Trax\XapiStore\Stores\Agents\AgentService;
 
 trait RequestAgent
 {
@@ -34,7 +34,7 @@ trait RequestAgent
         }
 
         // Get the agent.
-        $agents = resolve(AgentRepository::class);
+        $agents = resolve(AgentService::class);
         if (!$agent = $agents->addFilter([
             'vid' => AgentFactory::virtualId($query->filter('agent')),
             'owner_id' => $ownerId

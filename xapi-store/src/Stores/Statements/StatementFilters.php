@@ -20,54 +20,67 @@ trait StatementFilters
     public function dynamicFilters(): array
     {
         return array_merge($this->xapiDynamicFilters(), [
-            'magicActor',
-            'magicVerb',
-            'magicObject',
-            'magicContext',
+            'uiActor',
+            'uiVerb',
+            'uiObject',
+            'uiContext',
         ]);
     }
 
     /**
-     * Filter: magicActor.
+     * Filter: uiActor.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicActorFilter($field, Query $query)
+    public function uiActorFilter($field, Query $query)
     {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
         return $this->getMagicAgentFilter($field, 'data->actor');
     }
 
     /**
-     * Filter: magicVerb.
+     * Filter: uiVerb.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicVerbFilter($field, Query $query)
+    public function uiVerbFilter($field, Query $query)
     {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+
         return $this->getMagicVerbFilter($field, 'data->verb');
     }
 
     /**
-     * Filter: magicObject.
+     * Filter: uiObject.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicObjectFilter($field, Query $query)
+    public function uiObjectFilter($field, Query $query)
     {
-        // Agent.
-        $filter = $this->getMagicAgentFilter($field, 'data->object');
-        if (!empty($filter)) {
-            return $filter;
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
         }
 
-        // Activity.
-        return $this->getMagicActivityFilter($field, 'data->object');
+        if ($this->hasMagicAgentFilter($field)) {
+            // Agent.
+            return $this->getMagicAgentFilter($field, 'data->object');
+        } else {
+            // Activity.
+            return $this->getMagicActivityFilter($field, 'data->object');
+        }
     }
 
     /**
@@ -90,14 +103,19 @@ trait StatementFilters
     }
 
     /**
-     * Filter: magicContext.
+     * Filter: uiContext.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicContextFilter($field, Query $query)
+    public function uiContextFilter($field, Query $query)
     {
+        // Check if null. This may happen when the UI field is empty.
+        if (is_null($field)) {
+            return [];
+        }
+
         // Agent.
         $filter = $this->getMagicContextAgentFilter($field);
         if (!empty($filter)) {
@@ -182,8 +200,8 @@ trait StatementFilters
         if (count($parts) > 1) {
             return [
                 ['$or' => [
-                    'data->context->instructor->mbox' => 'mailto:' . $parts[0],
-                    'data->context->team->mbox' => 'mailto:' . $parts[0],
+                    'data->context->instructor->mbox' => 'mailto:' . $field,
+                    'data->context->team->mbox' => 'mailto:' . $field,
                 ]],
             ];
         }

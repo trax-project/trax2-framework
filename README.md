@@ -1,4 +1,4 @@
-# TRAX Framework 2.0 (beta 2)
+# TRAX Framework 2.0 (beta 3)
 
 
 ## About TRAX Framework
@@ -17,8 +17,6 @@ It provides the following features:
 TRAX Framework is dual-licensed under:
 
 - [GNU-GPL3 license](https://www.gnu.org/licenses/gpl-3.0.fr.html)
-- TRAX LRS Extended Edition license
-
-You can choose between one of them if you use this work.
+- [TRAX LRS 2.0 Extended Edition license](https://github.com/trax-project/trax2-extended-lrs/blob/master/services/trax/docs/2.0/license.md)
 
 Copyright 2021 Sébastien Fraysse, http://fraysse.eu, sebastien@fraysse.eu.

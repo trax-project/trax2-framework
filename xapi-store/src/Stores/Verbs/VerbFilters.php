@@ -17,18 +17,18 @@ trait VerbFilters
     public function dynamicFilters(): array
     {
         return [
-            'magic',
+            'uiCombo',
         ];
     }
 
     /**
-     * Filter: magic.
+     * Filter: uiCombo.
      *
      * @param  string  $field
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function magicFilter($field, Query $query = null)
+    public function uiComboFilter($field, Query $query = null)
     {
         return $this->getMagicVerbFilter($field);
     }

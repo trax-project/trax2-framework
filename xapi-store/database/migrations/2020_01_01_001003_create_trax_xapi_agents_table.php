@@ -15,9 +15,10 @@ class CreateTraxXapiAgentsTable extends Migration
     {
         Schema::create('trax_xapi_agents', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('vid');    // A virtual ID based on the xAPI identification.
-            $table->json('data');
-            $table->boolean('pseudonymized')->default(0);
+            $table->string('vid')->index();    // A virtual ID based on the xAPI identification.
+            $table->string('name')->nullable();
+            $table->boolean('pseudonymized')->default(0)->index();
+            $table->boolean('is_group')->default(0)->index();
             $table->timestamps();
 
             // Person relation

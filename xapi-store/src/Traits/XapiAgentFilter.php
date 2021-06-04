@@ -2,7 +2,7 @@
 
 namespace Trax\XapiStore\Traits;
 
-trait AgentFilter
+trait XapiAgentFilter
 {
     /**
      * Get the filtering conditions for a given path and a searched agent.

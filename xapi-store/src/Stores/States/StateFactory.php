@@ -32,19 +32,8 @@ class StateFactory extends XapiDocumentFactory
         // Required data.
         $model->state_id = $data['state_id'];
         $model->activity_id = $data['activity_id'];
-        $model->agent = is_string($data['agent']) ? json_decode($data['agent'], true) : $data['agent'];
+        $model->vid = AgentFactory::virtualId($data['agent']);
         $model->data = $data['data'];
-
-        // Indexes (optional).
-        if (isset($data['access_id'])) {
-            $model->access_id = $data['access_id'];
-        }
-        if (isset($data['client_id'])) {
-            $model->client_id = $data['client_id'];
-        }
-        if (isset($data['entity_id'])) {
-            $model->entity_id = $data['entity_id'];
-        }
 
         // Nullable owner_id.
         if (isset($data['owner_id'])) {
@@ -58,9 +47,6 @@ class StateFactory extends XapiDocumentFactory
 
         // Generated data.
         $model->timestamp = XapiDate::now();
-
-        // VID.
-        $model->vid = AgentFactory::virtualId($model->agent);
 
         return $model;
     }

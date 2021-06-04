@@ -12,20 +12,11 @@ class Agent extends Model
     protected $table = 'trax_xapi_agents';
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'data' => 'object',
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['data', 'person_id', 'pseudonymized'];
+    protected $fillable = ['person_id', 'pseudonymized'];
 
     /**
      * Get the matching person.

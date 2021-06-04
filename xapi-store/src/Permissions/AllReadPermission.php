@@ -20,9 +20,9 @@ class AllReadPermission extends Permission
      */
     protected $capabilities = [
         'statement.read.entity',
-        'state.read.entity',
-        'activity_profile.read.entity',
-        'agent_profile.read.entity',
+        'state.read.owner',
+        'activity_profile.read.owner',
+        'agent_profile.read.owner',
         'activity.read.owner',
         'agent.read.owner',
     ];

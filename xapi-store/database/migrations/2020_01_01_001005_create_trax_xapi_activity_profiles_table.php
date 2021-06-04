@@ -28,27 +28,6 @@ class CreateTraxXapiActivityProfilesTable extends Migration
                 ->on('trax_owners')
                 ->onDelete('cascade');
 
-            // Entity relation
-            $table->unsignedBigInteger('entity_id')->nullable()->index();
-            $table->foreign('entity_id')
-                ->references('id')
-                ->on('trax_entities')
-                ->onDelete('restrict');
-
-            // Client relation
-            $table->unsignedBigInteger('client_id')->nullable()->index();
-            $table->foreign('client_id')
-                ->references('id')
-                ->on('trax_clients')
-                ->onDelete('restrict');
-
-            // Access relation
-            $table->unsignedBigInteger('access_id')->nullable()->index();
-            $table->foreign('access_id')
-                ->references('id')
-                ->on('trax_accesses')
-                ->onDelete('restrict');
-
             // Unicity.
             $table->unique(['activity_id', 'profile_id', 'owner_id'], 'trax_xapi_activity_profiles_unique');
         });
@@ -63,9 +42,6 @@ class CreateTraxXapiActivityProfilesTable extends Migration
     {
         Schema::table('trax_xapi_activity_profiles', function (Blueprint $table) {
             $table->dropForeign('trax_xapi_activity_profiles_owner_id_foreign');
-            $table->dropForeign('trax_xapi_activity_profiles_entity_id_foreign');
-            $table->dropForeign('trax_xapi_activity_profiles_client_id_foreign');
-            $table->dropForeign('trax_xapi_activity_profiles_access_id_foreign');
         });
         Schema::dropIfExists('trax_xapi_activity_profiles');
     }

@@ -28,9 +28,19 @@ class AgentFactory implements ModelFactoryContract
         $model = new $modelClass;
 
         // Required data.
-        $model->data = $data['data'];
         $model->person_id = $data['person_id'];
+        $model->vid = self::virtualId($data['agent']);
 
+        // Nullable name.
+        if (isset($data['agent']['name'])) {
+            $model->name = $data['agent']['name'];
+        }
+        
+        // Optional is_group.
+        if (isset($data['agent']['objectType']) && $data['agent']['objectType'] == 'Group') {
+            $model->is_group = true;
+        }
+        
         // Optional pseudonymized.
         if (isset($data['pseudonymized'])) {
             $model->pseudonymized = $data['pseudonymized'];
@@ -46,9 +56,6 @@ class AgentFactory implements ModelFactoryContract
             $model->owner_id = $data['owner_id'];
         }
 
-        // VID.
-        $model->vid = self::virtualId($model->data);
-
         return $model;
     }
 
@@ -61,10 +68,15 @@ class AgentFactory implements ModelFactoryContract
     public static function prepare(array $data)
     {
         // VID.
-        $data['vid'] = self::virtualId($data['data']);
+        $data['vid'] = self::virtualId($data['agent']);
 
-        // JSON data.
-        $data['data'] = json_encode($data['data']);
+        // Nullable name.
+        $data['name'] = isset($data['agent']->name) ? $data['agent']->name : null;
+        
+        // Is group.
+        $data['is_group'] = isset($data['agent']->objectType) && $data['agent']->objectType == 'Group';
+
+        unset($data['agent']);
 
         // Timestamps.
         $data['created_at'] = date('Y-m-d H:i:s');
@@ -126,5 +138,25 @@ class AgentFactory implements ModelFactoryContract
         } else {
             return null;
         }
+    }
+
+    /**
+     * Extract the agent props from a virtual ID.
+     *
+     * @param  string $vid
+     * @return array
+     */
+    public static function agentPropsFromVid(string $vid)
+    {
+        list($type, $value) = explode('::', $vid);
+
+        if ($type == 'account') {
+            list($name, $homePage) = explode('@', $value);
+            return [$type => [
+                'name' => $name,
+                'homePage' => $homePage,
+            ]];
+        }
+        return [$type => $value];
     }
 }
