@@ -35,12 +35,17 @@ trait RequestVerb
             return false;
         }
 
-        // Adapt the query.
-        $callback = $this->verbCallback($verb);
+        // Allow whereHas request when it is the only filter (better perfs).
+        $whereHas = !$query->hasFilter('agent') && !$query->hasFilter('activity');
 
         // Modify the filters.
         $query->removeFilter('verb');
-        $query->addFilter(['verbRelations' => ['$has' => $callback]]);
+        if ($whereHas) {
+            $query->addFilter(['verbRelations' => ['$has' => $this->verbWhereHasCallback($verb)]]);
+        } else {
+            $query->addFilter(['id' => ['$in' => $this->verbWhereInCallback($verb)]]);
+        }
+
         return true;
     }
 
@@ -50,7 +55,22 @@ trait RequestVerb
      * @param  \Trax\XapiStore\Stores\Verbs\Verb  $verb
      * @return callable
      */
-    protected function verbCallback(Verb $verb): callable
+    protected function verbWhereInCallback(Verb $verb): callable
+    {
+        return function ($query) use ($verb) {
+            return $query->select('statement_id')->from('trax_xapi_statement_verb')
+                ->where('verb_id', $verb->id)
+                ->where('sub', false);
+        };
+    }
+
+    /**
+     * Get callback for verb filter.
+     *
+     * @param  \Trax\XapiStore\Stores\Verbs\Verb  $verb
+     * @return callable
+     */
+    protected function verbWhereHasCallback(Verb $verb): callable
     {
         return function ($query) use ($verb) {
             return $query

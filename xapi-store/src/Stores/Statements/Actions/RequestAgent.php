@@ -50,8 +50,38 @@ trait RequestAgent
 
         // Modify the filters.
         $query->removeFilter('agent');
-        $query->addFilter(['agentRelations' => ['$has' => $callback]]);
+        $query->addFilter(['id' => ['$in' => $callback]]);
         return true;
+    }
+
+    /**
+     * Get callback for agent filter.
+     *
+     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
+     * @return callable
+     */
+    protected function agentCallback(Agent $agent): callable
+    {
+        return function ($query) use ($agent) {
+            return $query->select('statement_id')->from('trax_xapi_statement_agent')
+                ->where('agent_id', $agent->id)
+                ->whereIn('type', ['actor', 'object'])
+                ->where('sub', false);
+        };
+    }
+
+    /**
+     * Get callback for related agents filter.
+     *
+     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
+     * @return callable
+     */
+    protected function relatedAgentsCallback(Agent $agent): callable
+    {
+        return function ($query) use ($agent) {
+            return $query->select('statement_id')->from('trax_xapi_statement_agent')
+                ->where('agent_id', $agent->id);
+        };
     }
 
     /**
@@ -72,35 +102,5 @@ trait RequestAgent
             }
         }
         return false;
-    }
-
-    /**
-     * Get callback for agent filter.
-     *
-     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
-     * @return callable
-     */
-    protected function agentCallback(Agent $agent): callable
-    {
-        return function ($query) use ($agent) {
-            return $query
-                ->where('agent_id', $agent->id)
-                ->whereIn('type', ['actor', 'object'])
-                ->where('sub', false);
-        };
-    }
-
-    /**
-     * Get callback for related agents filter.
-     *
-     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
-     * @return callable
-     */
-    protected function relatedAgentsCallback(Agent $agent): callable
-    {
-        return function ($query) use ($agent) {
-            return $query
-                ->where('agent_id', $agent->id);
-        };
     }
 }

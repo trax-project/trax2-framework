@@ -41,7 +41,7 @@ trait RequestActivity
         
         // Modify the filters.
         $query->removeFilter('activity');
-        $query->addFilter(['activityRelations' => ['$has' => $callback]]);
+        $query->addFilter(['id' => ['$in' => $callback]]);
         return true;
     }
 
@@ -54,7 +54,7 @@ trait RequestActivity
     protected function activityCallback(Activity $activity): callable
     {
         return function ($query) use ($activity) {
-            return $query
+            return $query->select('statement_id')->from('trax_xapi_statement_activity')
                 ->where('activity_id', $activity->id)
                 ->where('type', 'object')
                 ->where('sub', false);
@@ -70,7 +70,7 @@ trait RequestActivity
     protected function relatedActivitiesCallback(Activity $activity): callable
     {
         return function ($query) use ($activity) {
-            return $query
+            return $query->select('statement_id')->from('trax_xapi_statement_activity')
                 ->where('activity_id', $activity->id);
         };
     }

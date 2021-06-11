@@ -68,25 +68,28 @@ trait RequestMagicContext
             return false;
         }
 
+        $agentIds = $agents->pluck('id');
+
         // Modify the filters.
-        $callback = $this->uiContextAgentCallback($agents);
         $query->removeFilter('uiContext');
-        $query->addFilter(['agentRelations' => ['$has' => $callback]]);
+        $query->addFilter(['id' => ['$in' => $this->magicContextAgentCallback($agentIds)]]);
+
         return true;
     }
 
     /**
      * Get callback for agent filter.
      *
-     * @param  \Illuminate\Support\Collection  $agents
+     * @param  \Illuminate\Support\Collection  $agentIds
      * @return callable
      */
-    protected function uiContextAgentCallback(Collection $agents): callable
+    protected function magicContextAgentCallback(Collection $agentIds): callable
     {
-        return function ($query) use ($agents) {
-            return $query
-                ->whereIn('agent_id', $agents->pluck('id'))
-                ->whereIn('type', ['instructor', 'team']);
+        return function ($query) use ($agentIds) {
+            return $query->select('statement_id')->from('trax_xapi_statement_agent')
+                ->whereIn('agent_id', $agentIds)
+                ->whereIn('type', ['instructor', 'team'])
+                ->where('sub', false);
         };
     }
 
@@ -124,9 +127,10 @@ trait RequestMagicContext
         }
 
         // Modify the filters.
-        $callback = $this->uiContextActivityCallback($activity, $prefix);
         $query->removeFilter('uiContext');
-        $query->addFilter(['activityRelations' => ['$has' => $callback]]);
+        $query->addFilter([
+            'id' => ['$in' => $this->magicContextActivityCallback($activity, $prefix)]
+        ]);
         return true;
     }
 
@@ -137,17 +141,19 @@ trait RequestMagicContext
      * @param  string  $prefix
      * @return callable
      */
-    protected function uiContextActivityCallback(Activity $activity, $relation = null): callable
+    protected function magicContextActivityCallback(Activity $activity, $relation = null): callable
     {
         return function ($query) use ($activity, $relation) {
             if (!isset($relation)) {
-                return $query
+                return $query->select('statement_id')->from('trax_xapi_statement_activity')
                     ->where('activity_id', $activity->id)
-                    ->whereIn('type', ['parent', 'grouping', 'category', 'other']);
+                    ->whereIn('type', ['parent', 'grouping', 'category', 'other'])
+                    ->where('sub', false);
             } else {
-                return $query
+                return $query->select('statement_id')->from('trax_xapi_statement_activity')
                     ->where('activity_id', $activity->id)
-                    ->where('type', $relation);
+                    ->where('type', $relation)
+                    ->where('sub', false);
             }
         };
     }

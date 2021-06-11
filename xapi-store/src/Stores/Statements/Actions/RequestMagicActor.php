@@ -44,24 +44,26 @@ trait RequestMagicActor
             return false;
         }
 
+        $agentIds = $agents->pluck('id');
+
         // Modify the filters.
-        $callback = $this->uiActorCallback($agents);
         $query->removeFilter('uiActor');
-        $query->addFilter(['agentRelations' => ['$has' => $callback]]);
+        $query->addFilter(['id' => ['$in' => $this->magicActorCallback($agentIds)]]);
+
         return true;
     }
 
     /**
      * Get callback for agent filter.
      *
-     * @param  \Illuminate\Support\Collection  $agents
+     * @param  \Illuminate\Support\Collection  $agentIds
      * @return callable
      */
-    protected function uiActorCallback(Collection $agents): callable
+    protected function magicActorCallback(Collection $agentIds): callable
     {
-        return function ($query) use ($agents) {
-            return $query
-                ->whereIn('agent_id', $agents->pluck('id'))
+        return function ($query) use ($agentIds) {
+            return $query->select('statement_id')->from('trax_xapi_statement_agent')
+                ->whereIn('agent_id', $agentIds)
                 ->where('type', 'actor')
                 ->where('sub', false);
         };

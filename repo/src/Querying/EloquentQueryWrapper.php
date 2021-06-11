@@ -58,7 +58,7 @@ class EloquentQueryWrapper
      *
      * @param \Trax\Repo\Contracts\CrudRepositoryContract  $repo
      * @param string  $model
-     * @param string  $table
+     * @param string  $table  May be specified when when want a direct request on the table, not on the Eloquent model
      * @param array  $dynamicFilters
      * @return void
      */

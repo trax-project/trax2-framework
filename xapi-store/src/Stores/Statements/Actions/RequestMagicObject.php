@@ -65,25 +65,28 @@ trait RequestMagicObject
             return false;
         }
 
+        $agentIds = $agents->pluck('id');
+
         // Modify the filters.
-        $callback = $this->uiObjectAgentCallback($agents);
         $query->removeFilter('uiObject');
-        $query->addFilter(['agentRelations' => ['$has' => $callback]]);
+        $query->addFilter(['id' => ['$in' => $this->magicObjectAgentCallback($agentIds)]]);
+
         return true;
     }
 
     /**
      * Get callback for verb filter.
      *
-     * @param  \Illuminate\Support\Collection  $agents
+     * @param  \Illuminate\Support\Collection  $agentIds
      * @return callable
      */
-    protected function uiObjectAgentCallback(Collection $agents): callable
+    protected function magicObjectAgentCallback(Collection $agentIds): callable
     {
-        return function ($query) use ($agents) {
-            return $query
-                ->whereIn('agent_id', $agents->pluck('id'))
-                ->where('type', 'object');
+        return function ($query) use ($agentIds) {
+            return $query->select('statement_id')->from('trax_xapi_statement_agent')
+                ->whereIn('agent_id', $agentIds)
+                ->where('type', 'object')
+                ->where('sub', false);
         };
     }
 
@@ -118,25 +121,29 @@ trait RequestMagicObject
             return false;
         }
 
+        $activityIds = $activities->pluck('id');
+
         // Modify the filters.
-        $callback = $this->uiObjectActivityCallback($activities);
         $query->removeFilter('uiObject');
-        $query->addFilter(['activityRelations' => ['$has' => $callback]]);
+        $query->addFilter([
+            'id' => ['$in' => $this->magicObjectActivityCallback($activityIds)]
+        ]);
         return true;
     }
 
     /**
      * Get callback for activity filter.
      *
-     * @param  \Illuminate\Support\Collection  $activities
+     * @param  \Illuminate\Support\Collection  $activityIds
      * @return callable
      */
-    protected function uiObjectActivityCallback(Collection $activities): callable
+    protected function magicObjectActivityCallback(Collection $activityIds): callable
     {
-        return function ($query) use ($activities) {
-            return $query
-                ->whereIn('activity_id', $activities->pluck('id'))
-                ->where('type', 'object');
+        return function ($query) use ($activityIds) {
+            return $query->select('statement_id')->from('trax_xapi_statement_activity')
+                ->whereIn('activity_id', $activityIds)
+                ->where('type', 'object')
+                ->where('sub', false);
         };
     }
 }

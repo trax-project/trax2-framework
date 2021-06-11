@@ -42,24 +42,51 @@ trait RequestMagicVerb
             return false;
         }
 
+        $verbIds = $verbs->pluck('id');
+
+        // Allow whereHas request when it is the only filter (better perfs).
+        $whereHas = !$query->hasFilter('uiActor')
+            && !$query->hasFilter('uiObject')
+            && !$query->hasFilter('uiContext');
+    
         // Modify the filters.
-        $callback = $this->uiVerbCallback($verbs);
         $query->removeFilter('uiVerb');
-        $query->addFilter(['verbRelations' => ['$has' => $callback]]);
+        if ($whereHas) {
+            $query->addFilter(['verbRelations' => ['$has' => $this->magicVerbWhereHasCallback($verbIds)]]);
+        } else {
+            $query->addFilter(['id' => ['$in' => $this->magicVerbWhereInCallback($verbIds)]]);
+        }
+        
         return true;
     }
 
     /**
      * Get callback for verb filter.
      *
-     * @param  \Illuminate\Support\Collection  $verbs
+     * @param  \Illuminate\Support\Collection  $verbIds
      * @return callable
      */
-    protected function uiVerbCallback(Collection $verbs): callable
+    protected function magicVerbWhereInCallback(Collection $verbIds): callable
     {
-        return function ($query) use ($verbs) {
+        return function ($query) use ($verbIds) {
+            return $query->select('statement_id')->from('trax_xapi_statement_verb')
+                ->whereIn('verb_id', $verbIds)
+                ->where('sub', false);
+        };
+    }
+
+    /**
+     * Get callback for verb filter.
+     *
+     * @param  \Illuminate\Support\Collection  $verbIds
+     * @return callable
+     */
+    protected function magicVerbWhereHasCallback(Collection $verbIds): callable
+    {
+        return function ($query) use ($verbIds) {
             return $query
-                ->whereIn('verb_id', $verbs->pluck('id'));
+                ->whereIn('verb_id', $verbIds)
+                ->where('sub', false);
         };
     }
 }

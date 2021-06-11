@@ -26,37 +26,37 @@ trait RequestStatement
      */
     protected function requestStatement(Query $query = null, $ownerId = null, bool $reveal = true): bool
     {
-        // Request agent.
+        // Request agent from API.
         if (!$match = $this->requestAgent($query, $ownerId)) {
             return false;
         }
 
-        // Request verb.
+        // Request verb from API.
         if (!$match = $this->requestVerb($query, $ownerId)) {
             return false;
         }
 
-        // Request activity.
+        // Request activity from API.
         if (!$match = $this->requestActivity($query, $ownerId)) {
             return false;
         }
 
-        // Request UI actor.
+        // Request actor from UI.
         if (!$match = $this->requestMagicActor($query, $ownerId, $reveal)) {
             return false;
         }
 
-        // Request UI verb.
+        // Request verb from UI.
         if (!$match = $this->requestMagicVerb($query, $ownerId)) {
             return false;
         }
 
-        // Request UI object.
+        // Request object from UI.
         if (!$match = $this->requestMagicObject($query, $ownerId, $reveal)) {
             return false;
         }
 
-        // Request UI context.
+        // Request context from UI.
         if (!$match = $this->requestMagicContext($query, $ownerId, $reveal)) {
             return false;
         }

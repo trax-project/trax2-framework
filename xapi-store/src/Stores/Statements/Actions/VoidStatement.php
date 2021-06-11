@@ -33,7 +33,9 @@ trait VoidStatement
         }
         
         // Void it.
-        // DOn't use updateModel here because it may be an object, and not an Eloquent model.
+        // Don't use updateModel here because it may be an object, and not an Eloquent model.
+        // It may be an object when direct table requests are prefered to ELoquent request.
+        // That's the case for the StatementService.
         $this->update($statement->id, ['voided' => true]);
     }
 }

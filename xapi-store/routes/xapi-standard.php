@@ -48,5 +48,5 @@ Route::namespace('Trax\XapiStore\Stores\AgentProfiles')->group(function () {
 
 // About.
 Route::namespace('Trax\XapiStore\Stores\About')->middleware('known.access')->group(function () {
-    TraxAuth::appGetRoute('trax/api', 'xapi/std/about', 'XapiAboutController@get');
+    Route::get('trax/api/{source}/xapi/std/about', 'XapiAboutController@get');
 });
