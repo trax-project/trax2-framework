@@ -59,7 +59,7 @@ class CorsMiddleware
             return $next($request);
         }
         $source = $urlSegments[1];
-        if ($source == 'front') {
+        if ($source == 'front' || $source == 'auth') {
             return $next($request);
         }
 
