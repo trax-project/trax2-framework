@@ -162,16 +162,17 @@ class Query
      */
     public function sortInfo(): array
     {
-        if (!$this->sorted()) {
-            return [];
+        $sortInfo = [];
+        foreach ($this->sort as $sort) {
+            $dir = 'asc';
+            $col = $sort;
+            if (\Str::startsWith($col, '-')) {
+                $dir = 'desc';
+                $col = \Str::after($col, '-');
+            }
+            $sortInfo[] = ['col' => $col, 'dir' => $dir];
         }
-        $col = $this->sort[0];
-        $dir = 'asc';
-        if (\Str::startsWith($col, '-')) {
-            $dir = 'desc';
-            $col = \Str::after($col, '-');
-        }
-        return [$col, $dir];
+        return $sortInfo;
     }
 
     /**

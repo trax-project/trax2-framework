@@ -143,7 +143,7 @@ class EloquentQueryWrapper
      */
     public function delete(Query $query): void
     {
-        $builder = $this->queriedBuilder($query, false);
+        $builder = $this->queriedBuilder($query, true);
 
         //print_r($builder->toSql());
         //die;
@@ -171,17 +171,18 @@ class EloquentQueryWrapper
      */
     public function countAll(Query $query = null): int
     {
-        $builder = $this->queriedBuilder($query, false);
+        $builder = $this->queriedBuilder($query, true);
         return $builder->count();
     }
 
     /**
      * Return the query builder with a query already built.
      *
-     * @param \Trax\Repo\Querying\Query  $query
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @param  bool  $noLimit
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
-    protected function queriedBuilder(Query $query = null, bool $paginate = true)
+    protected function queriedBuilder(Query $query = null, bool $noLimit = false)
     {
         // Simple query with filters.
         if (!isset($query)) {
@@ -195,13 +196,12 @@ class EloquentQueryWrapper
         $builder = $this->builder();
 
         // Sort results.
-        if ($query->sorted()) {
-            list($col, $dir) = $query->sortInfo();
-            $builder->orderBy($col, $dir);
+        foreach ($query->sortInfo() as $sortInfo) {
+            $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
         }
 
         // Limit and skip.
-        if ($paginate) {
+        if (!$noLimit) {
             $builder->limit($query->limit());
             $builder->skip($query->skip());
         }
