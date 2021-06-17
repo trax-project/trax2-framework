@@ -18,7 +18,7 @@ trait RecordActivities
      */
     protected function recordStatementsActivities(array $statements, array $context)
     {
-        // Collect activites info.
+        // Collect activities info.
         $activitiesInfo = $this->statementsActivitiesInfo($statements);
 
         // Get existing activities.
