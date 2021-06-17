@@ -16,7 +16,7 @@ class Agent extends Model
      *
      * @var array
      */
-    protected $fillable = ['person_id', 'pseudonymized'];
+    protected $fillable = ['name', 'person_id', 'pseudonymized'];
 
     /**
      * Get the matching person.
