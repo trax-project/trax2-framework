@@ -361,7 +361,7 @@ abstract class CrudRepository implements CrudRepositoryContract
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function propEqFilter(array $params, Query $query)
+    public function propEqFilter(array $params, Query $query = null)
     {
         return [
             [$params['name'] => $params['value']]

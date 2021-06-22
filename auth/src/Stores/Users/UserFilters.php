@@ -25,7 +25,7 @@ trait UserFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function simpleSearchFilter($value, Query $query)
+    public function simpleSearchFilter($value, Query $query = null)
     {
         return ['$or' => [
             ['username' => ['$text' => $value]],

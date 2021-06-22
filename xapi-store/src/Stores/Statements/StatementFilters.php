@@ -34,7 +34,7 @@ trait StatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function uiActorFilter($field, Query $query)
+    public function uiActorFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -50,7 +50,7 @@ trait StatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function uiVerbFilter($field, Query $query)
+    public function uiVerbFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -67,7 +67,7 @@ trait StatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function uiObjectFilter($field, Query $query)
+    public function uiObjectFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {
@@ -109,7 +109,7 @@ trait StatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function uiContextFilter($field, Query $query)
+    public function uiContextFilter($field, Query $query = null)
     {
         // Check if null. This may happen when the UI field is empty.
         if (is_null($field)) {

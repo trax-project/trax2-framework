@@ -38,7 +38,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function statementIdFilter($id, Query $query)
+    public function statementIdFilter($id, Query $query = null)
     {
         return [
             ['voided' => false],
@@ -53,7 +53,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function voidedStatementIdFilter($id, Query $query)
+    public function voidedStatementIdFilter($id, Query $query = null)
     {
         return [
             ['voided' => true],
@@ -68,7 +68,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function agentFilter($agent, Query $query)
+    public function agentFilter($agent, Query $query = null)
     {
         if (is_string($agent)) {
             $agent = json_decode($agent, true);
@@ -77,7 +77,7 @@ trait XapiStatementFilters
         }
 
         // Simple.
-        if (!$query->hasOption('related_agents') || $query->option('related_agents') == 'false') {
+        if (is_null($query) || !$query->hasOption('related_agents') || $query->option('related_agents') == 'false') {
             return ['$or' => [
                 $this->agentFilterConditions('data->actor', $agent),
                 $this->agentFilterConditions('data->object', $agent),
@@ -124,7 +124,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function verbFilter($id, Query $query)
+    public function verbFilter($id, Query $query = null)
     {
         return [
             ['data->verb->id' => $id],
@@ -138,10 +138,10 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function activityFilter($id, Query $query)
+    public function activityFilter($id, Query $query = null)
     {
         // Simple.
-        if (!$query->hasOption('related_activities') || $query->option('related_activities') == 'false') {
+        if (is_null($query) || !$query->hasOption('related_activities') || $query->option('related_activities') == 'false') {
             return [
                 ['data->object->id' => $id],
             ];
@@ -172,7 +172,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function registrationFilter(string $registration, Query $query)
+    public function registrationFilter(string $registration, Query $query = null)
     {
         return [
             ['data->context->registration' => $registration],
@@ -186,7 +186,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function sinceFilter(string $isoDate, Query $query)
+    public function sinceFilter(string $isoDate, Query $query = null)
     {
         return [
             ['data->stored' => ['$gt' => XapiDate::normalize($isoDate)]],
@@ -200,7 +200,7 @@ trait XapiStatementFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function untilFilter(string $isoDate, Query $query)
+    public function untilFilter(string $isoDate, Query $query = null)
     {
         return [
             ['data->stored' => ['$lte' => XapiDate::normalize($isoDate)]],

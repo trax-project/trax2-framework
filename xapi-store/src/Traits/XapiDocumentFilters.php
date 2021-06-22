@@ -17,7 +17,7 @@ trait XapiDocumentFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function stateIdFilter($id, Query $query)
+    public function stateIdFilter($id, Query $query = null)
     {
         return [
             ['state_id' => $id],
@@ -31,7 +31,7 @@ trait XapiDocumentFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function profileIdFilter($id, Query $query)
+    public function profileIdFilter($id, Query $query = null)
     {
         return [
             ['profile_id' => $id],
@@ -45,7 +45,7 @@ trait XapiDocumentFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function activityIdFilter($id, Query $query)
+    public function activityIdFilter($id, Query $query = null)
     {
         return [
             ['activity_id' => $id],
@@ -59,7 +59,7 @@ trait XapiDocumentFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function agentFilter($agent, Query $query)
+    public function agentFilter($agent, Query $query = null)
     {
         return [
             ['vid' => AgentFactory::virtualId($agent)]
@@ -73,7 +73,7 @@ trait XapiDocumentFilters
      * @param  \Trax\Repo\Querying\Query  $query
      * @return array
      */
-    public function sinceFilter($since, Query $query)
+    public function sinceFilter($since, Query $query = null)
     {
         return [
             ['timestamp' => ['$gt' => XapiDate::normalize($since)]],
