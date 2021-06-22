@@ -121,6 +121,8 @@ class EloquentQueryWrapper
 
         //dd($builder->toSql());
         //dd($builder->getBindings());
+        
+        //dd($builder->getBindings());
         //print_r($builder->toSql());
         //die;
 
