@@ -9,6 +9,11 @@ use Trax\XapiStore\Stores\Logs\Logger;
 class GlobalService
 {
     /**
+     * @var \Trax\Auth\Stores\Owners\OwnerRepository
+     */
+    protected $owners;
+
+    /**
      * @var \Trax\XapiStore\Stores\Statements\StatementService
      */
     protected $statements;
@@ -53,6 +58,11 @@ class GlobalService
      */
     protected $verbs;
 
+    /**
+     * @var \Trax\XapiStore\Stores\Logs\LogRepository
+     */
+    protected $logs;
+
 
     /**
      * Create a new class instance.
@@ -62,6 +72,7 @@ class GlobalService
      */
     public function __construct(Container $container)
     {
+        $this->owners = $container->make(\Trax\Auth\Stores\Owners\OwnerRepository::class);
         $this->statements = $container->make(\Trax\XapiStore\Stores\Statements\StatementService::class);
         $this->activities = $container->make(\Trax\XapiStore\Stores\Activities\ActivityRepository::class);
         $this->agents = $container->make(\Trax\XapiStore\Stores\Agents\AgentService::class);
@@ -71,7 +82,7 @@ class GlobalService
         $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
         $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
-        $this->owners = $container->make(\Trax\Auth\Stores\Owners\OwnerRepository::class);
+        $this->logs = $container->make(\Trax\XapiStore\Stores\Logs\LogRepository::class);
     }
 
     /**
@@ -92,7 +103,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
-        Logger::clear();
+        $this->logs->deleteByQuery($query);
     }
 
     /**
@@ -113,7 +124,7 @@ class GlobalService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
-        Logger::clear($ownerId);
+        $this->logs->deleteByQuery($query);
     }
 
     /**

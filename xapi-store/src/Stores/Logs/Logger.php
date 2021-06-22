@@ -34,19 +34,4 @@ class Logger
         }
         app(LogRepository::class)->create($data);
     }
-
-    /**
-     * Clear all logs (from the given store).
-     *
-     * @param  int|string|null  $ownerId
-     * @return void
-     */
-    public static function clear($ownerId = null): void
-    {
-        if (isset($ownerId)) {
-            Log::where('owner_id', $ownerId)->delete();
-        } else {
-            Log::query()->delete();
-        }
-    }
 }
