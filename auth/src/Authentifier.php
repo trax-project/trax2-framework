@@ -464,15 +464,30 @@ class Authentifier
     }
 
     /**
+     * Get the consumer context or one of its props.
+     *
+     * @param  string  $prop
+     * @return mixed
+     */
+    public function context(string $prop = null)
+    {
+        $context = $this->getContext();
+        if (isset($prop)) {
+            return isset($context[$prop]) ? $context[$prop] : null;
+        }
+        return $context;
+    }
+
+    /**
      * Get the consumer context.
      *
-     * @return array
+     * @return mixed
      */
-    public function context(string $prop = null): array
+    public function getContext()
     {
         // Return the cached context.
         if (isset($this->currentContext)) {
-            return isset($prop) ? $this->currentContext[$prop] : $this->currentContext;
+            return $this->currentContext;
         }
 
         // A context should always have an owner_id, be it null.
@@ -499,16 +514,16 @@ class Authentifier
                 'owner_id' => $access->client->owner_id,
             ];
         }
-        return isset($prop) ? $this->currentContext[$prop] : $this->currentContext;
+        return $this->currentContext;
     }
 
     /**
      * Set the consumer context.
      *
      * @param  array  $context
-     * @return array
+     * @return void
      */
-    public function setContext(array $context = null): array
+    public function setContext(array $context = null): void
     {
         $this->currentContext = $context;
     }
