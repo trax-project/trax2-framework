@@ -152,13 +152,12 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
-     * @param  array  $context
      * @return array
      */
-    public function createStatements($statements, array $attachments, array $context)
+    public function createStatements($statements, array $attachments)
     {
-        return DB::transaction(function () use ($statements, $attachments, $context) {
-            return $this->createStatementsWithoutTransaction($statements, $attachments, $context);
+        return DB::transaction(function () use ($statements, $attachments) {
+            return $this->createStatementsWithoutTransaction($statements, $attachments);
         });
     }
 
@@ -168,10 +167,9 @@ class StatementService extends StatementRepository
      *
      * @param  \stdClass|array  $statements
      * @param  array  $attachments
-     * @param  array  $context
      * @return array
      */
-    public function createStatementsWithoutTransaction($statements, array $attachments, array $context)
+    public function createStatementsWithoutTransaction($statements, array $attachments)
     {
         if (!is_array($statements)) {
             $statements = [$statements];
@@ -192,22 +190,22 @@ class StatementService extends StatementRepository
         // we want to get the anonymous agents first.
         $agentsInfo = [];
         if (config('trax-xapi-store.tables.agents', false)) {
-            $agentsInfo = $this->recordAgents($statements, $authority, $context);
+            $agentsInfo = $this->recordAgents($statements, $authority);
         }
     
         // Save the statements.
-        $statements = $this->recordStatements($statements, $authority, $context, $agentsInfo);
+        $statements = $this->recordStatements($statements, $authority, $agentsInfo);
 
         // Save the attachments.
-        $this->recordAttachments($attachments, $context);
+        $this->recordAttachments($attachments);
     
         // Save the verbs.
         if (config('trax-xapi-store.tables.verbs', false)) {
-            $this->recordStatementsVerbs($statements, $context);
+            $this->recordStatementsVerbs($statements);
         }
     
         // Save the activities.
-        $this->recordStatementsActivities($statements, $context);
+        $this->recordStatementsActivities($statements);
 
         // Return the statements IDs.
         return array_map(function ($statement) {
@@ -230,10 +228,10 @@ class StatementService extends StatementRepository
         return DB::transaction(function () use ($statements, $ownerId, $entityId, $pseudonymize) {
 
             // Context.
-            $context = [
+            TraxAuth::setContext([
                 'entity_id' => $entityId,
                 'owner_id' => $ownerId,
-            ];
+            ]);
 
             // Get the authority.
             $authority = $this->getImportAuthority();
@@ -243,19 +241,19 @@ class StatementService extends StatementRepository
             // we want to get the anonymous agents first.
             $agentsInfo = [];
             if (config('trax-xapi-store.tables.agents', false)) {
-                $agentsInfo = $this->recordAgents($statements, $authority, $context);
+                $agentsInfo = $this->recordAgents($statements, $authority);
             }
         
             // Save the statements.
-            $statements = $this->recordStatements($statements, $authority, $context, $agentsInfo, $pseudonymize);
+            $statements = $this->recordStatements($statements, $authority, $agentsInfo, $pseudonymize);
         
             // Save the verbs.
             if (config('trax-xapi-store.tables.verbs', false)) {
-                $this->recordStatementsVerbs($statements, $context);
+                $this->recordStatementsVerbs($statements);
             }
         
             // Save the activities.
-            $this->recordStatementsActivities($statements, $context);
+            $this->recordStatementsActivities($statements);
         });
     }
 }

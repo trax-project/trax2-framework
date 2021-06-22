@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements;
 
 use Illuminate\Http\Request;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Traits\AcceptJsonRequests;
 use Trax\XapiStore\Traits\AcceptMultipartRequests;
 use Trax\XapiStore\Exceptions\XapiBadRequestException;
@@ -159,7 +160,10 @@ trait XapiStatementContentValidation
         }
         
         // ID already used in database.
-        if (!$this->repository->addFilter(['uuid' => $uuid])->get()->isEmpty()) {
+        if (!$this->repository->addFilter([
+            'uuid' => $uuid,
+            'owner_id' => TraxAuth::context('owner_id'),
+        ])->get()->isEmpty()) {
             throw new XapiBadRequestException("A statement with this ID already exists in the database: [$uuid].");
         }
     }

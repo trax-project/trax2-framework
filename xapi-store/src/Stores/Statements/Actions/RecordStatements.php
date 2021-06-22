@@ -2,6 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Statements\Statement;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 
@@ -9,10 +10,19 @@ trait RecordStatements
 {
     use PseudonymizeStatement;
 
-    protected function recordStatements(array $statements, object $authority, array $context, array $agentsInfo, bool $pseudonymize = true): array
+    /**
+     * Save the statements.
+     *
+     * @param  array  $statements
+     * @param  object  $authority
+     * @param  array  $agentsInfo
+     * @param  bool  $pseudonymize
+     * @return void
+     */
+    protected function recordStatements(array $statements, object $authority, array $agentsInfo, bool $pseudonymize = true): array
     {
         // Record the statements batch.
-        $batch = $this->statementsBatch($statements, $authority, $context, $agentsInfo, $pseudonymize);
+        $batch = $this->statementsBatch($statements, $authority, $agentsInfo, $pseudonymize);
         $insertedBatch = $this->insert($batch);
 
         // Get back the models. We need them.
@@ -20,7 +30,7 @@ trait RecordStatements
         // We should remove this request when indexing will be moved in a Job.
         $uuids = collect($insertedBatch)->pluck('uuid')->toArray();
         $models = $this->addFilter([
-            'owner_id' => $context['owner_id'],
+            'owner_id' => TraxAuth::context('owner_id'),
             'uuid' => ['$in' => $uuids]
         ])->get()->all();
     
@@ -39,12 +49,11 @@ trait RecordStatements
      *
      * @param  array  $statements
      * @param  object  $authority
-     * @param  array  $context
      * @param  array  $agentsInfo
      * @param  bool  $pseudonymize
      * @return array
      */
-    protected function statementsBatch(array &$statements, object $authority, array $context, array $agentsInfo, bool $pseudonymize = true): array
+    protected function statementsBatch(array &$statements, object $authority, array $agentsInfo, bool $pseudonymize = true): array
     {
         $batch = [];
         foreach ($statements as &$statement) {
@@ -70,7 +79,7 @@ trait RecordStatements
             }
 
             // Record the statement.
-            $batch[] = array_merge(['data' => $pseudonymized], $context);
+            $batch[] = array_merge(['data' => $pseudonymized], TraxAuth::context());
         }
         return $batch;
     }

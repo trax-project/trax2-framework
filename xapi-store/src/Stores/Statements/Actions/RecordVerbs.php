@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Verbs\Verb;
 
 trait RecordVerbs
@@ -11,20 +12,19 @@ trait RecordVerbs
      * Save the statements verbs.
      *
      * @param  array  $statements
-     * @param  array  $context
      * @return void
      */
-    protected function recordStatementsVerbs(array $statements, array $context)
+    protected function recordStatementsVerbs(array $statements)
     {
         // Collect verbs info.
         $verbsInfo = $this->statementsVerbsInfo($statements);
 
         // Get existing verbs.
-        $existingVerbs = $this->getExistingVerbs($verbsInfo, $context);
+        $existingVerbs = $this->getExistingVerbs($verbsInfo);
 
         // Insert the new verbs.
         try {
-            $insertedBatch = $this->insertNewVerbs($existingVerbs, $verbsInfo, $context);
+            $insertedBatch = $this->insertNewVerbs($existingVerbs, $verbsInfo);
         } catch (\Exception $e) {
             // We may have a concurrency issue.
             // We accept to loose some data here!
@@ -32,22 +32,21 @@ trait RecordVerbs
         }
 
         // Index verbs.
-        $this->indexVerbs($existingVerbs, $insertedBatch, $verbsInfo, $context);
+        $this->indexVerbs($existingVerbs, $insertedBatch, $verbsInfo);
     }
 
     /**
      * Get existing verbs.
      *
      * @param  array  $verbsInfo
-     * @param  array  $context
      * @return \Illuminate\Support\Collection
      */
-    protected function getExistingVerbs(array $verbsInfo, array $context): Collection
+    protected function getExistingVerbs(array $verbsInfo): Collection
     {
         $iris = collect($verbsInfo)->pluck('iri')->unique();
         return $this->verbs->addFilter([
             'iri' => ['$in' => $iris],
-            'owner_id' => $context['owner_id']
+            'owner_id' => TraxAuth::context('owner_id')
         ])->get();
     }
 
@@ -56,10 +55,9 @@ trait RecordVerbs
      *
      * @param  \Illuminate\Support\Collection  $existingVerbs
      * @param  array  $verbsInfo
-     * @param  array  $context
      * @return array
      */
-    protected function insertNewVerbs(Collection $existingVerbs, array $verbsInfo, array $context): array
+    protected function insertNewVerbs(Collection $existingVerbs, array $verbsInfo): array
     {
         // Get the new verbs.
         $newVerbsInfo = array_filter($verbsInfo, function ($verbInfo) use ($existingVerbs) {
@@ -69,10 +67,10 @@ trait RecordVerbs
         });
 
         // Prepare batch.
-        $batch = collect($newVerbsInfo)->pluck('iri')->unique()->map(function ($iri) use ($context) {
+        $batch = collect($newVerbsInfo)->pluck('iri')->unique()->map(function ($iri) {
             return [
                 'iri' => $iri,
-                'owner_id' => $context['owner_id']
+                'owner_id' => TraxAuth::context('owner_id')
             ];
         })->all();
 
@@ -123,10 +121,9 @@ trait RecordVerbs
      * @param  \Illuminate\Support\Collection  $existingVerbs
      * @param  array  $insertedBatch
      * @param  array  $verbsInfo
-     * @param  array  $context
      * @return void
      */
-    protected function indexVerbs(Collection $existingVerbs, array $insertedBatch, array $verbsInfo, array $context): void
+    protected function indexVerbs(Collection $existingVerbs, array $insertedBatch, array $verbsInfo): void
     {
         if (!config('trax-xapi-store.tables.verbs', false)
             || !config('trax-xapi-store.relations.statements_verbs', false)
@@ -137,7 +134,7 @@ trait RecordVerbs
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
         $newVerbs = $this->verbs->addFilter([
-            'owner_id' => $context['owner_id'],
+            'owner_id' => TraxAuth::context('owner_id'),
             'iri' => ['$in' => $iris]
         ])->get();
 

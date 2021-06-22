@@ -3,7 +3,6 @@
 namespace Trax\XapiStore\Stores\Statements;
 
 use Illuminate\Http\Request;
-use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiNotFoundException;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
@@ -62,8 +61,7 @@ class XapiStatementController extends XapiController
         // Save statements.
         $ids = $this->repository->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments(),
-            TraxAuth::context()
+            $xapiRequest->attachments()
         );
 
         // Logging.
@@ -90,8 +88,7 @@ class XapiStatementController extends XapiController
         // Save statement.
         $this->repository->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments(),
-            TraxAuth::context()
+            $xapiRequest->attachments()
         );
 
         // Logging.

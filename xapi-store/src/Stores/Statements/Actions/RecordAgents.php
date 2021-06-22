@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 
 trait RecordAgents
@@ -12,20 +13,19 @@ trait RecordAgents
      *
      * @param  array  $statements
      * @param  object  $authority
-     * @param  array  $context
      * @return array
      */
-    protected function recordAgents(array $statements, object $authority, array $context): array
+    protected function recordAgents(array $statements, object $authority): array
     {
         // Collect agents info.
         $agentsInfo = $this->statementsAgentsInfo($statements, $authority);
 
         // Get existing agents.
-        $existingAgents = $this->getExistingAgents($agentsInfo, $context);
+        $existingAgents = $this->getExistingAgents($agentsInfo);
 
         // Insert the new agents.
         try {
-            $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo, $context);
+            $insertedBatch = $this->insertNewAgents($existingAgents, $agentsInfo);
         } catch (\Exception $e) {
             // We may have a concurrency issue.
             // We accept to loose some data here!
@@ -33,7 +33,7 @@ trait RecordAgents
         }
 
         // Update agents info with models.
-        $this->updateAgentsInfoWithModels($existingAgents, $insertedBatch, $agentsInfo, $context);
+        $this->updateAgentsInfoWithModels($existingAgents, $insertedBatch, $agentsInfo);
 
         return $agentsInfo;
     }
@@ -42,15 +42,14 @@ trait RecordAgents
      * Get existing agents.
      *
      * @param  array  $agentsInfo
-     * @param  array  $context
      * @return \Illuminate\Support\Collection
      */
-    protected function getExistingAgents(array $agentsInfo, array $context): Collection
+    protected function getExistingAgents(array $agentsInfo): Collection
     {
         $vids = collect($agentsInfo)->pluck('vid')->unique();
         return $this->agents->addFilter([
             'vid' => ['$in' => $vids],
-            'owner_id' => $context['owner_id']
+            'owner_id' => TraxAuth::context('owner_id')
         ])->get();
     }
 
@@ -59,10 +58,9 @@ trait RecordAgents
      *
      * @param  \Illuminate\Support\Collection  $existingAgents
      * @param  array  $agentsInfo
-     * @param  array  $context
      * @return array
      */
-    protected function insertNewAgents(Collection $existingAgents, array $agentsInfo, array $context): array
+    protected function insertNewAgents(Collection $existingAgents, array $agentsInfo): array
     {
         // Get the new agents.
         $newAgentsInfo = array_filter($agentsInfo, function ($agentInfo) use ($existingAgents) {
@@ -75,32 +73,32 @@ trait RecordAgents
         $uniqueAgentsInfo = collect($newAgentsInfo)->keyBy('vid')->values();
 
         // Insert persons.
-        $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($context) {
-            return $this->agents->newPersonData($context['owner_id']);
+        $batch = $uniqueAgentsInfo->map(function ($agentInfo) {
+            return $this->agents->newPersonData(TraxAuth::context('owner_id'));
         })->all();
-        $persons = $this->insertAgentsAndReturnModels($batch, $context, 'persons', 'uuid');
+        $persons = $this->insertAgentsAndReturnModels($batch, 'persons', 'uuid');
 
         // Insert pseudonymized agents.
         $pseudos = collect([]);
         if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
-            $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($context, $persons) {
+            $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons) {
                 $objectType = isset($agentInfo->agent->objectType) ? $agentInfo->agent->objectType : 'Agent';
-                return $this->agents->newPseudoData($objectType, $persons->pop()->id, $context['owner_id']);
+                return $this->agents->newPseudoData($objectType, $persons->pop()->id, TraxAuth::context('owner_id'));
             })->all();
-            $pseudos = $this->insertAgentsAndReturnModels($batch, $context);
+            $pseudos = $this->insertAgentsAndReturnModels($batch);
         }
 
         // Insert native agents.
-        $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons, $pseudos, $context) {
+        $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons, $pseudos) {
             if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
                 $pseudo = $pseudos->pop();
-                return $this->agents->newAgentData($agentInfo->agent, $pseudo->person_id, $pseudo->id, $context['owner_id']);
+                return $this->agents->newAgentData($agentInfo->agent, $pseudo->person_id, $pseudo->id, TraxAuth::context('owner_id'));
             } else {
                 $person = $persons->pop();
-                return $this->agents->newAgentData($agentInfo->agent, $person->id, null, $context['owner_id']);
+                return $this->agents->newAgentData($agentInfo->agent, $person->id, null, TraxAuth::context('owner_id'));
             }
         })->all();
-        $agents = $this->insertAgentsAndReturnModels($batch, $context);
+        $agents = $this->insertAgentsAndReturnModels($batch);
         return $agents->all();
     }
 
@@ -108,17 +106,16 @@ trait RecordAgents
      * Insert agents (or persons) and return the models.
      *
      * @param  array  $batch
-     * @param  array  $context
      * @param  string  $store
      * @param  string  $id
      * @return \Illuminate\Support\Collection
      */
-    protected function insertAgentsAndReturnModels(array $batch, array $context, string $store = 'agents', string $id = 'vid'): Collection
+    protected function insertAgentsAndReturnModels(array $batch, string $store = 'agents', string $id = 'vid'): Collection
     {
         $inserted = $this->$store->insert($batch);
         $ids = collect($inserted)->pluck($id)->toArray();
         return $this->$store->addFilter([
-            'owner_id' => $context['owner_id'],
+            'owner_id' => TraxAuth::context('owner_id'),
             $id => ['$in' => $ids]
         ])->get();
     }
@@ -129,15 +126,14 @@ trait RecordAgents
      * @param  \Illuminate\Support\Collection  $existingAgents
      * @param  array  $insertedBatch
      * @param  array  $agentsInfo
-     * @param  array  $context
      * @return void
      */
-    protected function updateAgentsInfoWithModels(Collection $existingAgents, array $insertedBatch, array &$agentsInfo, array $context): void
+    protected function updateAgentsInfoWithModels(Collection $existingAgents, array $insertedBatch, array &$agentsInfo): void
     {
         // Get back the new models.
         $vids = collect($insertedBatch)->pluck('vid')->toArray();
         $newAgents = $this->agents->addFilter([
-            'owner_id' => $context['owner_id'],
+            'owner_id' => TraxAuth::context('owner_id'),
             'vid' => ['$in' => $vids]
         ])->get();
 

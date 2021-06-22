@@ -2,16 +2,17 @@
 
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
+use Trax\Auth\TraxAuth;
+
 trait RecordAttachments
 {
     /**
      * Save the attachments.
      *
      * @param  array  $attachments
-     * @param  array  $context
      * @return void
      */
-    public function recordAttachments(array $attachments, array $context)
+    public function recordAttachments(array $attachments)
     {
         foreach ($attachments as $attachment) {
             if (is_array($attachment)) {
@@ -20,7 +21,7 @@ trait RecordAttachments
             if (!$this->attachments->addFilter(['data->sha2' => $attachment->sha2])->get()->last()) {
                 $this->attachments->create(array_merge([
                     'data' => $attachment
-                ], $context));
+                ], TraxAuth::context()));
             };
         }
     }

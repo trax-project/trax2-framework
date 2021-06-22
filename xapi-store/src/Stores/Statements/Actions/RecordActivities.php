@@ -3,9 +3,9 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Activities\Activity;
 use Trax\XapiStore\Stores\Activities\ActivityFactory;
-use Trax\Auth\TraxAuth;
 
 trait RecordActivities
 {
@@ -13,23 +13,22 @@ trait RecordActivities
      * Save the statements activities.
      *
      * @param  array  $statements
-     * @param  array  $context
      * @return void
      */
-    protected function recordStatementsActivities(array $statements, array $context)
+    protected function recordStatementsActivities(array $statements)
     {
         // Collect activities info.
         $activitiesInfo = $this->statementsActivitiesInfo($statements);
 
         // Get existing activities.
-        $existingActivities = $this->getExistingActivities($activitiesInfo, $context);
+        $existingActivities = $this->getExistingActivities($activitiesInfo);
 
         // Update existing activities.
         $this->mergeExistingActivities($existingActivities, $activitiesInfo);
 
         // Insert the new activities.
         try {
-            $insertedBatch = $this->insertNewActivities($existingActivities, $activitiesInfo, $context);
+            $insertedBatch = $this->insertNewActivities($existingActivities, $activitiesInfo);
         } catch (\Exception $e) {
             // We may have a concurrency issue.
             // We accept to loose some data here!
@@ -37,22 +36,21 @@ trait RecordActivities
         }
 
         // Index activities.
-        $this->indexActivities($existingActivities, $insertedBatch, $activitiesInfo, $context);
+        $this->indexActivities($existingActivities, $insertedBatch, $activitiesInfo);
     }
 
     /**
      * Get existing activities.
      *
      * @param  array  $activitiesInfo
-     * @param  array  $context
      * @return \Illuminate\Support\Collection
      */
-    protected function getExistingActivities(array $activitiesInfo, array $context): Collection
+    protected function getExistingActivities(array $activitiesInfo): Collection
     {
         $iris = collect($activitiesInfo)->pluck('iri')->unique();
         return $this->activities->addFilter([
             'iri' => ['$in' => $iris],
-            'owner_id' => $context['owner_id']
+            'owner_id' => TraxAuth::context('owner_id')
         ])->get();
     }
 
@@ -87,10 +85,9 @@ trait RecordActivities
      *
      * @param  \Illuminate\Support\Collection  $existingActivities
      * @param  array  $activitiesInfo
-     * @param  array  $context
      * @return array
      */
-    protected function insertNewActivities(Collection $existingActivities, array $activitiesInfo, array $context): array
+    protected function insertNewActivities(Collection $existingActivities, array $activitiesInfo): array
     {
         // Get the new activities.
         $newActivitiesInfo = array_filter($activitiesInfo, function ($activityInfo) use ($existingActivities) {
@@ -100,7 +97,7 @@ trait RecordActivities
         });
 
         // Prepare batch.
-        $batch = collect($newActivitiesInfo)->groupBy('iri')->map(function ($activityInfos, $iri) use ($context) {
+        $batch = collect($newActivitiesInfo)->groupBy('iri')->map(function ($activityInfos, $iri) {
             $model = (object)['data' => (object)[
                 'id' => $iri
             ]];
@@ -113,13 +110,13 @@ trait RecordActivities
                 } else {
                     return [
                         'data' => ['id' => $activityInfo->iri],
-                        'owner_id' => $context['owner_id']
+                        'owner_id' => TraxAuth::context('owner_id')
                     ];
                 }
             }
             return [
                 'data' => $model->data,
-                'owner_id' => $context['owner_id']
+                'owner_id' => TraxAuth::context('owner_id')
             ];
         })->values()->all();
 
@@ -263,10 +260,9 @@ trait RecordActivities
      * @param  \Illuminate\Support\Collection  $existingActivities
      * @param  array  $insertedBatch
      * @param  array  $activitiesInfo
-     * @param  array  $context
      * @return void
      */
-    protected function indexActivities(Collection $existingActivities, array $insertedBatch, array $activitiesInfo, array $context): void
+    protected function indexActivities(Collection $existingActivities, array $insertedBatch, array $activitiesInfo): void
     {
         if (!config('trax-xapi-store.relations.statements_activities', false)) {
             return;
@@ -275,7 +271,7 @@ trait RecordActivities
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
         $newActivities = $this->activities->addFilter([
-            'owner_id' => $context['owner_id'],
+            'owner_id' => TraxAuth::context('owner_id'),
             'iri' => ['$in' => $iris]
         ])->get();
 

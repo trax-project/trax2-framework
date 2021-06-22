@@ -2,6 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Exceptions\XapiBadRequestException;
 
 trait VoidStatement
@@ -19,7 +20,8 @@ trait VoidStatement
         // Get the statement.
         $statement = $this->addFilter([
             'voided' => false,
-            'uuid' => $id
+            'uuid' => $id,
+            'owner_id' => TraxAuth::context('owner_id')
         ])->get()->last();
 
         // No error when the statement is not found.

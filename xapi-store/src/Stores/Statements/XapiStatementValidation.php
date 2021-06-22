@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements;
 
 use Illuminate\Http\Request;
+use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Traits\AcceptAlternateRequests;
 use Trax\XapiStore\Traits\PreventUnkownInputs;
 use Trax\XapiStore\Exceptions\XapiBadRequestException;
@@ -95,7 +96,10 @@ trait XapiStatementValidation
 
         // Check unicity of the statementId input.
         $statementId = $request->input('statementId');
-        if (!$this->repository->addFilter(['uuid' => $statementId])->get()->isEmpty()) {
+        if (!$this->repository->addFilter([
+            'uuid' => $statementId,
+            'owner_id' => TraxAuth::context('owner_id'),
+        ])->get()->isEmpty()) {
             throw new XapiNoContentException("A statement with UUID [$statementId] already exists.");
         }
 

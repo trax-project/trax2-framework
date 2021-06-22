@@ -35,6 +35,13 @@ class Authentifier
     protected $currentAccess;
 
     /**
+     * The current context.
+     *
+     * @var array
+     */
+    protected $currentContext;
+
+    /**
      * Create a the auth services.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
@@ -461,17 +468,22 @@ class Authentifier
      *
      * @return array
      */
-    public function context(): array
+    public function context(string $prop = null): array
     {
+        // Return the cached context.
+        if (isset($this->currentContext)) {
+            return isset($prop) ? $this->currentContext[$prop] : $this->currentContext;
+        }
+
         // A context should always have an owner_id, be it null.
-        $context = [
+        $this->currentContext = [
             'owner_id' => null
         ];
 
         // Common context to consumers (both users and accesses).
         $consumer = $this->consumer();
         if (!is_null($consumer)) {
-            $context = [
+            $this->currentContext = [
                 'entity_id' => $consumer->entity_id,
                 'owner_id' => $consumer->owner_id,
             ];
@@ -480,14 +492,25 @@ class Authentifier
         // When the consumer is an access.
         $access = $this->access();
         if (!is_null($access)) {
-            $context = [
+            $this->currentContext = [
                 'access_id' => $access->id,
                 'client_id' => $access->client->id,
                 'entity_id' => $access->client->entity_id,
                 'owner_id' => $access->client->owner_id,
             ];
         }
-        return $context;
+        return isset($prop) ? $this->currentContext[$prop] : $this->currentContext;
+    }
+
+    /**
+     * Set the consumer context.
+     *
+     * @param  array  $context
+     * @return array
+     */
+    public function setContext(array $context = null): array
+    {
+        $this->currentContext = $context;
     }
 
     /**
