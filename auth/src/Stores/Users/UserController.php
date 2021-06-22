@@ -243,10 +243,15 @@ class UserController extends CrudController
      */
     protected function uiConfig()
     {
-        return ['xapi' => [
-            'tables' => config('trax-xapi-store.tables'),
-            'gdpr' => config('trax-xapi-store.gdpr'),
-            'logging' => config('trax-xapi-store.logging'),
-        ]];
+        return [
+            'app' => [
+                'env' => config('app.env'),
+            ],
+            'xapi' => [
+                'tables' => config('trax-xapi-store.tables'),
+                'gdpr' => config('trax-xapi-store.gdpr'),
+                'logging' => config('trax-xapi-store.logging'),
+            ],
+        ];
     }
 }
