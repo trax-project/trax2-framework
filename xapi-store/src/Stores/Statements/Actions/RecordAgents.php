@@ -137,6 +137,7 @@ trait RecordAgents
         // Get back the new models.
         $vids = collect($insertedBatch)->pluck('vid')->toArray();
         $newAgents = $this->agents->whereVidIn($vids);
+        $this->agents->cache($newAgents);
 
         // Index them.
         foreach ($agentsInfo as &$agentInfo) {

@@ -2,6 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Verbs;
 
+use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\Repo\CrudRepository;
@@ -22,7 +23,38 @@ class VerbRepository extends CrudRepository
     }
 
     /**
-     * Find an existing activity given its IRI.
+     * Cache a collection of verbs.
+     *
+     * @param  \Illuminate\Support\Collection  $verbs
+     * @return void
+     */
+    public function cache(Collection $verbs): void
+    {
+        Caching::cacheVerbs(
+            $verbs->pluck('iri', 'id'),
+            TraxAuth::context('owner_id')
+        );
+    }
+
+    /**
+     * Find an existing verb ID given its IRI.
+     *
+     * @param  string  $iri
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return int|false
+     */
+    public function idByIri(string $iri, Query $query = null)
+    {
+        $ownerId = TraxAuth::context('owner_id', $query);
+
+        return Caching::verbId($iri, function ($iri, $ownerId) {
+            $verb = $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
+            return $verb ? $verb->id : false;
+        }, $ownerId);
+    }
+
+    /**
+     * Find an existing verb given its IRI.
      *
      * @param  string  $iri
      * @param  \Trax\Repo\Querying\Query  $query
@@ -31,14 +63,11 @@ class VerbRepository extends CrudRepository
     public function findByIri(string $iri, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        return Caching::verb($iri, function ($iri, $ownerId) {
-            return $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
-        }, $ownerId);
+        return $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
     }
 
     /**
-     * Find a collection of activities given their IRIs.
+     * Find a collection of verbs given their IRIs.
      *
      * @param  array  $iris
      * @param  \Trax\Repo\Querying\Query  $query
@@ -47,9 +76,6 @@ class VerbRepository extends CrudRepository
     public function whereIriIn(array $iris, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        // We should use the caching system here!!!!!!!!!!!!!!!!!
-
         return $this->addFilter(['iri' => ['$in' => $iris], 'owner_id' => $ownerId])->get();
     }
 

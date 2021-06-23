@@ -140,6 +140,12 @@ trait StatementFilters
             return $filter;
         }
 
+        // other.
+        $filter = $this->getMagicContextActivityFilter($field, 'other');
+        if (!empty($filter)) {
+            return $filter;
+        }
+
         // profile.
         $filter = $this->getMagicContextProfileFilter($field);
         if (!empty($filter)) {

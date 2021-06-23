@@ -29,9 +29,6 @@ class PersonRepository extends CrudRepository
     public function whereUuidIn(array $uuids, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        // We should use the caching system here!!!!!!!!!!!!!!!!!
-
         return $this->addFilter(['uuid' => ['$in' => $uuids], 'owner_id' => $ownerId])->get();
     }
 }

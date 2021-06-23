@@ -3,10 +3,11 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
-use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
+use Trax\XapiStore\Relations\StatementAgent;
+use Trax\XapiStore\Relations\StatementActivity;
 
 trait RequestMagicObject
 {
@@ -81,7 +82,7 @@ trait RequestMagicObject
         return function ($query) use ($agentIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
                 ->whereIn('agent_id', $agentIds)
-                ->where('type', 'object')
+                ->where('type', StatementAgent::TYPE_OBJECT)
                 ->where('sub', false);
         };
     }
@@ -134,7 +135,7 @@ trait RequestMagicObject
         return function ($query) use ($activityIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_activity')
                 ->whereIn('activity_id', $activityIds)
-                ->where('type', 'object')
+                ->where('type', StatementActivity::TYPE_OBJECT)
                 ->where('sub', false);
         };
     }

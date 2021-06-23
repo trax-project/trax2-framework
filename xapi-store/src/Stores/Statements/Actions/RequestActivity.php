@@ -5,6 +5,7 @@ namespace Trax\XapiStore\Stores\Statements\Actions;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Activities\Activity;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
+use Trax\XapiStore\Relations\StatementActivity;
 
 trait RequestActivity
 {
@@ -25,14 +26,14 @@ trait RequestActivity
 
         // Get the activity.
         $iri = $query->filter('activity');
-        if (!$activity = app(ActivityRepository::class)->findByIri($iri, $query)) {
+        if (!$activityId = app(ActivityRepository::class)->idByIri($iri, $query)) {
             return false;
         }
 
         // Adapt the query.
         $callback = $query->hasOption('related_activities') && $query->option('related_activities') == 'true'
-            ? $this->relatedActivitiesCallback($activity)
-            : $this->activityCallback($activity);
+            ? $this->relatedActivitiesCallback($activityId)
+            : $this->activityCallback($activityId);
         
         // Modify the filters.
         $query->removeFilter('activity');
@@ -43,15 +44,15 @@ trait RequestActivity
     /**
      * Get callback for activity filter.
      *
-     * @param  \Trax\XapiStore\Stores\Activities\Activity  $activity
+     * @param  int  $activityId
      * @return callable
      */
-    protected function activityCallback(Activity $activity): callable
+    protected function activityCallback(int $activityId): callable
     {
-        return function ($query) use ($activity) {
+        return function ($query) use ($activityId) {
             return $query->select('statement_id')->from('trax_xapi_statement_activity')
-                ->where('activity_id', $activity->id)
-                ->where('type', 'object')
+                ->where('activity_id', $activityId)
+                ->where('type', StatementActivity::TYPE_OBJECT)
                 ->where('sub', false);
         };
     }
@@ -59,14 +60,14 @@ trait RequestActivity
     /**
      * Get callback for related activities filter.
      *
-     * @param  \Trax\XapiStore\Stores\Activities\Activity  $activity
+     * @param  int  $activityId
      * @return callable
      */
-    protected function relatedActivitiesCallback(Activity $activity): callable
+    protected function relatedActivitiesCallback(int $activityId): callable
     {
-        return function ($query) use ($activity) {
+        return function ($query) use ($activityId) {
             return $query->select('statement_id')->from('trax_xapi_statement_activity')
-                ->where('activity_id', $activity->id);
+                ->where('activity_id', $activityId);
         };
     }
 }

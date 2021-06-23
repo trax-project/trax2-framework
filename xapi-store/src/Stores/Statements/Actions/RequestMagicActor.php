@@ -3,9 +3,9 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
-use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
+use Trax\XapiStore\Relations\StatementAgent;
 
 trait RequestMagicActor
 {
@@ -61,7 +61,7 @@ trait RequestMagicActor
         return function ($query) use ($agentIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
                 ->whereIn('agent_id', $agentIds)
-                ->where('type', 'actor')
+                ->where('type', StatementAgent::TYPE_ACTOR)
                 ->where('sub', false);
         };
     }

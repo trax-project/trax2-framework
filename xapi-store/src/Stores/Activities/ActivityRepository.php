@@ -2,6 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Activities;
 
+use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\Repo\CrudRepository;
@@ -23,6 +24,37 @@ class ActivityRepository extends CrudRepository
     }
 
     /**
+     * Cache a collection of activities.
+     *
+     * @param  \Illuminate\Support\Collection  $activities
+     * @return void
+     */
+    public function cache(Collection $activities): void
+    {
+        Caching::cacheActivities(
+            $activities->pluck('iri', 'id'),
+            TraxAuth::context('owner_id')
+        );
+    }
+
+    /**
+     * Find an existing activity ID given its IRI.
+     *
+     * @param  string  $iri
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return int|false
+     */
+    public function idByIri(string $iri, Query $query = null)
+    {
+        $ownerId = TraxAuth::context('owner_id', $query);
+
+        return Caching::activityId($iri, function ($iri, $ownerId) {
+            $activity = $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
+            return $activity ? $activity->id : false;
+        }, $ownerId);
+    }
+
+    /**
      * Find an existing activity given its IRI.
      *
      * @param  string  $iri
@@ -32,10 +64,7 @@ class ActivityRepository extends CrudRepository
     public function findByIri(string $iri, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        return Caching::activity($iri, function ($iri, $ownerId) {
-            return $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
-        }, $ownerId);
+        return $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
     }
 
     /**
@@ -48,9 +77,6 @@ class ActivityRepository extends CrudRepository
     public function whereIriIn(array $iris, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        // We should use the caching system here!!!!!!!!!!!!!!!!!
-
         return $this->addFilter(['iri' => ['$in' => $iris], 'owner_id' => $ownerId])->get();
     }
 

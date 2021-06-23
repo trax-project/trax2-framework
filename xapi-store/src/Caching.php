@@ -3,16 +3,56 @@
 namespace Trax\XapiStore;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 use Trax\Auth\Caching as AuthCaching;
 
 class Caching extends AuthCaching
 {
-    /**
-     * Conservation delay.
+     /**
+     * Return cache duration.
      *
-     * @var int
+     * @return int
      */
-    protected static $xapiConservation = 60 * 60 * 24;
+    public static function duration(): int
+    {
+        return config('trax-xapi-store.cache.duration', 60 * 60 * 24 * 365);
+    }
+
+     /**
+     * Cache agents.
+     *
+     * @param  \Illuminate\Support\Collection  $agents
+     * @param  int  $ownerId
+     * @return void
+     */
+    public static function cacheAgents(Collection $agents, $ownerId = null): void
+    {
+        self::cacheXapiItems($agents, 'agent', $ownerId);
+    }
+
+     /**
+     * Cache verbs.
+     *
+     * @param  \Illuminate\Support\Collection  $verbs
+     * @param  int  $ownerId
+     * @return void
+     */
+    public static function cacheVerbs(Collection $verbs, $ownerId = null): void
+    {
+        self::cacheXapiItems($verbs, 'verb', $ownerId);
+    }
+
+     /**
+     * Cache activities.
+     *
+     * @param  \Illuminate\Support\Collection  $activities
+     * @param  int  $ownerId
+     * @return void
+     */
+    public static function cacheActivities(Collection $activities, $ownerId = null): void
+    {
+        self::cacheXapiItems($activities, 'activity', $ownerId);
+    }
 
      /**
      * Return an agent.
@@ -20,66 +60,94 @@ class Caching extends AuthCaching
      * @param  string  $vid
      * @param  callable  $callback
      * @param  int  $ownerId
-     * @return \Trax\XapiStore\Stores\Agents\Agent
+     * @return int
      */
-    public static function agent(string $vid, $callback, $ownerId = null)
+    public static function agentId(string $vid, $callback, $ownerId = null)
     {
-        if (!self::enabled()) {
-            return $callback($vid, $ownerId);
-        }
-
-        $key = isset($ownerId)
-            ? 'owner_' . $ownerId . '_agent_' . $vid
-            : 'agent_' . $vid;
-
-        return Cache::remember($key, self::$xapiConservation, function () use ($vid, $ownerId, $callback) {
-            return $callback($vid, $ownerId);
-        });
+        return self::xapiItemId($vid, 'agent', $callback, $ownerId);
     }
 
     /**
-     * Return an agent.
+     * Return a verb.
      *
      * @param  string  $iri
      * @param  callable  $callback
      * @param  int  $ownerId
-     * @return \Trax\XapiStore\Stores\Verbs\Verb
+     * @return int
      */
-    public static function verb(string $iri, $callback, $ownerId = null)
+    public static function verbId(string $iri, $callback, $ownerId = null)
     {
-        if (!self::enabled()) {
-            return $callback($iri, $ownerId);
-        }
-
-        $key = isset($ownerId)
-            ? 'owner_' . $ownerId . '_verb_' . $iri
-            : 'verb_' . $iri;
-            
-        return Cache::remember($key, self::$xapiConservation, function () use ($iri, $ownerId, $callback) {
-            return $callback($iri, $ownerId);
-        });
+        return self::xapiItemId($iri, 'verb', $callback, $ownerId);
     }
 
     /**
-     * Return an agent.
+     * Return an activity.
      *
      * @param  string  $iri
      * @param  callable  $callback
      * @param  int  $ownerId
-     * @return \Trax\XapiStore\Stores\Activities\Activity
+     * @return int
      */
-    public static function activity(string $iri, $callback, $ownerId = null)
+    public static function activityId(string $iri, $callback, $ownerId = null)
+    {
+        return self::xapiItemId($iri, 'activity', $callback, $ownerId);
+    }
+
+     /**
+     * Cache items.
+     *
+     * @param  \Illuminate\Support\Collection  $items
+     * @param  string $type
+     * @param  int  $ownerId
+     * @return void
+     */
+    protected static function cacheXapiItems(Collection $items, string $type, $ownerId = null): void
     {
         if (!self::enabled()) {
-            return $callback($iri, $ownerId);
+            return;
+        }
+        
+        $entries = $items->transform(function ($value) use ($type, $ownerId) {
+            return self::xapiKey($value, $type, $ownerId);
+        })->flip()->toArray();
+
+        Cache::putMany($entries, self::duration());
+    }
+
+    /**
+     * Return an xAPI item ID.
+     *
+     * @param  string  $id
+     * @param  string $type
+     * @param  callable  $callback
+     * @param  int  $ownerId
+     * @return int
+     */
+    protected static function xapiItemId(string $id, string $type, $callback, $ownerId = null)
+    {
+        if (!self::enabled()) {
+            return $callback($id, $ownerId);
         }
 
-        $key = isset($ownerId)
-            ? 'owner_' . $ownerId . '_activity_' . $iri
-            : 'activity_' . $iri;
+        $key = self::xapiKey($id, $type, $ownerId);
             
-        return Cache::remember($key, self::$xapiConservation, function () use ($iri, $ownerId, $callback) {
-            return $callback($iri, $ownerId);
+        return Cache::remember($key, self::duration(), function () use ($id, $ownerId, $callback) {
+            return $callback($id, $ownerId);
         });
+    }
+
+    /**
+     * Return an xAPI key.
+     *
+     * @param  string  $id
+     * @param  string $type
+     * @param  int  $ownerId
+     * @return string
+     */
+    protected static function xapiKey(string $id, string $type, $ownerId = null)
+    {
+        return isset($ownerId)
+            ? 'owner_' . $ownerId . '_' . $type . '_' . $id
+            : $type . '_' . $id;
     }
 }

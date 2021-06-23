@@ -5,6 +5,7 @@ namespace Trax\XapiStore\Stores\Statements\Actions;
 use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Statements\Statement;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
+use Trax\XapiStore\Relations\StatementAgent;
 
 trait RecordStatements
 {
@@ -114,35 +115,83 @@ trait RecordStatements
     {
         // Actor agent.
         if (!isset($statement->actor->objectType) || $statement->actor->objectType == 'Agent') {
-            $this->indexStatementAgent($model, $statement->actor, 'actor', $sub, $agentsInfo);
+            $this->indexStatementAgent(
+                $model,
+                $statement->actor,
+                StatementAgent::TYPE_ACTOR,
+                $sub,
+                $agentsInfo
+            );
         }
         // Actor group.
         if (isset($statement->actor->objectType) && $statement->actor->objectType == 'Group') {
-            $this->indexStatementGroup($model, $statement->actor, 'actor', $sub, $agentsInfo);
+            $this->indexStatementGroup(
+                $model,
+                $statement->actor,
+                StatementAgent::TYPE_ACTOR,
+                $sub,
+                $agentsInfo
+            );
         }
         // Object agent.
         if (isset($statement->object->objectType) && $statement->object->objectType == 'Agent') {
-            $this->indexStatementAgent($model, $statement->object, 'object', $sub, $agentsInfo);
+            $this->indexStatementAgent(
+                $model,
+                $statement->object,
+                StatementAgent::TYPE_OBJECT,
+                $sub,
+                $agentsInfo
+            );
         }
         // Object group.
         if (isset($statement->object->objectType) && $statement->object->objectType == 'Group') {
-            $this->indexStatementGroup($model, $statement->object, 'object', $sub, $agentsInfo);
+            $this->indexStatementGroup(
+                $model,
+                $statement->object,
+                StatementAgent::TYPE_OBJECT,
+                $sub,
+                $agentsInfo
+            );
         }
         // Instructor agent.
         if (isset($statement->context->instructor) && $statement->context->instructor->objectType == "Agent") {
-            $this->indexStatementAgent($model, $statement->context->instructor, 'instructor', $sub, $agentsInfo);
+            $this->indexStatementAgent(
+                $model,
+                $statement->context->instructor,
+                StatementAgent::TYPE_INSTRUCTOR,
+                $sub,
+                $agentsInfo
+            );
         }
         // Instructor group.
         if (isset($statement->context->instructor) && $statement->context->instructor->objectType == "Group") {
-            $this->indexStatementGroup($model, $statement->context->instructor, 'instructor', $sub, $agentsInfo);
+            $this->indexStatementGroup(
+                $model,
+                $statement->context->instructor,
+                StatementAgent::TYPE_INSTRUCTOR,
+                $sub,
+                $agentsInfo
+            );
         }
         // Team (always group).
         if (isset($statement->context->team)) {
-            $this->indexStatementGroup($model, $statement->context->team, 'team', $sub, $agentsInfo);
+            $this->indexStatementGroup(
+                $model,
+                $statement->context->team,
+                StatementAgent::TYPE_TEAM,
+                $sub,
+                $agentsInfo
+            );
         }
         // Authority.
         if (!$sub) {
-            $this->indexStatementAgent($model, $statement->authority, 'authority', $sub, $agentsInfo);
+            $this->indexStatementAgent(
+                $model,
+                $statement->authority,
+                StatementAgent::TYPE_AUTHORITY,
+                $sub,
+                $agentsInfo
+            );
         }
     }
 

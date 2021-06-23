@@ -19,22 +19,11 @@ class StatementAgent extends Model
     public $timestamps = false;
 
     /**
-     * Get the related agent.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Types of relation.
      */
-    public function agent()
-    {
-        return $this->belongsTo(\Trax\XapiStore\Stores\Agents\Agent::class);
-    }
-
-    /**
-     * Get the related statement.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function statement()
-    {
-        return $this->belongsTo(\Trax\XapiStore\Stores\Statements\Statement::class);
-    }
+    const TYPE_ACTOR = 1;
+    const TYPE_OBJECT = 2;
+    const TYPE_INSTRUCTOR = 3;
+    const TYPE_TEAM = 4;
+    const TYPE_AUTHORITY = 5;
 }

@@ -3,11 +3,12 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
-use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Activities\Activity;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
+use Trax\XapiStore\Relations\StatementAgent;
+use Trax\XapiStore\Relations\StatementActivity;
 
 trait RequestMagicContext
 {
@@ -84,7 +85,7 @@ trait RequestMagicContext
         return function ($query) use ($agentIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
                 ->whereIn('agent_id', $agentIds)
-                ->whereIn('type', ['instructor', 'team'])
+                ->whereIn('type', [StatementAgent::TYPE_INSTRUCTOR, StatementAgent::TYPE_TEAM])
                 ->where('sub', false);
         };
     }
@@ -105,21 +106,22 @@ trait RequestMagicContext
         // Get the matching activities.
         $uiContext = $query->filter('uiContext');
         $prefix = \Str::before($uiContext, ':');
-        if (in_array($prefix, ['parent', 'grouping', 'category'])) {
+        if (in_array($prefix, ['parent', 'grouping', 'category', 'other'])) {
             $activityId = \Str::after($uiContext, $prefix.':');
+            $type = StatementActivity::typeByName($prefix);
         } else {
             $activityId = $uiContext;
-            $prefix = null;
+            $type = null;
         }
 
-        if (!$activity = app(ActivityRepository::class)->findByIri($activityId, $query)) {
+        if (!$activityId = app(ActivityRepository::class)->idByIri($activityId, $query)) {
             return false;
         }
 
         // Modify the filters.
         $query->removeFilter('uiContext');
         $query->addFilter([
-            'id' => ['$in' => $this->magicContextActivityCallback($activity, $prefix)]
+            'id' => ['$in' => $this->magicContextActivityCallback($activityId, $type)]
         ]);
         return true;
     }
@@ -127,22 +129,27 @@ trait RequestMagicContext
     /**
      * Get callback for activity filter.
      *
-     * @param  \Trax\XapiStore\Stores\Activities\Activity  $activity
-     * @param  string  $prefix
+     * @param  int  $activityId
+     * @param  int  $type
      * @return callable
      */
-    protected function magicContextActivityCallback(Activity $activity, $relation = null): callable
+    protected function magicContextActivityCallback(int $activityId, $type = null): callable
     {
-        return function ($query) use ($activity, $relation) {
-            if (!isset($relation)) {
+        return function ($query) use ($activityId, $type) {
+            if (!isset($type)) {
                 return $query->select('statement_id')->from('trax_xapi_statement_activity')
-                    ->where('activity_id', $activity->id)
-                    ->whereIn('type', ['parent', 'grouping', 'category', 'other'])
+                    ->where('activity_id', $activityId)
+                    ->whereIn('type', [
+                        StatementActivity::TYPE_CONTEXT_PARENT,
+                        StatementActivity::TYPE_CONTEXT_GROUPING,
+                        StatementActivity::TYPE_CONTEXT_CATEGORY,
+                        StatementActivity::TYPE_CONTEXT_OTHER
+                    ])
                     ->where('sub', false);
             } else {
                 return $query->select('statement_id')->from('trax_xapi_statement_activity')
-                    ->where('activity_id', $activity->id)
-                    ->where('type', $relation)
+                    ->where('activity_id', $activityId)
+                    ->where('type', $type)
                     ->where('sub', false);
             }
         };

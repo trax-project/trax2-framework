@@ -131,6 +131,7 @@ trait RecordVerbs
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
         $newVerbs = $this->verbs->whereIriIn($iris);
+        $this->verbs->cache($newVerbs);
 
         // Index them: new + existing!
         foreach ($verbsInfo as $verbInfo) {

@@ -6,6 +6,7 @@ use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\Agent;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 use Trax\XapiStore\Stores\Agents\AgentService;
+use Trax\XapiStore\Relations\StatementAgent;
 
 trait RequestAgent
 {
@@ -34,14 +35,14 @@ trait RequestAgent
 
         // Get the agent.
         $vid = AgentFactory::virtualId($query->filter('agent'));
-        if (!$agent = app(AgentService::class)->findByVid($vid, $query)) {
+        if (!$agentId = app(AgentService::class)->idByVid($vid, $query)) {
             return false;
         }
 
         // Adapt the query.
         $callback = $query->hasOption('related_agents') && $query->option('related_agents') == 'true'
-            ? $this->relatedAgentsCallback($agent)
-            : $this->agentCallback($agent);
+            ? $this->relatedAgentsCallback($agentId)
+            : $this->agentCallback($agentId);
 
         // Modify the filters.
         $query->removeFilter('agent');
@@ -52,15 +53,15 @@ trait RequestAgent
     /**
      * Get callback for agent filter.
      *
-     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
+     * @param  int  $agentId
      * @return callable
      */
-    protected function agentCallback(Agent $agent): callable
+    protected function agentCallback(int $agentId): callable
     {
-        return function ($query) use ($agent) {
+        return function ($query) use ($agentId) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
-                ->where('agent_id', $agent->id)
-                ->whereIn('type', ['actor', 'object'])
+                ->where('agent_id', $agentId)
+                ->whereIn('type', [StatementAgent::TYPE_ACTOR, StatementAgent::TYPE_OBJECT])
                 ->where('sub', false);
         };
     }
@@ -68,14 +69,14 @@ trait RequestAgent
     /**
      * Get callback for related agents filter.
      *
-     * @param  \Trax\XapiStore\Stores\Agents\Agent  $agent
+     * @param  int  $agentId
      * @return callable
      */
-    protected function relatedAgentsCallback(Agent $agent): callable
+    protected function relatedAgentsCallback(int $agentId): callable
     {
-        return function ($query) use ($agent) {
+        return function ($query) use ($agentId) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
-                ->where('agent_id', $agent->id);
+                ->where('agent_id', $agentId);
         };
     }
 

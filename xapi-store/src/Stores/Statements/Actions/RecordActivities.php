@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Activities\Activity;
 use Trax\XapiStore\Stores\Activities\ActivityFactory;
+use Trax\XapiStore\Relations\StatementActivity;
 
 trait RecordActivities
 {
@@ -67,7 +68,7 @@ trait RecordActivities
         }
         $existingActivities->each(function ($model) use ($activitiesInfo) {
             $activitiesData = collect($activitiesInfo)
-                ->where('type', 'object')
+                ->where('type', StatementActivity::TYPE_OBJECT)
                 ->where('iri', $model->iri)
                 ->map(function ($activityInfo) {
                     return ['data' => $activityInfo->activity];
@@ -174,7 +175,7 @@ trait RecordActivities
                 $activities = array_merge($activities, $this->contextActivities(
                     $statementId,
                     $statementData->context->contextActivities->parent,
-                    'parent',
+                    StatementActivity::TYPE_CONTEXT_PARENT,
                     $sub
                 ));
             }
@@ -183,7 +184,7 @@ trait RecordActivities
                 $activities = array_merge($activities, $this->contextActivities(
                     $statementId,
                     $statementData->context->contextActivities->grouping,
-                    'grouping',
+                    StatementActivity::TYPE_CONTEXT_GROUPING,
                     $sub
                 ));
             }
@@ -192,7 +193,7 @@ trait RecordActivities
                 $activities = array_merge($activities, $this->contextActivities(
                     $statementId,
                     $statementData->context->contextActivities->category,
-                    'category',
+                    StatementActivity::TYPE_CONTEXT_CATEGORY,
                     $sub
                 ));
             }
@@ -201,7 +202,7 @@ trait RecordActivities
                 $activities = array_merge($activities, $this->contextActivities(
                     $statementId,
                     $statementData->context->contextActivities->other,
-                    'other',
+                    StatementActivity::TYPE_CONTEXT_OTHER,
                     $sub
                 ));
             }
@@ -222,7 +223,7 @@ trait RecordActivities
         return (object)[
             'iri' => $object->id,
             'activity' => $object,
-            'type' => 'object',
+            'type' => StatementActivity::TYPE_OBJECT,
             'sub' => $sub,
             'statementId' => $statementId
         ];
@@ -268,6 +269,7 @@ trait RecordActivities
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
         $newActivities = $this->activities->whereIriIn($iris);
+        $this->activities->cache($newActivities);
 
         // Index them: new + existing!
         foreach ($activitiesInfo as $activityInfo) {

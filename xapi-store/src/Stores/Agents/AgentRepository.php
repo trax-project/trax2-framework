@@ -2,6 +2,7 @@
 
 namespace Trax\XapiStore\Stores\Agents;
 
+use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
 use Trax\Repo\CrudRepository;
 use Trax\Repo\Querying\Query;
@@ -22,6 +23,37 @@ class AgentRepository extends CrudRepository
     }
 
     /**
+     * Cache a collection of agents.
+     *
+     * @param  \Illuminate\Support\Collection  $agents
+     * @return void
+     */
+    public function cache(Collection $agents): void
+    {
+        Caching::cacheAgents(
+            $agents->pluck('vid', 'id'),
+            TraxAuth::context('owner_id')
+        );
+    }
+
+    /**
+     * Find an existing agent ID given its VID.
+     *
+     * @param  string  $vid
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return int|false
+     */
+    public function idByVid(string $vid, Query $query = null)
+    {
+        $ownerId = TraxAuth::context('owner_id', $query);
+
+        return Caching::agentId($vid, function ($vid, $ownerId) {
+            $agent = $this->addFilter(['vid' => $vid, 'owner_id' => $ownerId])->get()->first();
+            return $agent ? $agent->id : false;
+        }, $ownerId);
+    }
+
+    /**
      * Find an existing agent given its VID.
      *
      * @param  string  $vid
@@ -31,10 +63,7 @@ class AgentRepository extends CrudRepository
     public function findByVid(string $vid, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        return Caching::agent($vid, function ($vid, $ownerId) {
-            return $this->addFilter(['vid' => $vid, 'owner_id' => $ownerId])->get()->first();
-        }, $ownerId);
+        return $this->addFilter(['vid' => $vid, 'owner_id' => $ownerId])->get()->first();
     }
 
     /**
@@ -47,9 +76,6 @@ class AgentRepository extends CrudRepository
     public function whereVidIn(array $vids, Query $query = null)
     {
         $ownerId = TraxAuth::context('owner_id', $query);
-
-        // We should use the caching system here!!!!!!!!!!!!!!!!!
-
         return $this->addFilter(['vid' => ['$in' => $vids], 'owner_id' => $ownerId])->get();
     }
 

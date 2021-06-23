@@ -3,7 +3,6 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Trax\Repo\Querying\Query;
-use Trax\XapiStore\Stores\Verbs\Verb;
 use Trax\XapiStore\Stores\Verbs\VerbRepository;
 
 trait RequestVerb
@@ -26,7 +25,7 @@ trait RequestVerb
 
         // Get the verb.
         $iri = $query->filter('verb');
-        if (!$verb = app(VerbRepository::class)->findByIri($iri, $query)) {
+        if (!$verbId = app(VerbRepository::class)->idByIri($iri, $query)) {
             return false;
         }
 
@@ -36,9 +35,9 @@ trait RequestVerb
         // Modify the filters.
         $query->removeFilter('verb');
         if ($whereHas) {
-            $query->addFilter(['verbRelations' => ['$has' => $this->verbWhereHasCallback($verb)]]);
+            $query->addFilter(['verbRelations' => ['$has' => $this->verbWhereHasCallback($verbId)]]);
         } else {
-            $query->addFilter(['id' => ['$in' => $this->verbWhereInCallback($verb)]]);
+            $query->addFilter(['id' => ['$in' => $this->verbWhereInCallback($verbId)]]);
         }
 
         return true;
@@ -47,14 +46,14 @@ trait RequestVerb
     /**
      * Get callback for verb filter.
      *
-     * @param  \Trax\XapiStore\Stores\Verbs\Verb  $verb
+     * @param  int  $verbId
      * @return callable
      */
-    protected function verbWhereInCallback(Verb $verb): callable
+    protected function verbWhereInCallback(int $verbId): callable
     {
-        return function ($query) use ($verb) {
+        return function ($query) use ($verbId) {
             return $query->select('statement_id')->from('trax_xapi_statement_verb')
-                ->where('verb_id', $verb->id)
+                ->where('verb_id', $verbId)
                 ->where('sub', false);
         };
     }
@@ -62,14 +61,14 @@ trait RequestVerb
     /**
      * Get callback for verb filter.
      *
-     * @param  \Trax\XapiStore\Stores\Verbs\Verb  $verb
+     * @param  int  $verbId
      * @return callable
      */
-    protected function verbWhereHasCallback(Verb $verb): callable
+    protected function verbWhereHasCallback(int $verbId): callable
     {
-        return function ($query) use ($verb) {
+        return function ($query) use ($verbId) {
             return $query
-                ->where('verb_id', $verb->id)
+                ->where('verb_id', $verbId)
                 ->where('sub', false);
         };
     }
