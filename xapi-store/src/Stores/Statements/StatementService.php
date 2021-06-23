@@ -118,13 +118,8 @@ class StatementService extends StatementRepository
             return $this->getStatements($query, $reveal);
         }
 
-        // Get the owner.
-        $consumer = TraxAuth::consumer();
-        $ownerId = is_null($consumer) ? null : $consumer->owner_id;
-        $ownerId = is_null($ownerId) ? $query->filter('owner_id') : $ownerId;
-
         // Request statement.
-        if (!$match = $this->requestStatement($query, $ownerId, $reveal)) {
+        if (!$match = $this->requestStatement($query, $reveal)) {
             return collect([]);
         }
 

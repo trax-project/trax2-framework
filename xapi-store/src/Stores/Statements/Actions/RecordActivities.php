@@ -47,11 +47,8 @@ trait RecordActivities
      */
     protected function getExistingActivities(array $activitiesInfo): Collection
     {
-        $iris = collect($activitiesInfo)->pluck('iri')->unique();
-        return $this->activities->addFilter([
-            'iri' => ['$in' => $iris],
-            'owner_id' => TraxAuth::context('owner_id')
-        ])->get();
+        $iris = collect($activitiesInfo)->pluck('iri')->unique()->toArray();
+        return $this->activities->whereIriIn($iris);
     }
 
     /**
@@ -270,10 +267,7 @@ trait RecordActivities
 
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
-        $newActivities = $this->activities->addFilter([
-            'owner_id' => TraxAuth::context('owner_id'),
-            'iri' => ['$in' => $iris]
-        ])->get();
+        $newActivities = $this->activities->whereIriIn($iris);
 
         // Index them: new + existing!
         foreach ($activitiesInfo as $activityInfo) {

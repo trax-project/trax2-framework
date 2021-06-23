@@ -29,10 +29,7 @@ trait RecordStatements
         // They are needed to index agents, activities and verbs.
         // We should remove this request when indexing will be moved in a Job.
         $uuids = collect($insertedBatch)->pluck('uuid')->toArray();
-        $models = $this->addFilter([
-            'owner_id' => TraxAuth::context('owner_id'),
-            'uuid' => ['$in' => $uuids]
-        ])->get()->all();
+        $models = $this->whereUuidIn($uuids)->all();
     
         // Index related agents.
         if (config('trax-xapi-store.tables.agents', false)

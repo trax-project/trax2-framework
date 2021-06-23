@@ -3,7 +3,6 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
-use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Stores\Agents\AgentFactory;
 
 trait RecordAgents
@@ -46,11 +45,8 @@ trait RecordAgents
      */
     protected function getExistingAgents(array $agentsInfo): Collection
     {
-        $vids = collect($agentsInfo)->pluck('vid')->unique();
-        return $this->agents->addFilter([
-            'vid' => ['$in' => $vids],
-            'owner_id' => TraxAuth::context('owner_id')
-        ])->get();
+        $vids = collect($agentsInfo)->pluck('vid')->unique()->toArray();
+        return $this->agents->whereVidIn($vids);
     }
 
     /**
@@ -74,16 +70,16 @@ trait RecordAgents
 
         // Insert persons.
         $batch = $uniqueAgentsInfo->map(function ($agentInfo) {
-            return $this->agents->newPersonData(TraxAuth::context('owner_id'));
+            return $this->agents->newPersonData();
         })->all();
-        $persons = $this->insertAgentsAndReturnModels($batch, 'persons', 'uuid');
+        $persons = $this->insertPersonsAndReturnModels($batch);
 
         // Insert pseudonymized agents.
         $pseudos = collect([]);
         if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
             $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons) {
                 $objectType = isset($agentInfo->agent->objectType) ? $agentInfo->agent->objectType : 'Agent';
-                return $this->agents->newPseudoData($objectType, $persons->pop()->id, TraxAuth::context('owner_id'));
+                return $this->agents->newPseudoData($objectType, $persons->pop()->id);
             })->all();
             $pseudos = $this->insertAgentsAndReturnModels($batch);
         }
@@ -92,10 +88,10 @@ trait RecordAgents
         $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons, $pseudos) {
             if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
                 $pseudo = $pseudos->pop();
-                return $this->agents->newAgentData($agentInfo->agent, $pseudo->person_id, $pseudo->id, TraxAuth::context('owner_id'));
+                return $this->agents->newAgentData($agentInfo->agent, $pseudo->person_id, $pseudo->id);
             } else {
                 $person = $persons->pop();
-                return $this->agents->newAgentData($agentInfo->agent, $person->id, null, TraxAuth::context('owner_id'));
+                return $this->agents->newAgentData($agentInfo->agent, $person->id, null);
             }
         })->all();
         $agents = $this->insertAgentsAndReturnModels($batch);
@@ -103,21 +99,29 @@ trait RecordAgents
     }
 
     /**
-     * Insert agents (or persons) and return the models.
+     * Insert persons and return the models.
      *
      * @param  array  $batch
-     * @param  string  $store
-     * @param  string  $id
      * @return \Illuminate\Support\Collection
      */
-    protected function insertAgentsAndReturnModels(array $batch, string $store = 'agents', string $id = 'vid'): Collection
+    protected function insertPersonsAndReturnModels(array $batch): Collection
     {
-        $inserted = $this->$store->insert($batch);
-        $ids = collect($inserted)->pluck($id)->toArray();
-        return $this->$store->addFilter([
-            'owner_id' => TraxAuth::context('owner_id'),
-            $id => ['$in' => $ids]
-        ])->get();
+        $inserted = $this->persons->insert($batch);
+        $uuids = collect($inserted)->pluck('uuid')->toArray();
+        return $this->persons->whereUuidIn($uuids);
+    }
+
+    /**
+     * Insert agents and return the models.
+     *
+     * @param  array  $batch
+     * @return \Illuminate\Support\Collection
+     */
+    protected function insertAgentsAndReturnModels(array $batch): Collection
+    {
+        $inserted = $this->agents->insert($batch);
+        $vids = collect($inserted)->pluck('vid')->toArray();
+        return $this->agents->whereVidIn($vids);
     }
 
     /**
@@ -132,10 +136,7 @@ trait RecordAgents
     {
         // Get back the new models.
         $vids = collect($insertedBatch)->pluck('vid')->toArray();
-        $newAgents = $this->agents->addFilter([
-            'owner_id' => TraxAuth::context('owner_id'),
-            'vid' => ['$in' => $vids]
-        ])->get();
+        $newAgents = $this->agents->whereVidIn($vids);
 
         // Index them.
         foreach ($agentsInfo as &$agentInfo) {

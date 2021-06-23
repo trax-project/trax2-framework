@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Activities\Activity;
@@ -14,11 +15,10 @@ trait RequestMagicContext
      * Context filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicContext(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestMagicContext(Query $query = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiContext')) {
@@ -32,9 +32,9 @@ trait RequestMagicContext
         }
 
         if (!empty($this->getMagicContextAgentFilter($uiContext))) {
-            return $this->requestMagicContextAgent($query, $ownerId, $reveal);
+            return $this->requestMagicContextAgent($query, $reveal);
         } else {
-            return $this->requestMagicContextActivity($query, $ownerId);
+            return $this->requestMagicContextActivity($query);
         }
     }
 
@@ -42,11 +42,10 @@ trait RequestMagicContext
      * Context filtering by agent.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicContextAgent(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestMagicContextAgent(Query $query = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal
@@ -58,10 +57,7 @@ trait RequestMagicContext
 
         // Get the matching agents.
         $uiContext = $query->filter('uiContext');
-        $agents = resolve(AgentService::class)->addFilter([
-            'uiCombo' => $uiContext,
-            'owner_id' => $ownerId
-        ])->get();
+        $agents = app(AgentService::class)->whereUiCombo($uiContext, $query);
 
         // No matching.
         if ($agents->isEmpty()) {
@@ -97,10 +93,9 @@ trait RequestMagicContext
      * Context filtering by activity.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestMagicContextActivity(Query $query = null, $ownerId = null): bool
+    protected function requestMagicContextActivity(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!config('trax-xapi-store.relations.statements_activities', false)) {
@@ -116,13 +111,8 @@ trait RequestMagicContext
             $activityId = $uiContext;
             $prefix = null;
         }
-        $activity = resolve(ActivityRepository::class)->addFilter([
-            'iri' => $activityId,
-            'owner_id' => $ownerId
-        ])->get()->first();
 
-        // No matching.
-        if (!$activity) {
+        if (!$activity = app(ActivityRepository::class)->findByIri($activityId, $query)) {
             return false;
         }
 

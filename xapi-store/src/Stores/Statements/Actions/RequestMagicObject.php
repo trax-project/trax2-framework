@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
 use Trax\XapiStore\Stores\Activities\ActivityRepository;
@@ -13,20 +14,19 @@ trait RequestMagicObject
      * Object filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicObject(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestMagicObject(Query $query = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiObject')) {
             return true;
         }
         if ($this->hasMagicAgentFilter($query->filter('uiObject'))) {
-            return $this->requestMagicObjectAgent($query, $ownerId, $reveal);
+            return $this->requestMagicObjectAgent($query, $reveal);
         } else {
-            return $this->requestMagicObjectActivity($query, $ownerId);
+            return $this->requestMagicObjectActivity($query);
         }
     }
 
@@ -34,11 +34,10 @@ trait RequestMagicObject
      * Object filtering by agent.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicObjectAgent(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestMagicObjectAgent(Query $query = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal
@@ -55,10 +54,7 @@ trait RequestMagicObject
         }
 
         // Get the matching agents.
-        $agents = resolve(AgentService::class)->addFilter([
-            'uiCombo' => $uiObject,
-            'owner_id' => $ownerId
-        ])->get();
+        $agents = app(AgentService::class)->whereUiCombo($uiObject, $query);
 
         // No matching.
         if ($agents->isEmpty()) {
@@ -94,10 +90,9 @@ trait RequestMagicObject
      * Object filtering by activity.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestMagicObjectActivity(Query $query = null, $ownerId = null): bool
+    protected function requestMagicObjectActivity(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!config('trax-xapi-store.relations.statements_activities', false)) {
@@ -111,10 +106,7 @@ trait RequestMagicObject
         }
 
         // Get the matching axtivities.
-        $activities = resolve(ActivityRepository::class)->addFilter([
-            'uiCombo' => $uiObject,
-            'owner_id' => $ownerId
-        ])->get();
+        $activities = app(ActivityRepository::class)->whereUiCombo($uiObject, $query);
 
         // No matching.
         if ($activities->isEmpty()) {

@@ -12,10 +12,9 @@ trait RequestActivity
      * Activity filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestActivity(Query $query = null, $ownerId = null): bool
+    protected function requestActivity(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('activity')
@@ -25,12 +24,8 @@ trait RequestActivity
         }
 
         // Get the activity.
-        $activities = resolve(ActivityRepository::class);
-        if (!$activity = $activities->addFilter([
-            'iri' => $query->filter('activity'),
-            'owner_id' => $ownerId
-        ])->get()->first()) {
-            // No matching.
+        $iri = $query->filter('activity');
+        if (!$activity = app(ActivityRepository::class)->findByIri($iri, $query)) {
             return false;
         }
 

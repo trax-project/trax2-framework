@@ -10,6 +10,7 @@ use Trax\Auth\Middleware\ApiMiddleware;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authorizer;
 use Trax\Auth\Stores\Accesses\Access;
+use Trax\Repo\Querying\Query;
 
 class Authentifier
 {
@@ -467,15 +468,26 @@ class Authentifier
      * Get the consumer context or one of its props.
      *
      * @param  string  $prop
+     * @param  \Trax\Repo\Querying\Query  $query
      * @return mixed
      */
-    public function context(string $prop = null)
+    public function context(string $prop = null, Query $query = null)
     {
         $context = $this->getContext();
-        if (isset($prop)) {
-            return isset($context[$prop]) ? $context[$prop] : null;
+
+        if (!isset($prop)) {
+            return $context;
         }
-        return $context;
+
+        if (isset($context[$prop])) {
+            return $context[$prop];
+        }
+
+        if (isset($query) && $query->hasFilter($prop)) {
+            return $query->filter($prop);
+        }
+
+        return null;
     }
 
     /**
@@ -505,14 +517,16 @@ class Authentifier
         }
 
         // When the consumer is an access.
-        $access = $this->access();
-        if (!is_null($access)) {
-            $this->currentContext = [
-                'access_id' => $access->id,
-                'client_id' => $access->client->id,
-                'entity_id' => $access->client->entity_id,
-                'owner_id' => $access->client->owner_id,
-            ];
+        if (!$this->isUser()) {
+            // Be carefull because of unit tests.
+            if ($access = $this->access()) {
+                $this->currentContext = [
+                    'access_id' => $access->id,
+                    'client_id' => $access->client->id,
+                    'entity_id' => $access->client->entity_id,
+                    'owner_id' => $access->client->owner_id,
+                ];
+            }
         }
         return $this->currentContext;
     }

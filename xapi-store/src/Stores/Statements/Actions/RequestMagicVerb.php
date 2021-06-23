@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Verbs\VerbRepository;
 
@@ -12,10 +13,9 @@ trait RequestMagicVerb
      * Verb filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestMagicVerb(Query $query = null, $ownerId = null): bool
+    protected function requestMagicVerb(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiVerb')
@@ -32,10 +32,7 @@ trait RequestMagicVerb
         }
 
         // Get the matching verbs.
-        $verbs = resolve(VerbRepository::class)->addFilter([
-            'uiCombo' => $uiVerb,
-            'owner_id' => $ownerId
-        ])->get();
+        $verbs = app(VerbRepository::class)->whereUiCombo($uiVerb, $query);
 
         // No matching.
         if ($verbs->isEmpty()) {

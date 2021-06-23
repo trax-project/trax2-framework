@@ -13,10 +13,9 @@ trait RequestAgent
      * Agent filtering.
      *
      * @param  \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestAgent(Query $query = null, $ownerId = null): bool
+    protected function requestAgent(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('agent')
@@ -34,12 +33,8 @@ trait RequestAgent
         }
 
         // Get the agent.
-        $agents = resolve(AgentService::class);
-        if (!$agent = $agents->addFilter([
-            'vid' => AgentFactory::virtualId($query->filter('agent')),
-            'owner_id' => $ownerId
-        ])->get()->first()) {
-            // No matching.
+        $vid = AgentFactory::virtualId($query->filter('agent'));
+        if (!$agent = app(AgentService::class)->findByVid($vid, $query)) {
             return false;
         }
 

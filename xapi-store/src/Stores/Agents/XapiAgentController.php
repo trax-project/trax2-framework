@@ -3,7 +3,6 @@
 namespace Trax\XapiStore\Stores\Agents;
 
 use Illuminate\Http\Request;
-use Trax\Auth\TraxAuth;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
 use Trax\XapiStore\Stores\Agents\AgentService;

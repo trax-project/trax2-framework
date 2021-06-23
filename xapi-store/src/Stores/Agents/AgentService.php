@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Agents;
 
 use Illuminate\Container\Container;
+use Trax\Auth\TraxAuth;
 
 class AgentService extends AgentRepository
 {
@@ -28,12 +29,11 @@ class AgentService extends AgentRepository
     /**
      * Get data for a new person.
      *
-     * @param  integer|null  $ownerId
      * @return array
      */
-    public function newPersonData($ownerId = null): array
+    public function newPersonData(): array
     {
-        return ['owner_id' => $ownerId];
+        return ['owner_id' => TraxAuth::context('owner_id')];
     }
 
     /**
@@ -41,10 +41,9 @@ class AgentService extends AgentRepository
      *
      * @param  string  $objectType
      * @param  integer  $personId
-     * @param  integer|null  $ownerId
      * @return array
      */
-    public function newPseudoData(string $objectType, $personId, $ownerId = null): array
+    public function newPseudoData(string $objectType, $personId): array
     {
         return [
             'agent' => [
@@ -55,7 +54,7 @@ class AgentService extends AgentRepository
                 ]
             ],
             'person_id' => $personId,
-            'owner_id' => $ownerId,
+            'owner_id' => TraxAuth::context('owner_id'),
             'pseudonymized' => true
         ];
     }
@@ -66,16 +65,15 @@ class AgentService extends AgentRepository
      * @param  object  $agent
      * @param  integer  $personId
      * @param  integer|null  $pseudoId
-     * @param  integer|null  $ownerId
      * @return array
      */
-    public function newAgentData(object $agent, $personId, $pseudoId = null, $ownerId = null): array
+    public function newAgentData(object $agent, $personId, $pseudoId = null): array
     {
         return [
             'agent' => $agent,
             'person_id' => $personId,
             'pseudo_id' => $pseudoId,
-            'owner_id' => $ownerId
+            'owner_id' => TraxAuth::context('owner_id')
         ];
     }
 

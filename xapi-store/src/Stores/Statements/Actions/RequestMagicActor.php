@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Stores\Statements\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Stores\Agents\AgentService;
 
@@ -12,11 +13,10 @@ trait RequestMagicActor
      * Agent filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicActor(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestMagicActor(Query $query = null, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal
@@ -34,10 +34,7 @@ trait RequestMagicActor
         }
 
         // Get the matching agents.
-        $agents = resolve(AgentService::class)->addFilter([
-            'uiCombo' => $uiActor,
-            'owner_id' => $ownerId
-        ])->get();
+        $agents = app(AgentService::class)->whereUiCombo($uiActor, $query);
 
         // No matching.
         if ($agents->isEmpty()) {

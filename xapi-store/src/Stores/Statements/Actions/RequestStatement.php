@@ -20,44 +20,43 @@ trait RequestStatement
      * Statement filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @param bool  $reveal
      * @return bool
      */
-    protected function requestStatement(Query $query = null, $ownerId = null, bool $reveal = true): bool
+    protected function requestStatement(Query $query = null, bool $reveal = true): bool
     {
         // Request agent from API.
-        if (!$match = $this->requestAgent($query, $ownerId)) {
+        if (!$match = $this->requestAgent($query)) {
             return false;
         }
 
         // Request verb from API.
-        if (!$match = $this->requestVerb($query, $ownerId)) {
+        if (!$match = $this->requestVerb($query)) {
             return false;
         }
 
         // Request activity from API.
-        if (!$match = $this->requestActivity($query, $ownerId)) {
+        if (!$match = $this->requestActivity($query)) {
             return false;
         }
 
         // Request actor from UI.
-        if (!$match = $this->requestMagicActor($query, $ownerId, $reveal)) {
+        if (!$match = $this->requestMagicActor($query, $reveal)) {
             return false;
         }
 
         // Request verb from UI.
-        if (!$match = $this->requestMagicVerb($query, $ownerId)) {
+        if (!$match = $this->requestMagicVerb($query)) {
             return false;
         }
 
         // Request object from UI.
-        if (!$match = $this->requestMagicObject($query, $ownerId, $reveal)) {
+        if (!$match = $this->requestMagicObject($query, $reveal)) {
             return false;
         }
 
         // Request context from UI.
-        if (!$match = $this->requestMagicContext($query, $ownerId, $reveal)) {
+        if (!$match = $this->requestMagicContext($query, $reveal)) {
             return false;
         }
 

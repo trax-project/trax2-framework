@@ -3,9 +3,9 @@
 namespace Trax\Auth\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
+use Trax\Auth\Caching;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authentifier;
 
@@ -56,9 +56,7 @@ class ApiMiddleware
         }
 
         // Get the access instance from cache first.
-        $access = Cache::remember("access_instance_$source", 60, function () use ($source) {
-            return $this->accesses->findByUuid($source);
-        });
+        $access = Caching::access($source);
 
         // Not found.
         if (!$access) {
@@ -70,11 +68,9 @@ class ApiMiddleware
             throw new AuthenticationException();
         }
 
-        // Get authorization from cache first.
-        $authorized = Cache::remember("access_authorization_$source", 60, function () use ($access, $request) {
-            $guard = $this->authentifier->guard($access->type);
-            return $guard->check($access->credentials, $request);
-        });
+        // Get authorization.
+        $guard = $this->authentifier->guard($access->type);
+        $authorized = $guard->check($access->credentials, $request);
 
         // Check authorization.
         if (!$authorized) {

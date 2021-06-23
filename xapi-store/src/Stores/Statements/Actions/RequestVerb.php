@@ -12,10 +12,9 @@ trait RequestVerb
      * Verb filtering.
      *
      * @param \Trax\Repo\Querying\Query  $query
-     * @param  string|int  $ownerId
      * @return bool
      */
-    protected function requestVerb(Query $query = null, $ownerId = null): bool
+    protected function requestVerb(Query $query = null): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('verb')
@@ -26,12 +25,8 @@ trait RequestVerb
         }
 
         // Get the verb.
-        $verbs = resolve(VerbRepository::class);
-        if (!$verb = $verbs->addFilter([
-            'iri' => $query->filter('verb'),
-            'owner_id' => $ownerId
-        ])->get()->first()) {
-            // No matching.
+        $iri = $query->filter('verb');
+        if (!$verb = app(VerbRepository::class)->findByIri($iri, $query)) {
             return false;
         }
 

@@ -5,7 +5,7 @@ namespace Trax\Auth\Middleware;
 use Closure;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Trax\Auth\Caching;
 use Trax\Auth\Stores\Accesses\AccessService;
 
 class KnownAccessMiddleware
@@ -46,9 +46,7 @@ class KnownAccessMiddleware
         }
 
         // Get the access from the cache first.
-        $access = Cache::remember("access_$source", 60, function () use ($source) {
-            return $this->accesses->findByUuid($source);
-        });
+        $access = Caching::access($source);
 
         // Not found.
         if (!$access) {

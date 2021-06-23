@@ -43,11 +43,8 @@ trait RecordVerbs
      */
     protected function getExistingVerbs(array $verbsInfo): Collection
     {
-        $iris = collect($verbsInfo)->pluck('iri')->unique();
-        return $this->verbs->addFilter([
-            'iri' => ['$in' => $iris],
-            'owner_id' => TraxAuth::context('owner_id')
-        ])->get();
+        $iris = collect($verbsInfo)->pluck('iri')->unique()->toArray();
+        return $this->verbs->whereIriIn($iris);
     }
 
     /**
@@ -133,10 +130,7 @@ trait RecordVerbs
 
         // Get back the new models.
         $iris = collect($insertedBatch)->pluck('iri')->toArray();
-        $newVerbs = $this->verbs->addFilter([
-            'owner_id' => TraxAuth::context('owner_id'),
-            'iri' => ['$in' => $iris]
-        ])->get();
+        $newVerbs = $this->verbs->whereIriIn($iris);
 
         // Index them: new + existing!
         foreach ($verbsInfo as $verbInfo) {

@@ -6,7 +6,6 @@ use Trax\Core\ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Throwable;
-use Trax\Auth\TraxAuth;
 use Trax\XapiValidation\Exceptions\XapiValidationException;
 use Trax\XapiStore\Stores\Logs\Logger;
 use Trax\Core\Contracts\HttpException;
