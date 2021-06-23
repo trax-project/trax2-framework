@@ -15,7 +15,7 @@ class CreateTraxXapiPersonsTable extends Migration
     {
         Schema::create('trax_xapi_persons', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid');
             $table->timestamps();
 
             // Owner relation
@@ -24,6 +24,9 @@ class CreateTraxXapiPersonsTable extends Migration
                 ->references('id')
                 ->on('trax_owners')
                 ->onDelete('cascade');
+
+            // Unicity.
+            $table->unique(['uuid', 'owner_id']);
         });
     }
 
