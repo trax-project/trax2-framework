@@ -14,8 +14,7 @@ class CreateTraxXapiStatementAgentTable extends Migration
     public function up()
     {
         Schema::create('trax_xapi_statement_agent', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('type', 16)->index();
+            $table->tinyInteger('type')->index();
             $table->boolean('sub')->default(0)->index();
             $table->boolean('group')->default(0)->index();
 

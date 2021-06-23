@@ -14,7 +14,6 @@ class CreateTraxXapiStatementVerbTable extends Migration
     public function up()
     {
         Schema::create('trax_xapi_statement_verb', function (Blueprint $table) {
-            $table->bigIncrements('id');
             $table->boolean('sub')->default(0)->index();
 
             // Statement relation

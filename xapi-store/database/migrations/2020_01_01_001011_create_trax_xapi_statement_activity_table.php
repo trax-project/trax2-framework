@@ -14,8 +14,7 @@ class CreateTraxXapiStatementActivityTable extends Migration
     public function up()
     {
         Schema::create('trax_xapi_statement_activity', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('type', 16)->index();
+            $table->tinyInteger('type')->index();
             $table->boolean('sub')->default(0)->index();
 
             // Statement relation
