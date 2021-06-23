@@ -33,6 +33,6 @@ class Verb extends Model
      */
     public function statementRelations()
     {
-        return $this->hasMany(\Trax\XapiStore\Relations\StatementAgent::class);
+        return $this->hasMany(\Trax\XapiStore\Relations\StatementVerb::class);
     }
 }
