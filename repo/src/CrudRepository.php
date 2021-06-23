@@ -7,12 +7,6 @@ use Illuminate\Support\Collection;
 use Trax\Repo\Contracts\CrudRepositoryContract;
 use Trax\Repo\Querying\EloquentQueryWrapper;
 use Trax\Repo\Querying\Query;
-use Trax\Repo\Events\ResourceCreated;
-use Trax\Repo\Events\ResourceUpdated;
-use Trax\Repo\Events\ResourceDeleted;
-use Trax\Repo\Events\ResourcesDeleted;
-use Trax\Repo\Events\ResourcesDeletedByQuery;
-use Trax\Repo\Events\ResourcesTruncated;
 
 abstract class CrudRepository implements CrudRepositoryContract
 {
@@ -102,7 +96,6 @@ abstract class CrudRepository implements CrudRepositoryContract
     {
         $resource = $this->factory()::make($data);
         $resource->save();
-        event(new ResourceCreated($resource));
         return $resource;
     }
 
@@ -128,13 +121,11 @@ abstract class CrudRepository implements CrudRepositoryContract
      */
     public function updateModel($model, array $data = null)
     {
-        $originalData = $model->toArray();
         if (isset($data)) {
             $model = $this->factory()::update($model, $data);
         } else {
             $model->save();
         }
-        event(new ResourceUpdated($model, $originalData, $data));
         return $model;
     }
 
@@ -147,9 +138,7 @@ abstract class CrudRepository implements CrudRepositoryContract
      */
     public function duplicateModel($model, array $data = null)
     {
-        $copy = $this->factory()::duplicate($model, $data);
-        event(new ResourceCreated($copy));
-        return $copy;
+        return $this->factory()::duplicate($model, $data);
     }
 
     /**
@@ -211,10 +200,7 @@ abstract class CrudRepository implements CrudRepositoryContract
      */
     public function deleteModel($model)
     {
-        $originalData = $model->toArray();
-        $res = $model->delete();
-        event(new ResourceDeleted($this->factory()::modelClass(), $originalData));
-        return $res;
+        return $model->delete();
     }
 
     /**
@@ -226,9 +212,7 @@ abstract class CrudRepository implements CrudRepositoryContract
     public function deleteModels($models)
     {
         $ids = $models->pluck('id')->toArray();
-        $res = $this->factory()::modelClass()::destroy($ids);
-        event(new ResourcesDeleted($this->factory()::modelClass(), $ids));
-        return $res;
+        return $this->factory()::modelClass()::destroy($ids);
     }
 
     /**
@@ -240,7 +224,6 @@ abstract class CrudRepository implements CrudRepositoryContract
     public function deleteByQuery(Query $query)
     {
         $this->builder->delete($query);
-        event(new ResourcesDeletedByQuery($this->factory()::modelClass(), $query));
     }
 
     /**
@@ -252,9 +235,7 @@ abstract class CrudRepository implements CrudRepositoryContract
      */
     public function truncate()
     {
-        $res = $this->factory()::modelClass()::truncate();
-        event(new ResourcesTruncated($this->factory()::modelClass()));
-        return $res;
+        return $this->factory()::modelClass()::truncate();
     }
 
     /**
