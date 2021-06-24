@@ -103,7 +103,7 @@ class Caching extends AuthCaching
      */
     protected static function cacheXapiItems(Collection $items, string $type, $ownerId = null): void
     {
-        if (!self::enabled()) {
+        if (!self::redisEnabled()) {
             return;
         }
         
@@ -125,7 +125,7 @@ class Caching extends AuthCaching
      */
     protected static function xapiItemId(string $id, string $type, $callback, $ownerId = null)
     {
-        if (!self::enabled()) {
+        if (!self::redisEnabled()) {
             return $callback($id, $ownerId);
         }
 
