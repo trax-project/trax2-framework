@@ -13,7 +13,7 @@ trait RequestVerb
      * @param \Trax\Repo\Querying\Query  $query
      * @return bool
      */
-    protected function requestVerb(Query $query = null): bool
+    protected function requestVerb(Query $query): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('verb')

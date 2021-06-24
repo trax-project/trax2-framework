@@ -15,7 +15,7 @@ trait RequestActivity
      * @param \Trax\Repo\Querying\Query  $query
      * @return bool
      */
-    protected function requestActivity(Query $query = null): bool
+    protected function requestActivity(Query $query): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('activity')

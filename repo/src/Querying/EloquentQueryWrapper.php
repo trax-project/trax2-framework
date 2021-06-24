@@ -121,10 +121,6 @@ class EloquentQueryWrapper
 
         //dd($builder->toSql());
         //dd($builder->getBindings());
-        
-        //dd($builder->getBindings());
-        //print_r($builder->toSql());
-        //die;
 
         // Get results.
         $result = $builder->get();
@@ -235,7 +231,7 @@ class EloquentQueryWrapper
      */
     protected function processFilters($builder, array $filters, bool $or = false)
     {
-        $filters = $this->checkFilters($filters);
+        $filters = $this->serializeFilters($filters);
         $orWhere = false;
         foreach ($filters as $condition) {
             $this->addCondition($builder, $condition, $orWhere);

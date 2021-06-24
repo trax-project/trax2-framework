@@ -16,7 +16,7 @@ trait RequestMagicActor
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicActor(Query $query = null, bool $reveal = true): bool
+    protected function requestMagicActor(Query $query, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal

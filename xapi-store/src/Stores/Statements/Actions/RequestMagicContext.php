@@ -19,7 +19,7 @@ trait RequestMagicContext
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicContext(Query $query = null, bool $reveal = true): bool
+    protected function requestMagicContext(Query $query, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiContext')) {
@@ -46,7 +46,7 @@ trait RequestMagicContext
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicContextAgent(Query $query = null, bool $reveal = true): bool
+    protected function requestMagicContextAgent(Query $query, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal
@@ -96,7 +96,7 @@ trait RequestMagicContext
      * @param \Trax\Repo\Querying\Query  $query
      * @return bool
      */
-    protected function requestMagicContextActivity(Query $query = null): bool
+    protected function requestMagicContextActivity(Query $query): bool
     {
         // We can't make a relational request.
         if (!config('trax-xapi-store.relations.statements_activities', false)) {

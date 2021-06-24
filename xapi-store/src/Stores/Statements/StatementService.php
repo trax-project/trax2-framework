@@ -92,8 +92,8 @@ class StatementService extends StatementRepository
     public function get(Query $query = null): Collection
     {
         // We should use relations first.
-        if (config('trax-xapi-store.requests.relational', false) && isset($query)) {
-            $reveal = $query->option('reveal', false);
+        if (config('trax-xapi-store.requests.relational', false)) {
+            $reveal = isset($query) ? $query->option('reveal', false) : false;
             return $this->getRelationalFirst($query, $reveal);
         }
         return parent::get($query);
@@ -113,12 +113,13 @@ class StatementService extends StatementRepository
             return parent::get($query);
         }
 
-        // No query.
-        if (!isset($query)) {
-            return $this->getStatements($query, $reveal);
-        }
+        // That's where we will replace the traditional JSON filters by relational filters when it is possible.
+        // We need both the $query filters and the filters passed with the `addFilter()` method.
+        $query = isset($query) ? $query : new Query();
+        $addtionalFilters = $this->builder->getAndRemove();
+        $query->addFilter($addtionalFilters);
 
-        // Request statement.
+        // Now we try to replace the traditional JSON filters by relational filters.
         if (!$match = $this->requestStatement($query, $reveal)) {
             return collect([]);
         }

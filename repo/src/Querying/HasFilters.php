@@ -18,7 +18,22 @@ trait HasFilters
      */
     public function filters(): array
     {
+        // Always serialize the filters before returning them.
+        $this->filters = $this->serializeFilters($this->filters);
+
         return $this->filters;
+    }
+
+    /**
+     * Get and remove filters.
+     *
+     * @return array
+     */
+    public function getAndRemove(): array
+    {
+        $response = $this->filters();
+        $this->clearFilters();
+        return $response;
     }
 
     /**
@@ -40,8 +55,8 @@ trait HasFilters
      */
     public function filter(string $name)
     {
-        // Always check the filters before parsing them.
-        $this->filters = $this->checkFilters($this->filters);
+        // Always serialize the filters before parsing them.
+        $this->filters = $this->serializeFilters($this->filters);
 
         foreach ($this->filters as $filter) {
             foreach ($filter as $prop => $value) {
@@ -61,8 +76,8 @@ trait HasFilters
      */
     public function removeFilter(string $name)
     {
-        // Always check the filters before parsing them.
-        $this->filters = $this->checkFilters($this->filters);
+        // Always serialize the filters before parsing them.
+        $this->filters = $this->serializeFilters($this->filters);
 
         foreach ($this->filters as $index => &$filter) {
             foreach ($filter as $prop => $value) {
@@ -85,13 +100,13 @@ trait HasFilters
      */
     public function addFilter(array $filter = [])
     {
-        $filters = $this->checkFilters($filter);
+        $filters = $this->serializeFilters($filter);
         $this->filters = array_merge($this->filters, $filters);
         return $this;
     }
 
     /**
-     * Check filters.
+     * Serialize filters.
      *
      * At the end, each filter must be an array: [prop1 => value1], [prop2 => value2]
      * so we can merge several lists of filters without conflict: [prop => [$gt => 10]], [prop => [$lt => 30]]
@@ -102,7 +117,7 @@ trait HasFilters
      * @param  array  $filter
      * @return array
      */
-    protected function checkFilters(array $filters): array
+    protected function serializeFilters(array $filters): array
     {
         // We have an associative array at the first level.
         // [prop1 => value1, prop2 => value2] becomes [[prop1 => value1], [prop2 => value2]].

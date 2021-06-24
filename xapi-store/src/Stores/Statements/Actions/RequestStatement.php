@@ -23,7 +23,7 @@ trait RequestStatement
      * @param bool  $reveal
      * @return bool
      */
-    protected function requestStatement(Query $query = null, bool $reveal = true): bool
+    protected function requestStatement(Query $query, bool $reveal = true): bool
     {
         // Request agent from API.
         if (!$match = $this->requestAgent($query)) {

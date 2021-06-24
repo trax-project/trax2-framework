@@ -15,7 +15,7 @@ class Caching extends AuthCaching
      */
     public static function duration(): int
     {
-        return config('trax-xapi-store.cache.duration', 60 * 60 * 24 * 365);
+        return config('trax-xapi-store.cache.duration', null);
     }
 
      /**

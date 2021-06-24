@@ -18,7 +18,7 @@ trait RequestMagicObject
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicObject(Query $query = null, bool $reveal = true): bool
+    protected function requestMagicObject(Query $query, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiObject')) {
@@ -38,7 +38,7 @@ trait RequestMagicObject
      * @param  bool  $reveal
      * @return bool
      */
-    protected function requestMagicObjectAgent(Query $query = null, bool $reveal = true): bool
+    protected function requestMagicObjectAgent(Query $query, bool $reveal = true): bool
     {
         // We can't make a relational request.
         if (!$reveal
@@ -93,7 +93,7 @@ trait RequestMagicObject
      * @param \Trax\Repo\Querying\Query  $query
      * @return bool
      */
-    protected function requestMagicObjectActivity(Query $query = null): bool
+    protected function requestMagicObjectActivity(Query $query): bool
     {
         // We can't make a relational request.
         if (!config('trax-xapi-store.relations.statements_activities', false)) {
