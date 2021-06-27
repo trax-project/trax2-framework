@@ -17,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
     public $singletons = [
         'permission' => \Trax\Auth\Middleware\PermissionMiddleware::class,
         'known.access' => \Trax\Auth\Middleware\KnownAccessMiddleware::class,
+        \Trax\Auth\Routing::class => \Trax\Auth\Routing::class,
         \Trax\Auth\Authentifier::class => \Trax\Auth\Authentifier::class,
         \Trax\Auth\Authorizer::class => \Trax\Auth\Authorizer::class,
         \Trax\Auth\Stores\Accesses\AccessService::class => \Trax\Auth\Stores\Accesses\AccessService::class,

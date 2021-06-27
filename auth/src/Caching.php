@@ -2,8 +2,8 @@
 
 namespace Trax\Auth;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Trax\Auth\Stores\Accesses\AccessRepository;
 
 class Caching
 {
@@ -28,20 +28,22 @@ class Caching
             return 'TRAX LRS Redis cache is not activated. You should add CACHE_DRIVER=redis to your .env file...';
         }
     
-        Cache::put('check', 'check_value', 60);
-    
-        return Cache::get('check') == 'check_value'
+        Cache::store('redis')->put('check', 'check_value', 60);
+        
+        return Cache::store('redis')->get('check') == 'check_value'
             ? 'TRAX LRS Redis cache is up and running!'
             : 'TRAX LRS Redis cache does not work. Please, check the doc :(';
     }
 
     /**
-     * Return an access.
+     * Validate and return an access.
      *
-     * @param  string  $source
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $source
+     * @param  \Trax\Auth\Middleware\ApiMiddleware $middleware
      * @return \Trax\Auth\Stores\Accesses\Access
      */
-    public static function access(string $source)
+    public static function validateAccess(Request $request, string $source, $middleware)
     {
         // ALways cache the access, be it in a file.
 
@@ -49,8 +51,11 @@ class Caching
         // The cache is not reset when the access is modified or deleted,
         // so there will be a 30 delay to reflect changes.
 
-        return Cache::remember("access_$source", 30, function () use ($source) {
-            return app(AccessRepository::class)->findByUuid($source);
+        // We check the request credentials only when we load again the access from DB
+        // because it speeds up performances without big risk.
+
+        return Cache::remember("access_$source", 30, function () use ($request, $source, $middleware) {
+            return $middleware->validateAccess($request, $source);
         });
     }
 }

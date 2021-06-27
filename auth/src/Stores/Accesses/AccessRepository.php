@@ -8,7 +8,7 @@ use Trax\Repo\ModelAttributes\UuidModelRepo;
 
 class AccessRepository extends CrudRepository
 {
-    use ActivableModelRepo, UuidModelRepo;
+    use ActivableModelRepo;
 
     /**
      * Return model factory.
@@ -18,5 +18,16 @@ class AccessRepository extends CrudRepository
     public function factory()
     {
         return AccessFactory::class;
+    }
+
+    /**
+     * Find an existing resource given its UUID.
+     *
+     * @param string  $uuid
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function findByUuid($uuid)
+    {
+        return $this->model()->with('client')->where('uuid', $uuid)->first();
     }
 }

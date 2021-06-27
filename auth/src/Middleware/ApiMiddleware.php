@@ -56,7 +56,26 @@ class ApiMiddleware
         }
 
         // Get the access instance from cache first.
-        $access = Caching::access($source);
+        $access = Caching::validateAccess($request, $source, $this);
+
+        // Set the access.
+        $this->authentifier->setAccess($access);
+
+        return $next($request);
+    }
+
+    /**
+     * Get and validate the access.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $source
+     * @return \Trax\Auth\Stores\Accesses\Access
+     *
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    public function validateAccess(Request $request, string $source)
+    {
+        $access = $this->accesses->findByUuid($source);
 
         // Not found.
         if (!$access) {
@@ -77,9 +96,6 @@ class ApiMiddleware
             throw new AuthenticationException();
         }
 
-        // Set the access.
-        $this->authentifier->setAccess($access);
-
-        return $next($request);
+        return $access;
     }
 }
