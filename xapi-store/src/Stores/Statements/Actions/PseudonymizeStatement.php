@@ -88,20 +88,17 @@ trait PseudonymizeStatement
             return;
         }
         
-        $pseudo = $agentsInfo[$vid]->model->pseudo->data;
+        $pseudo = $agentsInfo[$vid]->model->pseudo;
 
         // Keep the name if present, but replace it.
         if (isset($agent->name)) {
-            $agent->name = $pseudo->account->name;
+            $agent->name = $pseudo->name;
         }
 
         // Replace identifier by the pseudo account.
         unset($agent->mbox);
         unset($agent->mbox_sha1sum);
         unset($agent->openid);
-        $agent->account = (object)[
-            'name' => $pseudo->account->name,
-            'homePage' => $pseudo->account->homePage,
-        ];
+        $agent->account = AgentFactory::reverseVirtualId($pseudo->vid, true)->account;
     }
 }

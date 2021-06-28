@@ -141,6 +141,32 @@ class AgentFactory implements ModelFactoryContract
     }
 
     /**
+     * Get the agent from a virtual ID.
+     *
+     * @param  string  $vid
+     * @param  bool  $asObject
+     * @return array|object
+     */
+    public static function reverseVirtualId(string $vid, bool $asObject = false)
+    {
+        list($type, $value) = explode('::', $vid);
+        if ($type == 'mbox') {
+            $agent = ['mbox' => $value];
+        } elseif ($type == 'mbox_sha1sum') {
+            $agent = ['mbox_sha1sum' => $value];
+        } elseif ($type == 'openid') {
+            $agent = ['openid' => $value];
+        } elseif ($type == 'account') {
+            list($name, $homePage) = explode('@', $value);
+            $agent = ['account' => [
+                'name' => $name,
+                'homePage' => $homePage,
+            ]];
+        }
+        return $asObject ? (object)$agent : $agent;
+    }
+
+    /**
      * Extract the agent props from a virtual ID.
      *
      * @param  string $vid

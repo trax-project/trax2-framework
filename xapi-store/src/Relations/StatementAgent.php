@@ -26,4 +26,15 @@ class StatementAgent extends Model
     const TYPE_INSTRUCTOR = 3;
     const TYPE_TEAM = 4;
     const TYPE_AUTHORITY = 5;
+
+    /**
+     * Get the related agent.
+     * This needed for the pseudonimization process.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function agent()
+    {
+        return $this->belongsTo(\Trax\XapiStore\Stores\Agents\Agent::class);
+    }
 }

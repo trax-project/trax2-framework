@@ -137,9 +137,12 @@ class StatementService extends StatementRepository
      */
     protected function getStatements(Query $query = null, bool $reveal = true): Collection
     {
-        return $reveal
-            ? $this->revealStatements(parent::get($query))
-            : parent::get($query);
+        $statements = parent::get($query);
+        if ($reveal) {
+            $removeNames = isset($query) && $query->hasOption('format') && $query->option('format') == 'ids';
+            $statements = $this->revealStatements($statements, $removeNames);
+        }
+        return $statements;
     }
 
     /**
