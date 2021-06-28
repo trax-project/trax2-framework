@@ -248,6 +248,7 @@ class UserController extends CrudController
                 'env' => config('app.env'),
             ],
             'xapi' => [
+                // No need to give default values here because the Starter Edition does not need it.
                 'tables' => config('trax-xapi-store.tables'),
                 'gdpr' => config('trax-xapi-store.gdpr'),
                 'logging' => config('trax-xapi-store.logging'),
