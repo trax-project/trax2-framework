@@ -92,7 +92,7 @@ trait RequestAgent
     {
         if ($query->hasFilter('agent')) {
             $agent = json_decode($query->filter('agent'));
-            if (isset($agent->account) && $agent->account->homePage == config('trax-xapi-store.gdpr.pseudo_iri')) {
+            if (isset($agent->account) && $agent->account->homePage == config('trax-xapi-store.gdpr.pseudo_iri', 'http://pseudo.traxlrs.com')) {
                 // Pseudonymized agent filter, we don't reveal.
                 return true;
             }
