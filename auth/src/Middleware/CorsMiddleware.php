@@ -60,6 +60,9 @@ class CorsMiddleware
         }
         $source = $urlSegments[1];
         if ($source == 'front' || $source == 'auth') {
+            // UI routes and Auth routes are not concerned by CORS.
+            // They may not have been detected by `isCorsRequest` when the app
+            // runs behind a proxy.
             return $next($request);
         }
 
