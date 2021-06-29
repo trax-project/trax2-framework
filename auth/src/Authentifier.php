@@ -5,8 +5,6 @@ namespace Trax\Auth;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Trax\Auth\Middleware\ApiMiddleware;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authorizer;
 use Trax\Auth\Stores\Accesses\Access;
