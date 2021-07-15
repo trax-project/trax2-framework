@@ -40,7 +40,11 @@ trait AcceptJsonRequests
         // Not a valid JSON content.
         $content = HttpRequest::content($request);
         if (!$json = json_decode($content)) {
-            throw new XapiBadRequestException('Invalid JSON content in request.');
+            // We should accept empty arrays because some LRP may send empty batches.
+            // See: https://github.com/trax-project/trax2-framework/issues/1
+            if (!is_array($json)) {
+                throw new XapiBadRequestException('Invalid JSON content in request.');
+            }
         }
 
         return $json;
