@@ -78,13 +78,13 @@ class StatementSchema implements Schema
     ];
     
     public $verb = [
-        'id' => ['format' => 'url', 'required'],
+        'id' => ['format' => 'iri', 'required'],
         'display' => ['format' => 'xapi_lang_map', 'descriptive'],
     ];
     
     public $activity = [
         'objectType' => ['format' => 'string', 'value' => 'Activity'],
-        'id' => ['format' => 'url', 'required'],
+        'id' => ['format' => 'iri', 'required'],
         'definition' => ['descriptive', '$or' => [
                 'definition',
                 'interaction_definition',
@@ -94,7 +94,7 @@ class StatementSchema implements Schema
     public $definition = [
         'name' => ['format' => 'xapi_lang_map'],
         'description' => ['format' => 'xapi_lang_map'],
-        'type' => ['format' => 'url'],
+        'type' => ['format' => 'iri'],
         'moreInfo' => ['format' => 'url'],
         'extensions' => ['format' => 'object'],
     ];
@@ -102,7 +102,7 @@ class StatementSchema implements Schema
     public $interaction_definition = [
         'name' => ['format' => 'xapi_lang_map'],
         'description' => ['format' => 'xapi_lang_map'],
-        'type' => ['format' => 'url', 'value' => 'http://adlnet.gov/expapi/activities/cmi.interaction'],
+        'type' => ['format' => 'iri', 'value' => 'http://adlnet.gov/expapi/activities/cmi.interaction'],
         'moreInfo' => ['format' => 'url'],
         'extensions' => ['format' => 'object'],
         '$extend' => ['$or' => [
@@ -245,7 +245,7 @@ class StatementSchema implements Schema
     ];
     
     public $attachment = [
-        'usageType' => ['format' => 'url', 'required'],
+        'usageType' => ['format' => 'iri', 'required'],
         'display' => ['format' => 'xapi_lang_map', 'required'],
         'description' => ['format' => 'xapi_lang_map'],
         'contentType' => ['format' => 'content_type', 'required'],
@@ -338,7 +338,7 @@ class StatementSchema implements Schema
         $props = get_object_vars($object);
         foreach ($props as $key => $val) {
             //
-            if (Validation::check($key, 'url')) {
+            if (Validation::check($key, 'iri')) {
                 continue;
             }
 

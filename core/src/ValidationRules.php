@@ -11,6 +11,7 @@ class ValidationRules
      */
     public static function register()
     {
+        self::registerIriRule();
         self::registerIsoDateRule();
         self::registerIsoDurationRule();
         self::registerIsoLangRule();
@@ -22,6 +23,21 @@ class ValidationRules
         self::registerForbiddenRule();
         self::registerForbiddenWithRule();
         self::registerArrayOrJsonRule();
+    }
+
+    /**
+     * IRI rule.
+     *
+     * @return void
+     */
+    protected static function registerIriRule()
+    {
+        app('validator')->extend('iri', function ($attribute, $value, $parameters, $validator) {
+            if (!is_string($value)) {
+                return false;
+            }
+            return (bool)preg_match('/^\w+:/i', $value);
+        }, "Invalid IRI.");
     }
 
     /**
