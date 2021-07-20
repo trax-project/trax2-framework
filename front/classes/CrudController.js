@@ -152,6 +152,8 @@ export default class CrudController {
                         this.vm.$notify({type: 'danger', message: this.vm.$t(this.errors['423-delete']) })
                     } else if (err.response.status == 403) {
                         this.vm.$notify({type: 'danger', message: this.vm.$t(this.errors['403-delete']) })
+                    } else {
+                        this.vm.$auth.handleErrorVm(err, this.vm)
                     }
                 })        
             }
