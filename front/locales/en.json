@@ -87,6 +87,7 @@
         "login": "Login",
         "login-message": "Sign in with your credentials...",
         "login-error": "Unknown user or wrong password!",
+        "login-unknown-error": "Unknown authentication error!",
         "my-account": "My Account",
         "new-password": "New password",
         "new-password-confirm": "New password (again)",
