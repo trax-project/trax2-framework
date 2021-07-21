@@ -80,7 +80,7 @@ class UserController extends CrudController
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'username' => "required|string|unique:$userTable,username$unicity",
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|custom_password',
             'active' => 'boolean',
             'admin' => 'boolean',
             'source' => (new UserSources)->rule(),
@@ -106,7 +106,7 @@ class UserController extends CrudController
         $content = !$withContent ? null : $request->validate([
             'firstname' => "string",
             'lastname' => "string",
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|custom_password|confirmed',
         ]);
         return new CrudRequest($params, $content);
     }
@@ -172,8 +172,8 @@ class UserController extends CrudController
 
         // Validate request.
         $data = $request->validate([
-            'current_password' => 'required|string|min:8|password',
-            'new_password' => 'required|string|min:8|confirmed',
+            'current_password' => 'required|string|password',
+            'new_password' => 'required|string|custom_password|confirmed',
         ]);
 
         // Perform task.
