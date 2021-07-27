@@ -101,7 +101,7 @@ trait HasFilters
     public function addFilter(array $filter = [])
     {
         $filters = $this->serializeFilters($filter);
-        $this->filters = array_merge($this->filters, $filters);
+        $this->filters = array_merge($this->filters(), $filters);
         return $this;
     }
 

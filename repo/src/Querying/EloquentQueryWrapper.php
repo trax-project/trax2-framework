@@ -189,7 +189,7 @@ class EloquentQueryWrapper
             return $builder;
         }
 
-        // Get builder with With.
+        // Get builder with With and/or more filters.
         $this->query = $query->addFilter($this->filters);
         $builder = $this->builder();
 

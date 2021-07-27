@@ -235,6 +235,9 @@ abstract class CrudController extends Controller
         // Validate request.
         $crudRequest = $this->validateRequest($request);
 
+        // Check permissions.
+        $this->authorizer->must($this->permissionsDomain . '.delete');
+
         // Hooks.
         $this->beforeRequest($crudRequest, $request);
         $this->beforeDestroyByQuery($crudRequest, $request);
