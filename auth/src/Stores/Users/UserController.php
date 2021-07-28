@@ -231,7 +231,7 @@ class UserController extends CrudController
                 return Trax::select((new UserSources)->all());
             case 'csrf-token':
                 return csrf_token();
-            case 'ui-config':
+            case 'config':
                 return $this->uiConfig();
         }
     }
