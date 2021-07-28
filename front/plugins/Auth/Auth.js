@@ -15,6 +15,10 @@ export default class Auth {
     config(conf) {
         this.conf = conf
     }
+
+    setGetMeHook(hookFunction) {
+        this.getMeHook = hookFunction
+    }
     
     // In most of the functions below, we don't have access to 'this'
     // because functions are directly attached to the routes object of Vue Router.
@@ -139,14 +143,14 @@ export default class Auth {
         axios.get('/trax/api/front/users/me', {params: {
             accessors: ['permissions'],
             relations: ['owner', 'entity', 'role'],
-            include: ['owners', 'csrf-token', 'ui-config'],
+            include: ['owners', 'csrf-token', 'config'],
         }})
         .then(resp => {
 
             // Keep user data and XSRF token.
             Vue.prototype.$auth.user = resp.data.data
             Vue.prototype.$auth['csrf-token'] = resp.data.included['csrf-token']
-            Vue.prototype.$auth['ui-config'] = resp.data.included['ui-config']
+            Vue.prototype.$auth.config = resp.data.included.config
             Vue.prototype.$auth.offline = resp.data.data.offline == true
 
             // Reset the redirect.
@@ -156,6 +160,14 @@ export default class Auth {
             if (checkOwner && !Vue.prototype.$auth.hasLocalOwner(resp.data.included.owners)) {
                 Vue.prototype.$auth.getMeReject('owners')
             } else {
+
+                // Call the hook if it exists.
+                if (Vue.prototype.$auth.getMeHook
+                    && !Vue.prototype.$auth.getMeHook(to, from, next)) {
+                    // The hook must return true to resolve the getMe promise.
+                    return
+                }
+
                 // Next callback of the Promise.
                 Vue.prototype.$auth.getMeResolve()
             }
