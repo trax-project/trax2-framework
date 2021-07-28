@@ -85,6 +85,18 @@ class ResetPasswordController extends Controller
     }
 
     /**
+     * Set the user's password.
+     *
+     * @param  \Trax\Auth\Stores\Users\User  $user
+     * @param  string  $password
+     * @return void
+     */
+    protected function setUserPassword($user, $password)
+    {
+        $user->setPassword($password);
+    }
+
+    /**
      * Get the response for a successful password reset.
      *
      * @param  \Illuminate\Http\Request  $request

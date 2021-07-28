@@ -5,6 +5,8 @@ namespace Trax\Auth\Stores\Users;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Date;
 use Trax\Auth\Contracts\HasPermissionsContract;
 use Trax\Auth\Contracts\ConsumerContract;
 use Trax\Repo\ModelAttributes\ActivableModel;
@@ -45,14 +47,14 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
      * @var array
      */
     protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname',
-        'source', 'meta', 'role_id', 'entity_id', 'owner_id'];
+        'source', 'meta', 'role_id', 'entity_id', 'owner_id', 'password_changed_at'];
 
     /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $appends = ['name'];
+    protected $appends = ['name', 'password_timestamp'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -81,6 +83,30 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
     public function getPermissionsAttribute(): array
     {
         return $this->permissions();
+    }
+
+    /**
+     * Create a new model instance given some data.
+     *
+     * @param  string  $password
+     * @return void
+     */
+    public function setPassword(string $password): void
+    {
+        $this->password = Hash::make($password);
+        $this->password_changed_at = $this->freshTimestamp();
+    }
+
+    /**
+     * Get the password timestamp.
+     *
+     * @return string
+     */
+    public function getPasswordTimestampAttribute(): string
+    {
+        return isset($this->password_changed_at)
+            ? $this->password_changed_at
+            : $this->created_at;
     }
 
     /**
