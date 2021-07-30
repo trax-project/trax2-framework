@@ -52,6 +52,11 @@ class ForgotPasswordController extends Controller
             ];
         }
 
+        // The user account is not internal, we must emit a 403 error.
+        if ($user->source != 'internal') {
+            abort(403, "External accounts can't reset their password!");
+        }
+
         // The user is an admin. It must be active and that's it.
         if ($user->admin) {
             return [
