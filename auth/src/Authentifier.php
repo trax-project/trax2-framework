@@ -113,14 +113,12 @@ class Authentifier
     /**
      * Get the authenticated user.
      *
-     * @return \Trax\Auth\Stores\Users\User
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return \Trax\Auth\Stores\Users\User|null
      */
     public function user()
     {
         if (!$this->isUser()) {
-            throw new AuthorizationException("Forbidden: apps can't get the authenticated user.");
+            return null;
         }
         return Auth::user();
     }
@@ -129,13 +127,11 @@ class Authentifier
      * Get the authentication access.
      *
      * @return \Trax\Auth\Stores\Accesses\Access|null
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function access()
     {
         if ($this->isUser()) {
-            throw new AuthorizationException("Forbidden: users can't get the connected app.");
+            return null;
         }
         return $this->currentAccess;
     }
