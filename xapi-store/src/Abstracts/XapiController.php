@@ -140,7 +140,7 @@ abstract class XapiController extends Controller
         try {
             return $request->validate($rules);
         } catch (ValidationException $e) {
-            throw new XapiBadRequestException('One or more request inputs are not valid: ', $e->errors());
+            throw new XapiBadRequestException('One or more request inputs are not valid: '. "\n" . json_encode($e->errors()), $e->errors());
         }
     }
 
