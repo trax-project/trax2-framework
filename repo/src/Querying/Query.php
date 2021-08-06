@@ -156,7 +156,7 @@ class Query
     }
 
     /**
-     * Get sort info: [column, direction].
+     * Get sort info: [[column, direction, relation], ...].
      *
      * @return array
      */
@@ -170,23 +170,14 @@ class Query
                 $dir = 'desc';
                 $col = \Str::after($col, '-');
             }
-            $sortInfo[] = ['col' => $col, 'dir' => $dir];
+            $colParts = explode('.', $col);
+            if (count($colParts) == 1) {
+                $sortInfo[] = ['col' => $col, 'dir' => $dir, 'rel' => null];
+            } else {
+                $sortInfo[] = ['col' => $colParts[1], 'dir' => $dir, 'rel' => $colParts[0]];
+            }
         }
         return $sortInfo;
-    }
-
-    /**
-     * Is ascending sorted?
-     *
-     * @return bool
-     */
-    public function ascending(): bool
-    {
-        if (!$this->sorted()) {
-            return true;
-        }
-        list($col, $dir) = $this->sortInfo();
-        return $dir == 'asc';
     }
 
     /**

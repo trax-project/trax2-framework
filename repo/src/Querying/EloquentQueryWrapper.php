@@ -195,7 +195,21 @@ class EloquentQueryWrapper
 
         // Sort results.
         foreach ($query->sortInfo() as $sortInfo) {
-            $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
+            if (is_null($sortInfo['rel'])) {
+                // Simple orderBy.
+                $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
+            } else {
+                // Order by applied on a belongTo relation.
+                $table = (new $this->model)->getTable();
+                $relationName = $sortInfo['rel'];
+                $foreignKey = $table . '.' . $relationName . '_id';
+                $relation = (new $this->model)->$relationName();
+                $joinedTable = $relation->getRelated()->getTable();
+                $joinedTableforeignKey = $relation->getRelated()->getQualifiedKeyName();
+
+                $builder->join($joinedTable, $foreignKey, '=', $joinedTableforeignKey)
+                    ->orderBy($joinedTable . '.' . $sortInfo['col'], $sortInfo['dir']);
+            }
         }
 
         // Limit and skip.
