@@ -102,7 +102,7 @@ class StatementSchema implements Schema
     public $interaction_definition = [
         'name' => ['format' => 'xapi_lang_map'],
         'description' => ['format' => 'xapi_lang_map'],
-        'type' => ['format' => 'iri', 'value' => 'http://adlnet.gov/expapi/activities/cmi.interaction'],
+        'type' => ['format' => 'iri'],
         'moreInfo' => ['format' => 'url'],
         'extensions' => ['format' => 'object'],
         '$extend' => ['$or' => [
