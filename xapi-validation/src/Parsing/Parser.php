@@ -37,7 +37,7 @@ class Parser
     /**
      * Try to validate the object against the given schema property.
      *
-     * @param  \stdClass|array  $object
+     * @param  object|array  $object
      * @param  string  $schemaProp
      * @return array
      */
@@ -65,7 +65,7 @@ class Parser
     /**
      * Try to validate the object with one of the given schema properties.
      *
-     * @param  \stdClass|array  $object
+     * @param  object|array  $object
      * @param  array  $schemaProps
      * @param  string  $path
      * @return array
@@ -83,7 +83,7 @@ class Parser
     /**
      * Try to validate the object against the given schema property.
      *
-     * @param  \stdClass|array  $object
+     * @param  object|array  $object
      * @param  string  $schemaProp
      * @param  string  $path
      * @return array
@@ -127,7 +127,7 @@ class Parser
     /**
      * Try to validate the object against the given schema.
      *
-     * @param  \stdClass|array  $object
+     * @param  object|array  $object
      * @param  array  $schema
      * @param  string  $path
      * @param  array  $errors
@@ -159,7 +159,7 @@ class Parser
     /**
      * Try to validate an object property under against the given schema.
      *
-     * @param  \stdClass|array  $object
+     * @param  object|array  $object
      * @param  string  $prop
      * @param  mixed  $value
      * @param  array  $schema
@@ -289,7 +289,7 @@ class Parser
     /**
      * Return the object schema given its schema property.
      *
-     * @param  \stdClass  $object
+     * @param  object  $object
      * @param  string  $schemaProp
      * @param  string  $path
      * @return  array
@@ -314,7 +314,7 @@ class Parser
     /**
      * Extend the object schema with one of potentiel complementary schemas.
      *
-     * @param  \stdClass  $object
+     * @param  object  $object
      * @param  array  $schema
      * @param  string  $extension
      * @param  string  $path
@@ -338,7 +338,7 @@ class Parser
     /**
      * Extend the object schema with one of potentiel 'CHOICE' schemas.
      *
-     * @param  \stdClass  $object
+     * @param  object  $object
      * @param  array  $schema
      * @param  array  $candidates
      * @param  bool  $required
@@ -376,7 +376,7 @@ class Parser
     /**
      * Extend the object schema with one of potentiel 'OR' schemas.
      *
-     * @param  \stdClass  $object
+     * @param  object  $object
      * @param  array  $schema
      * @param  array  $candidateProps
      * @param  string  $path

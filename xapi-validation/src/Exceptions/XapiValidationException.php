@@ -10,7 +10,7 @@ class XapiValidationException extends Exception implements HttpException
     /**
      * Data to be validated.
      *
-     * @var \stdClass|array
+     * @var object|array
      */
     protected $data;
 
@@ -26,7 +26,7 @@ class XapiValidationException extends Exception implements HttpException
      * Create a bad request exception.
      *
      * @param  string  $message
-     * @param  \stdClass|array  $data
+     * @param  object|array  $data
      * @param  array  $errors
      * @return void
      */
@@ -40,7 +40,7 @@ class XapiValidationException extends Exception implements HttpException
     /**
      * Get the data.
      *
-     * @return \stdClass|array
+     * @return object|array
      */
     public function data()
     {

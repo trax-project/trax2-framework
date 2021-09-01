@@ -87,6 +87,11 @@ class StatementFactory implements ModelFactoryContract
             $model->voided = $data['voided'];
         }
 
+        // Nullable pending.
+        if (isset($data['pending'])) {
+            $model->pending = $data['pending'];
+        }
+
         // UUID.
         $model->uuid = $model->data->id;
 
@@ -177,10 +182,10 @@ class StatementFactory implements ModelFactoryContract
     /**
      * Normalize context activities.
      *
-     * @param  \stdClass  $contextActivities
+     * @param  object  $contextActivities
      * @return void
      */
-    protected static function normalizeContextActivities(\stdClass $contextActivities)
+    protected static function normalizeContextActivities(object $contextActivities)
     {
         if (isset($contextActivities->parent) && !is_array($contextActivities->parent)) {
             $contextActivities->parent = [$contextActivities->parent];

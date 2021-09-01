@@ -8,6 +8,7 @@ use Trax\Repo\Querying\Query;
 use Trax\Repo\CrudRepository;
 use Trax\XapiStore\Traits\MergeableModelRepo;
 use Trax\XapiStore\Caching;
+use Trax\XapiStore\Relations\StatementActivity;
 
 class ActivityRepository extends CrudRepository
 {
@@ -74,7 +75,7 @@ class ActivityRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereIriIn(array $iris, Query $query = null)
+    public function whereIriIn(array $iris, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['iri' => ['$in' => $iris], 'owner_id' => $ownerId])->get();
@@ -87,9 +88,39 @@ class ActivityRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereUiCombo(string $uiCombo, Query $query = null)
+    public function whereUiCombo(string $uiCombo, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['uiCombo' => $uiCombo, 'owner_id' => $ownerId])->get();
+    }
+
+    /**
+     * Insert activities and returns models.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Support\Collection
+     */
+    public function insertAndGet(array $data): Collection
+    {
+        $insertedBatch = $this->insert($data);
+
+        // Get back the models.
+        $iris = collect($insertedBatch)->pluck('iri')->toArray();
+        $models = $this->whereIriIn($iris);
+
+        // Add them to the cache.
+        $this->cache($models);
+        return $models;
+    }
+
+    /**
+     * Insert relations between activities and statements.
+     *
+     * @param  array  $data
+     * @return void
+     */
+    public function insertStatementsRelations(array $data): void
+    {
+        StatementActivity::insert($data);
     }
 }

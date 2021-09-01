@@ -32,11 +32,11 @@ trait ProvideMultipartResponse
     /**
      * Return a part of a multipart.
      *
-     * @param  \stdClass  $part
+     * @param  object  $part
      * @param  string  $boundary
      * @return  string
      */
-    protected function multipart(\stdClass $part, string $boundary): string
+    protected function multipart(object $part, string $boundary): string
     {
           $crlf = "\r\n";
           $content = $crlf.'--'.$boundary.$crlf;

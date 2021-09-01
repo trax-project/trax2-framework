@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Trax\Repo\Contracts\CrudRepositoryContract;
+use Trax\Repo\Contracts\ReadableRepositoryContract;
 use Trax\Repo\CrudRequest;
+use Trax\Repo\Querying\Query;
 use Trax\Auth\Authorizer;
 use Trax\Auth\Authentifier;
 
@@ -445,19 +446,23 @@ abstract class CrudController extends Controller
      * Get resources from a repository.
      *
      * @param  string  $domain
-     * @param  \Trax\Repo\Contracts\CrudRepositoryContract  $repository
+     * @param  \Trax\Repo\Contracts\ReadableRepositoryContract  $repository
      * @param  \Trax\Repo\CrudRequest  $query
      * @return \Illuminate\Support\Collection
      */
-    protected function getResources(string $domain, CrudRepositoryContract $repository, CrudRequest $crudRequest = null)
+    protected function getResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null)
     {
         $filter = $this->authorizer->scopeFilter($domain);
         if (is_null($filter)) {
             return collect([]);
         } elseif (isset($crudRequest)) {
-            return $repository->addFilter($filter)->get($crudRequest->query());
+            return $repository->get(
+                $crudRequest->query()->addFilter($filter)
+            );
         } else {
-            return $repository->addFilter($filter)->get();
+            return $repository->get(
+                (new Query)->addFilter($filter)
+            );
         }
     }
 
@@ -465,19 +470,23 @@ abstract class CrudController extends Controller
      * Count resources from a repository, limited to pagination when provided.
      *
      * @param  string  $domain
-     * @param  \Trax\Repo\Contracts\CrudRepositoryContract  $repository
+     * @param  \Trax\Repo\Contracts\ReadableRepositoryContract  $repository
      * @param  \Trax\Repo\CrudRequest  $query
      * @return int
      */
-    protected function countResources(string $domain, CrudRepositoryContract $repository, CrudRequest $crudRequest = null): int
+    protected function countResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null): int
     {
         $filter = $this->authorizer->scopeFilter($domain);
         if (is_null($filter)) {
             return 0;
         } elseif (isset($crudRequest)) {
-            return $repository->addFilter($filter)->count($crudRequest->query());
+            return $repository->count(
+                $crudRequest->query()->addFilter($filter)
+            );
         } else {
-            return $repository->addFilter($filter)->count();
+            return $repository->count(
+                (new Query)->addFilter($filter)
+            );
         }
     }
 
@@ -485,19 +494,23 @@ abstract class CrudController extends Controller
      * Count all resources from a repository, without pagination params.
      *
      * @param  string  $domain
-     * @param  \Trax\Repo\Contracts\CrudRepositoryContract  $repository
+     * @param  \Trax\Repo\Contracts\ReadableRepositoryContract  $repository
      * @param  \Trax\Repo\CrudRequest  $query
      * @return int
      */
-    protected function countAllResources(string $domain, CrudRepositoryContract $repository, CrudRequest $crudRequest = null): int
+    protected function countAllResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null): int
     {
         $filter = $this->authorizer->scopeFilter($domain);
         if (is_null($filter)) {
             return 0;
         } elseif (isset($crudRequest)) {
-            return $repository->addFilter($filter)->countAll($crudRequest->query());
+            return $repository->countAll(
+                $crudRequest->query()->addFilter($filter)
+            );
         } else {
-            return $repository->addFilter($filter)->countAll();
+            return $repository->addFilter($filter)->countAll(
+                (new Query)->addFilter($filter)
+            );
         }
     }
 

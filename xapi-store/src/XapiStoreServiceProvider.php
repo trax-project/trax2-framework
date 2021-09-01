@@ -17,6 +17,7 @@ class XapiStoreServiceProvider extends ServiceProvider
     public $singletons = [
         'xapi' => \Trax\XapiStore\Middleware\XapiMiddleware::class,
         \Illuminate\Contracts\Debug\ExceptionHandler::class => \Trax\XapiStore\Exceptions\XapiExceptionHandler::class,
+        // Repositories.
         \Trax\XapiStore\Stores\Statements\StatementRepository::class => \Trax\XapiStore\Stores\Statements\StatementRepository::class,
         \Trax\XapiStore\Stores\Activities\ActivityRepository::class => \Trax\XapiStore\Stores\Activities\ActivityRepository::class,
         \Trax\XapiStore\Stores\Agents\AgentRepository::class => \Trax\XapiStore\Stores\Agents\AgentRepository::class,
@@ -26,10 +27,14 @@ class XapiStoreServiceProvider extends ServiceProvider
         \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class => \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class,
         \Trax\XapiStore\Stores\Persons\PersonRepository::class => \Trax\XapiStore\Stores\Persons\PersonRepository::class,
         \Trax\XapiStore\Stores\Verbs\VerbRepository::class => \Trax\XapiStore\Stores\Verbs\VerbRepository::class,
-        \Trax\XapiStore\Services\GlobalService::class => \Trax\XapiStore\Services\GlobalService::class,
-        \Trax\XapiStore\Stores\Statements\StatementService::class => \Trax\XapiStore\Stores\Statements\StatementService::class,
-        \Trax\XapiStore\Stores\Agents\AgentService::class => \Trax\XapiStore\Stores\Agents\AgentService::class,
         \Trax\XapiStore\Stores\Logs\LogRepository::class => \Trax\XapiStore\Stores\Logs\LogRepository::class,
+        // Services.
+        \Trax\XapiStore\Services\Destroyer\DestroyerService::class => \Trax\XapiStore\Services\Destroyer\DestroyerService::class,
+        \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class => \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class,
+        \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class => \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class,
+        \Trax\XapiStore\Services\Activity\ActivityService::class => \Trax\XapiStore\Services\Activity\ActivityService::class,
+        \Trax\XapiStore\Services\Agent\AgentService::class => \Trax\XapiStore\Services\Agent\AgentService::class,
+        \Trax\XapiStore\Services\Verb\VerbService::class => \Trax\XapiStore\Services\Verb\VerbService::class,
     ];
 
     /**

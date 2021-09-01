@@ -16,7 +16,7 @@ class CrudRequest
     /**
      * Request content.
      *
-     * @var \stdClass|array
+     * @var object|array
      */
     protected $content;
 
@@ -36,7 +36,7 @@ class CrudRequest
      * Make a request.
      *
      * @param  array  $params
-     * @param  \stdClass|array  $content
+     * @param  object|array|null  $content
      * @return void
      */
     public function __construct(array $params, $content = null)
@@ -179,7 +179,7 @@ class CrudRequest
     /**
      * Get the content.
      *
-     * @return \stdClass|array
+     * @return object|array
      */
     public function content()
     {
@@ -200,7 +200,7 @@ class CrudRequest
     /**
      * Set the content.
      *
-     * @param \stdClass|array  $content
+     * @param object|array  $content
      * @return void
      */
     public function setContent($content)

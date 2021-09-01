@@ -19,6 +19,13 @@ class StatementActivity extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['activity_id', 'statement_id', 'type', 'sub'];
+
+    /**
      * Types of relation.
      */
     const TYPE_OBJECT = 1;
@@ -35,7 +42,17 @@ class StatementActivity extends Model
      */
     public static function contextByName(string $name): int
     {
-        $constName = 'TYPE_CONTEXT_' . strtoupper($name);
-        return constant("StatementActivity::$constName");
+        switch ($name) {
+            case 'parent':
+                return  StatementActivity::TYPE_CONTEXT_PARENT;
+            case 'grouping':
+                return  StatementActivity::TYPE_CONTEXT_GROUPING;
+            case 'category':
+                return  StatementActivity::TYPE_CONTEXT_CATEGORY;
+            case 'other':
+                return  StatementActivity::TYPE_CONTEXT_OTHER;
+            default:
+                return null;
+        }
     }
 }

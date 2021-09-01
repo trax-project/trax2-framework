@@ -84,25 +84,6 @@ trait StatementFilters
     }
 
     /**
-     * Does context filter support relational request?
-     *
-     * @param  string  $field
-     * @param  string  $target
-     * @param  bool  $fulltext
-     * @return bool
-     */
-    protected function relationalMagicContext($field)
-    {
-        return !empty($this->getMagicContextAgentFilter($field))
-        || !empty($this->getMagicContextActivityFilter($field, 'parent'))
-        || !empty($this->getMagicContextActivityFilter($field, 'grouping'))
-        || !empty($this->getMagicContextActivityFilter($field, 'category'))
-        // No relational search by profile currently. The cost is too hight. We should index profiles.
-        || empty($this->getMagicContextProfileFilter($field))
-        ;
-    }
-
-    /**
      * Filter: uiContext.
      *
      * @param  string  $field
@@ -161,96 +142,5 @@ trait StatementFilters
                 'data->context->contextActivities->other[*]->id' => $field,
             ]],
         ];
-    }
-
-    /**
-     * Get context agent filter.
-     *
-     * @param  string  $field
-     * @return array
-     */
-    protected function getMagicContextAgentFilter($field)
-    {
-        // Account filter.
-        if (\Str::startsWith($field, 'account:')) {
-            $field = \Str::after($field, 'account:');
-            if (empty($field)) {
-                return [];
-            }
-            $parts = explode('@', $field);
-            if (count($parts) == 1) {
-                return [
-                    ['$or' => [
-                        'data->context->instructor->account->name' => $parts[0],
-                        'data->context->team->account->name' => $parts[0],
-                    ]],
-                ];
-            } else {
-                return [
-                    ['$or' => [
-                        ['$and' => [
-                            'data->context->instructor->account->name' => $parts[0],
-                            'data->context->instructor->account->homePage' => $parts[1],
-                        ]],
-                        ['$and' => [
-                            'data->context->team->account->name' => $parts[0],
-                            'data->context->team->account->homePage' => $parts[1],
-                        ]],
-                    ]],
-                ];
-            }
-        }
-
-        // Mbox filter.
-        $parts = explode('@', $field);
-        if (count($parts) > 1) {
-            return [
-                ['$or' => [
-                    'data->context->instructor->mbox' => 'mailto:' . $field,
-                    'data->context->team->mbox' => 'mailto:' . $field,
-                ]],
-            ];
-        }
-
-        return [];
-    }
-
-    /**
-     * Get context agent filter.
-     *
-     * @param  string  $field
-     * @param  string  $relation
-     * @return array
-     */
-    protected function getMagicContextActivityFilter($field, $relation)
-    {
-        if (\Str::startsWith($field, $relation.':')) {
-            $field = \Str::after($field, $relation.':');
-            if (empty($field)) {
-                return [];
-            }
-            return [
-                ['data->context->contextActivities->'.$relation.'[*]->id' => $field],
-            ];
-        }
-    }
-
-    /**
-     * Get profile filter.
-     *
-     * @param  string  $field
-     * @return array
-     */
-    protected function getMagicContextProfileFilter($field)
-    {
-        if (\Str::startsWith($field, 'profile:')) {
-            $field = \Str::after($field, 'profile:');
-            if (empty($field)) {
-                return [];
-            }
-            return [
-                ['data->context->contextActivities->category[*]->id' => ['$text' => $field]],
-            ];
-        }
     }
 }

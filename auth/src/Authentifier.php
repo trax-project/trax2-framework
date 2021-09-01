@@ -3,7 +3,6 @@
 namespace Trax\Auth;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authorizer;
@@ -134,6 +133,16 @@ class Authentifier
             return null;
         }
         return $this->currentAccess;
+    }
+
+    /**
+     * Is the consumer an admin in testing mode?
+     *
+     * @return bool
+     */
+    public function testingAsAdmin(): bool
+    {
+        return $this->app->runningUnitTests() && $this->consumer()->isAdmin();
     }
 
     /**

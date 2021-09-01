@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Trax\Repo\CrudRequest;
 use Trax\Auth\Controllers\CrudController;
 use Trax\Auth\Traits\HasOwner;
-use Trax\XapiStore\Stores\Agents\AgentService;
+use Trax\XapiStore\Stores\Agents\AgentRepository;
 
 class AgentController extends CrudController
 {
@@ -22,10 +22,10 @@ class AgentController extends CrudController
     /**
      * Create the constructor.
      *
-     * @param  \Trax\XapiStore\Stores\Agents\AgentService  $repository
+     * @param  \Trax\XapiStore\Stores\Agents\AgentRepository  $repository
      * @return void
      */
-    public function __construct(AgentService $repository)
+    public function __construct(AgentRepository $repository)
     {
         parent::__construct();
         $this->repository = $repository;

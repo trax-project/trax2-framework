@@ -12,10 +12,10 @@ trait FormatStatements
     /**
      * Format a statement.
      *
-     * @param  \stdClass  $statement
+     * @param  object  $statement
      * @param  string  $format
      * @param  string  $lang
-     * @return \stdClass
+     * @return object
      */
     public static function format($statement, string $format = 'exact', $lang = null)
     {
@@ -30,8 +30,8 @@ trait FormatStatements
     /**
      * Return statement with the 'ids' format.
      *
-     * @param  \stdClass  $statement
-     * @return \stdClass
+     * @param  object  $statement
+     * @return object
      */
     protected static function formatIds($statement)
     {
@@ -54,9 +54,9 @@ trait FormatStatements
     /**
      * Return statement with the 'canonical' format.
      *
-     * @param  \stdClass  $statement
+     * @param  object  $statement
      * @param  string  $lang
-     * @return \stdClass
+     * @return object
      */
     protected static function formatCanonical($statement, $lang = null)
     {
@@ -74,9 +74,9 @@ trait FormatStatements
     /**
      * Canonize a lang string.
      *
-     * @param  \stdClass  $langMap
+     * @param  object  $langMap
      * @param  string  $lang
-     * @return \stdClass
+     * @return object
      */
     protected static function canonize($langMap, $headerLang = null)
     {

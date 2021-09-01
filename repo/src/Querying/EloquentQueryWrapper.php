@@ -47,6 +47,13 @@ class EloquentQueryWrapper
     protected $dynamicFilters;
 
     /**
+     * Don't use Eloquent to get data.
+     *
+     * @var string
+     */
+    protected $dontGetWithEloquent;
+
+    /**
      * Query.
      *
      * @var \Trax\Repo\Querying\Query
@@ -62,13 +69,14 @@ class EloquentQueryWrapper
      * @param array  $dynamicFilters
      * @return void
      */
-    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [])
+    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [], bool $dontGetWithEloquent = false)
     {
         $this->grammar = GrammarFactory::make();
         $this->repo = $repo;
         $this->model = $model;
         $this->table = $table;
         $this->dynamicFilters = $dynamicFilters;
+        $this->dontGetWithEloquent = $dontGetWithEloquent;
     }
 
     /**
@@ -131,6 +139,19 @@ class EloquentQueryWrapper
         }
 
         return $this->response($result);
+    }
+
+    /**
+     * Update resources.
+     *
+     * @param \Trax\Repo\Querying\Query  $query
+     * @param array  $data
+     * @return void
+     */
+    public function update(Query $query, array $data): void
+    {
+        $builder = $this->queriedBuilder($query, true);
+        $builder->update($data);
     }
 
     /**
@@ -408,7 +429,7 @@ class EloquentQueryWrapper
     protected function builder()
     {
         // Get the DB query builder when it is prefered to Eloquent.
-        if (isset($this->table)) {
+        if ($this->dontGetWithEloquent) {
             return DB::table($this->table);
         }
         // ELoquent query builder.

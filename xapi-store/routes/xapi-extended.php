@@ -22,7 +22,10 @@ TraxRouting::mixedCrudRoutes(
 TraxRouting::mixedCrudRoutes(
     'trax/api',
     'xapi/ext/agents',
-    \Trax\XapiStore\Stores\Agents\AgentController::class
+    \Trax\XapiStore\Stores\Agents\AgentController::class,
+    [
+        'destroyByQuery' => true,
+    ]
 );
 
 TraxRouting::mixedCrudRoutes(

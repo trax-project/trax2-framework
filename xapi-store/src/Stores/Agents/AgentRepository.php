@@ -7,6 +7,7 @@ use Trax\Auth\TraxAuth;
 use Trax\Repo\CrudRepository;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Caching;
+use Trax\XapiStore\Relations\StatementAgent;
 
 class AgentRepository extends CrudRepository
 {
@@ -73,7 +74,7 @@ class AgentRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereVidIn(array $vids, Query $query = null)
+    public function whereVidIn(array $vids, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['vid' => ['$in' => $vids], 'owner_id' => $ownerId])->get();
@@ -86,9 +87,39 @@ class AgentRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereUiCombo(string $uiCombo, Query $query = null)
+    public function whereUiCombo(string $uiCombo, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['uiCombo' => $uiCombo, 'owner_id' => $ownerId])->get();
+    }
+
+    /**
+     * Insert agents and returns models.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Support\Collection
+     */
+    public function insertAndGet(array $data): Collection
+    {
+        $insertedBatch = $this->insert($data);
+
+        // Get back the models.
+        $vids = collect($insertedBatch)->pluck('vid')->toArray();
+        $models = $this->whereVidIn($vids);
+
+        // Add them to the cache.
+        $this->cache($models);
+        return $models;
+    }
+
+    /**
+     * Insert relations between verbs and statements.
+     *
+     * @param  array  $data
+     * @return void
+     */
+    public function insertStatementsRelations(array $data): void
+    {
+        StatementAgent::insert($data);
     }
 }

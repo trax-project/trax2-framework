@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiNotFoundException;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
-use Trax\XapiStore\Stores\Statements\StatementService;
+use Trax\XapiStore\Stores\Statements\StatementRepository;
 use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiStatementController extends XapiController
@@ -16,7 +16,7 @@ class XapiStatementController extends XapiController
     /**
      * The repository class.
      *
-     * @var \Trax\XapiStore\Stores\Statements\StatementService
+     * @var \Trax\XapiStore\Stores\Statements\StatementRepository
      */
     protected $repository;
 
@@ -30,13 +30,13 @@ class XapiStatementController extends XapiController
     /**
      * Create the constructor.
      *
-     * @param  \Trax\XapiStore\Stores\Statements\StatementService  $service
+     * @param  \Trax\XapiStore\Stores\Statements\StatementRepository  $repository
      * @return void
      */
-    public function __construct(StatementService $service)
+    public function __construct(StatementRepository $repository)
     {
         parent::__construct();
-        $this->repository = $service;
+        $this->repository = $repository;
     }
 
     /**
@@ -47,6 +47,8 @@ class XapiStatementController extends XapiController
      */
     public function post(Request $request)
     {
+        $service = app(\Trax\XapiStore\Services\StatementRecord\StatementRecordService::class);
+
         // Alternate request.
         if ($redirectMethod = $this->checkAlternateRequest($request)) {
             return $this->$redirectMethod($request);
@@ -59,14 +61,14 @@ class XapiStatementController extends XapiController
         $this->authorizer->must($this->permissionsDomain . '.write');
 
         // Save statements.
-        $ids = $this->repository->createStatements(
+        $ids = $service->createStatements(
             $xapiRequest->statements(),
             $xapiRequest->attachments()
         );
 
         // Logging.
         Logger::log($this->permissionsDomain, 'POST', count($ids));
-
+        
         // Response.
         return $this->response($ids);
     }
@@ -79,6 +81,8 @@ class XapiStatementController extends XapiController
      */
     public function put(Request $request)
     {
+        $service = app(\Trax\XapiStore\Services\StatementRecord\StatementRecordService::class);
+
         // Validate request.
         $xapiRequest = $this->validatePutRequest($request);
 
@@ -86,7 +90,7 @@ class XapiStatementController extends XapiController
         $this->authorizer->must($this->permissionsDomain . '.write');
 
         // Save statement.
-        $this->repository->createStatements(
+        $service->createStatements(
             $xapiRequest->statements(),
             $xapiRequest->attachments()
         );
@@ -106,6 +110,8 @@ class XapiStatementController extends XapiController
      */
     public function get(Request $request)
     {
+        $service = app(\Trax\XapiStore\Services\StatementRequest\StatementRequestService::class);
+
         // Find a given statement.
         if ($request->has('statementId') || $request->has('voidedStatementId')) {
             return $this->find($request);
@@ -115,13 +121,13 @@ class XapiStatementController extends XapiController
         $xapiRequest = $this->validateGetRequest($request);
 
         // Perform request.
-        $resources = $this->getResources($xapiRequest, 'getWithStandardProcess');
+        $resources = $this->getResources($xapiRequest, 'getWithStandardProcess', $service);
 
         // Prepare response.
         $response = ['statements' => $resources->pluck('data')->all()];
 
         // Add the more link.
-        if ($more = $this->repository->moreUrl($request->url(), $xapiRequest, $resources)) {
+        if ($more = $service->moreUrl($request->url(), $xapiRequest, $resources)) {
             $response['more'] = $more;
         }
 
@@ -130,7 +136,7 @@ class XapiStatementController extends XapiController
 
         // Response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';
-        return $this->repository->responseWithContent((object)$response, $withAttachments);
+        return $service->responseWithContent((object)$response, $withAttachments);
     }
 
     /**
@@ -143,11 +149,13 @@ class XapiStatementController extends XapiController
      */
     public function find(Request $request)
     {
+        $service = app(\Trax\XapiStore\Services\StatementRequest\StatementRequestService::class);
+
         // Validate request.
         $xapiRequest = $this->validateFindRequest($request);
 
         // Perform request.
-        $resources = $this->getResources($xapiRequest, 'getRelationalFirst');
+        $resources = $this->getResources($xapiRequest, 'getRelationalFirst', $service);
 
         // Check result.
         $response = $resources->last();
@@ -162,7 +170,7 @@ class XapiStatementController extends XapiController
 
         // Prepare response.
         $withAttachments = $xapiRequest->param('attachments') == 'true';
-        return $this->repository->responseWithContent($response->data, $withAttachments);
+        return $service->responseWithContent($response->data, $withAttachments);
     }
 
     /**

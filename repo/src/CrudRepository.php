@@ -18,11 +18,11 @@ abstract class CrudRepository implements CrudRepositoryContract
     protected $builder;
 
     /**
-     * DB table when DB query builder is prefered to Eloquent.
+     * Don't use Eloquent to get data.
      *
      * @var string
      */
-    protected $table;
+    protected $dontGetWithEloquent = false;
 
     /**
      * Constructor.
@@ -31,7 +31,13 @@ abstract class CrudRepository implements CrudRepositoryContract
      */
     public function __construct()
     {
-        $this->builder = new EloquentQueryWrapper($this, $this->factory()::modelClass(), $this->table, $this->dynamicFilters());
+        $this->builder = new EloquentQueryWrapper(
+            $this,
+            $this->factory()::modelClass(),
+            $this->table(),
+            $this->dynamicFilters(),
+            $this->dontGetWithEloquent
+        );
     }
 
     /**
@@ -87,6 +93,16 @@ abstract class CrudRepository implements CrudRepositoryContract
     }
 
     /**
+     * Remove filters and return them.
+     *
+     * @return array
+     */
+    public function removeFilters(): array
+    {
+        return $this->builder->removeFilters();
+    }
+
+    /**
      * Create a new resource.
      *
      * @param array  $data
@@ -127,6 +143,18 @@ abstract class CrudRepository implements CrudRepositoryContract
             $model->save();
         }
         return $model;
+    }
+
+    /**
+     * Update existing resources, given a query.
+     *
+     * @param \Trax\Repo\Querying\Query  $query
+     * @param array  $data
+     * @return void
+     */
+    public function updateByQuery(Query $query, array $data)
+    {
+        $this->builder->update($query, $data);
     }
 
     /**

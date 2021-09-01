@@ -5,10 +5,25 @@ namespace Trax\XapiStore\Stores\Statements;
 use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\Repo\CrudRepository;
+use Trax\XapiStore\XapiDate;
 
 class StatementRepository extends CrudRepository
 {
     use XapiStatementRepository, StatementFilters;
+
+    /**
+     * Constructor.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        if (!config('trax-xapi-store.requests.relational', false)) {
+            // We don't need Eloquent for pure JSON queries. We skip it to improve performances.
+            $this->dontGetWithEloquent = true;
+        }
+        parent::__construct();
+    }
 
     /**
      * Return model factory.
@@ -44,5 +59,38 @@ class StatementRepository extends CrudRepository
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['uuid' => ['$in' => $uuids], 'owner_id' => $ownerId])->get();
+    }
+
+    /**
+     * Find a collection of statements given their statement IDs.
+     *
+     * @param  array  $ids
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return \Illuminate\Support\Collection
+     */
+    public function whereStatementIdIn(array $ids, Query $query = null)
+    {
+        $ownerId = TraxAuth::context('owner_id', $query);
+        return $this->addFilter(['uuid' => ['$in' => $ids], 'owner_id' => $ownerId])->get();
+    }
+    
+    /**
+     * Get the consistent through value.
+     *
+     * @return string
+     */
+    public function consistentThrough()
+    {
+        // Get the `stored` of the oldest pending statement.
+        if ($pendingStatement = $this->get(new Query([
+            'filters' => ['pending' => true],
+            'sort' => ['id'],
+            'limit' => 1,
+        ]))->first()) {
+            return $pendingStatement->data->stored;
+        }
+
+        // No pending statement.
+        return XapiDate::now();
     }
 }

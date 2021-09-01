@@ -109,65 +109,63 @@ trait XapiStatementContentValidation
     /**
      * Validate Statements.
      *
-     * @param  \stdClass|array  $statements
+     * @param  object|array  $statements
      * @return void
+     *
+     * @throws \Trax\XapiStore\Exceptions\XapiBadRequestException
      */
     protected function validateStatements($statements): void
     {
-        if (is_array($statements)) {
-            // Statements batch.
-            foreach ($statements as $statement) {
-                Statement::validate($statement);
-            }
-        } else {
-            // Single statement.
-            Statement::validate($statements);
+        $statements = is_array($statements) ? collect($statements) : collect([$statements]);
+
+        // Validate each statement individually.
+        $statements->each(function ($statement) {
+            Statement::validate($statement);
+        });
+
+        // Identify statements to be voided..
+        $uuids = $statements->where('verb.id', 'http://adlnet.gov/expapi/verbs/voided')->pluck('object.id');
+        if ($uuids->isEmpty()) {
+            return;
+        }
+
+        // Check if voided statements are also voiding statements.
+        $voidedVoiding = $this->repository->whereUuidIn($uuids->toArray())
+            ->where('data.verb.id', 'http://adlnet.gov/expapi/verbs/voided');
+
+        if (!$voidedVoiding->isEmpty()) {
+            throw new XapiBadRequestException('Voiding statements can not be voided.');
         }
     }
     
     /**
-     * Validate statement IDs.
+     * Validate statements IDs.
      *
-     * @param  \stdClass|array  $statements
-     * @param  array  $reservedIds  IDs that have already been checked in the batch.
+     * @param  object|array  $statements
      * @return void
      */
-    protected function validateStatementIds($statements, $reservedIds = []): void
+    protected function validateStatementIds($statements): void
     {
-        // Statements batch.
-        if (is_array($statements)) {
-            $ids = [];
-            foreach ($statements as $statement) {
-                $this->validateStatementIds($statement, $ids);
-                if (isset($statement->id)) {
-                    $ids[] = $statement->id;
-                }
-            }
-            return;
-        }
-        
-        // The statement has no ID.
-        $statement = $statements;
-        if (!isset($statement->id)) {
-            return;
+        // Get the ids.
+        $statements = is_array($statements) ? collect($statements) : collect([$statements]);
+        $ids = $statements->pluck('id')->filter();
+
+        // Duplicates.
+        if ($ids->unique()->count() < $ids->count()) {
+            throw new XapiBadRequestException("Some statements have the same ID in the batch of statements.");
         }
 
-        // ID already used in the batch.
-        $uuid = $statement->id;
-        if (in_array($uuid, $reservedIds)) {
-            throw new XapiBadRequestException("2 statements have the same ID in the batch of statements: [$uuid].");
-        }
-        
-        // ID already used in database.
-        if ($this->repository->findByUuid($uuid)) {
-            throw new XapiBadRequestException("A statement with this ID already exists in the database: [$uuid].");
+        // DB check.
+        $existing = $this->repository->whereStatementIdIn($ids->unique()->all());
+        if (!$existing->isEmpty()) {
+            throw new XapiBadRequestException("Statement(s) with similar ID already exist in the database.");
         }
     }
     
     /**
      * Validate attachments.
      *
-     * @param  \stdClass|array  $statements
+     * @param  object|array  $statements
      * @param  array  $attachments
      * @param  bool  $globalCheck  Perform the global checks (on a batch or unique statement)
      * @return  array  The attachments that are referenced by the statements and only them.
@@ -238,12 +236,12 @@ trait XapiStatementContentValidation
     /**
      * Validate a signed attachment.
      *
-     * @param  \stdClass  $jsonAttachment
-     * @param  \stdClass  $rawAttachment
-     * @param  \stdClass|array  $statements
+     * @param  object  $jsonAttachment
+     * @param  object  $rawAttachment
+     * @param  object|array  $statements
      * @return  void
      */
-    protected function validateSignedAttachment(\stdClass $jsonAttachment, \stdClass $rawAttachment, $statements): void
+    protected function validateSignedAttachment(object $jsonAttachment, object $rawAttachment, $statements): void
     {
         // Not a signed statement.
         if ($jsonAttachment->usageType != 'http://adlnet.gov/expapi/attachments/signature') {

@@ -14,7 +14,7 @@ trait ManageConcurrency
      * Validate concurrency.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \stdClass|\Illuminate\Database\Eloquent\Model|false  $resource
+     * @param  object|\Illuminate\Database\Eloquent\Model|false  $resource
      * @return void
      *
      * @throws \Trax\XapiStore\Exceptions\XapiBadRequestException

@@ -180,7 +180,7 @@ abstract class XapiDocumentController extends XapiController
      * Validate concurrency.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \stdClass|\Illuminate\Database\Eloquent\Model  $resource
+     * @param  object|\Illuminate\Database\Eloquent\Model  $resource
      * @return void
      */
     protected function validateConcurrency(Request $request, $resource)
