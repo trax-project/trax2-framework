@@ -128,11 +128,6 @@ trait RecordStatementsVerbs
      */
     protected function recordStatementsRelations(Collection $verbs, array $verbsInfo): void
     {
-        if (!config('trax-xapi-store.tables.verbs', false)
-            || !config('trax-xapi-store.relations.statements_verbs', false)
-        ) {
-            return;
-        }
         $relations = collect($verbsInfo)->map(function ($info) use ($verbs) {
             return [
                 'verb_id' => $verbs->where('iri', $info->iri)->first()->id,

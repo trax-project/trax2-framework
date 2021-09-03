@@ -18,10 +18,8 @@ class StatementRepository extends CrudRepository
      */
     public function __construct()
     {
-        if (!config('trax-xapi-store.requests.relational', false)) {
-            // We don't need Eloquent for pure JSON queries. We skip it to improve performances.
-            $this->dontGetWithEloquent = true;
-        }
+        // We don't need Eloquent for pure JSON queries. We skip it to improve performances.
+        $this->dontGetWithEloquent = !config('trax-xapi-store.requests.relational', false);
         parent::__construct();
     }
 

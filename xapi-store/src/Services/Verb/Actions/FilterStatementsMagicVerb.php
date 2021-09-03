@@ -20,8 +20,7 @@ trait FilterStatementsMagicVerb
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiVerb')
-            || !config('trax-xapi-store.tables.verbs', false)
-            || !config('trax-xapi-store.relations.statements_verbs', false)
+            || !config('trax-xapi-store.requests.relational', false)
         ) {
             return;
         }

@@ -44,7 +44,14 @@ trait ProcessPendingStatements
     protected function processStatementsNow(Collection $statements, bool $allowPseudonymization): void
     {
         $this->recordStatementsActivities($statements);
-        app(\Trax\XapiStore\Services\Agent\AgentService::class)
-            ->processPendingStatements($statements, $allowPseudonymization);
+
+        // Skip the agent and verb services if we are not in a relational model.
+        if (config('trax-xapi-store.requests.relational', false)) {
+            app(\Trax\XapiStore\Services\Agent\AgentService::class)
+                ->processPendingStatements($statements, $allowPseudonymization);
+        } else {
+            app(\Trax\XapiStore\Services\StatementRecord\StatementRecordService::class)
+                ->processPendingStatements($statements, $allowPseudonymization);
+        }
     }
 }

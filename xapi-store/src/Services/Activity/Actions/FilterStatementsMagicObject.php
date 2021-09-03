@@ -21,7 +21,7 @@ trait FilterStatementsMagicObject
     {
         // We can't make a relational request.
         if (!$query->hasFilter('uiObject')
-            || !config('trax-xapi-store.relations.statements_activities', false)
+            || !config('trax-xapi-store.requests.relational', false)
         ) {
             return;
         }

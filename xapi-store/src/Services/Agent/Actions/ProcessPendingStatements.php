@@ -44,7 +44,6 @@ trait ProcessPendingStatements
     protected function processStatementsNow(Collection $statements, bool $allowPseudonymization): void
     {
         $agents = $this->recordStatementsAgents($statements);
-
         $statements = $this->pseudonymizeStatements($statements, $agents, $allowPseudonymization);
 
         app(\Trax\XapiStore\Services\Verb\VerbService::class)

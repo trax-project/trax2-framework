@@ -21,8 +21,7 @@ trait FilterStatementsAgent
     {
         // We can't make a relational request.
         if (!$query->hasFilter('agent')
-            || !config('trax-xapi-store.tables.agents', false)
-            || !config('trax-xapi-store.relations.statements_agents', false)
+            || !config('trax-xapi-store.requests.relational', false)
         ) {
             return;
         }

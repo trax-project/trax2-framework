@@ -92,6 +92,11 @@ class StatementFactory implements ModelFactoryContract
             $model->pending = $data['pending'];
         }
 
+        // Nullable validated.
+        if (isset($data['validated'])) {
+            $model->validated = $data['validated'];
+        }
+
         // UUID.
         $model->uuid = $model->data->id;
 

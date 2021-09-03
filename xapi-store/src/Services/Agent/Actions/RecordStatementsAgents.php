@@ -350,11 +350,6 @@ trait RecordStatementsAgents
      */
     protected function recordStatementsRelations(Collection $agents, array $agentsInfo): void
     {
-        if (!config('trax-xapi-store.tables.agents', false)
-            || !config('trax-xapi-store.relations.statements_agents', false)
-        ) {
-            return;
-        }
         $relations = collect($agentsInfo)->map(function ($info) use ($agents) {
             return [
                 'agent_id' => $agents->where('vid', $info->vid)->first()->id,

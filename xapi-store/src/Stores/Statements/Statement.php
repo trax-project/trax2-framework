@@ -20,6 +20,7 @@ class Statement extends Model
         'data' => 'object',
         'voided' => 'boolean',
         'pending' => 'boolean',
+        'validated' => 'boolean',
     ];
 
     /**
@@ -30,6 +31,7 @@ class Statement extends Model
     protected $attributes = [
         'voided' => false,
         'pending' => false,
+        'validated' => true,
     ];
 
     /**
@@ -37,7 +39,7 @@ class Statement extends Model
      *
      * @var array
      */
-    protected $fillable = ['uuid', 'data', 'voided', 'pending'];
+    protected $fillable = ['uuid', 'data', 'voided', 'pending', 'validated'];
 
     /**
      * Get the related agents.

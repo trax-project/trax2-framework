@@ -41,4 +41,11 @@ interface CrudRepositoryContract extends ReadableRepositoryContract, WritableRep
      * @return \Trax\Repo\Contracts\CrudRepositoryContract
      */
     public function addFilter(array $filter = []);
+
+    /**
+     * Remove filters and return them.
+     *
+     * @return array
+     */
+    public function removeFilters(): array;
 }

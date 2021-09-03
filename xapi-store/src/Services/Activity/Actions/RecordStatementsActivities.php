@@ -270,7 +270,7 @@ trait RecordStatementsActivities
      */
     protected function recordStatementsRelations(Collection $activities, array $activitiesInfo): void
     {
-        if (!config('trax-xapi-store.relations.statements_activities', false)) {
+        if (!config('trax-xapi-store.requests.relational', false)) {
             return;
         }
         $relations = collect($activitiesInfo)->map(function ($info) use ($activities) {
