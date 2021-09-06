@@ -18,8 +18,7 @@ trait ProcessPendingStatements
     public function processPendingStatements(Collection $statements, bool $allowPseudo): void
     {
         // Voiding.
-        $voidingStatements = $statements->where('data.verb.id', 'http://adlnet.gov/expapi/verbs/voided');
-        $this->voidStatements($voidingStatements->pluck('data.object.id')->all());
+        $this->processVoidingStatements($statements);
 
         // Release statements (pending status, data update).
         $this->releaseStatements($statements, $allowPseudo);

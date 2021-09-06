@@ -3,6 +3,8 @@
 namespace Trax\XapiStore\Services\StatementRecord\Actions;
 
 use Illuminate\Support\Collection;
+use Trax\XapiStore\Services\StatementRecord\Jobs\DispatchPendingStatementsJob;
+use Trax\Auth\TraxAuth;
 
 trait DispatchPendingStatements
 {
@@ -16,23 +18,21 @@ trait DispatchPendingStatements
      */
     protected function dispatchPendingStatements(array $uuids, bool $allowPseudo = true, bool $allowQueue = true): void
     {
-        if ($allowQueue && config('trax-xapi-store.queues.statements.enabled', false)) {
-            $this->startStatementsDispatching();
+        if ($allowQueue
+            && config('trax-xapi-store.queues.statements.enabled', false)
+            && config('queue.default', 'sync') !== 'sync'
+        ) {
+            // We delay the job because we want to merge individual requests in batches.
+            // So we need time to get more data.
+            DispatchPendingStatementsJob::dispatch(
+                TraxAuth::context('owner_id')
+            );
         } else {
             $this->processStatementsBatch(
-                $this->repository->whereUuidIn($uuids),
+                app(\Trax\XapiStore\Stores\Statements\StatementRepository::class)->whereUuidIn($uuids),
                 $allowPseudo
             );
         }
-    }
-
-    /**
-     * Displatch statements.
-     *
-     * @return void
-     */
-    protected function startStatementsDispatching(): void
-    {
     }
 
     /**
@@ -42,7 +42,7 @@ trait DispatchPendingStatements
      * @param  boolean  $allowPseudo
      * @return void
      */
-    protected function processStatementsBatch(Collection $statements, bool $allowPseudo): void
+    protected function processStatementsBatch(Collection $statements, bool $allowPseudo = true): void
     {
         app(\Trax\XapiStore\Services\Activity\ActivityService::class)->processPendingStatements($statements);
         if (config('trax-xapi-store.requests.relational', false)) {

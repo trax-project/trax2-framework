@@ -2,29 +2,30 @@
 
 namespace Trax\XapiStore\Services\StatementRecord\Actions;
 
-use Trax\Auth\TraxAuth;
-use Trax\Repo\Querying\Query;
+use Illuminate\Support\Collection;
 
 trait VoidStatements
 {
     /**
-     * Void a batch of statements.
+     * Process voiding statements.
      *
-     * @param  array  $statementIds
+     * @param  \Illuminate\Support\Collection  $statements
      * @return void
      */
-    public function voidStatements(array $statementIds): void
+    public function processVoidingStatements(Collection $statements): void
     {
-        if (empty($statementIds)) {
-            return;
-        }
+        $statements->where('data.verb.id', 'http://adlnet.gov/expapi/verbs/voided')->each(function ($voiding) {
 
-        $query = new Query(['filters' => [
-            'voided' => false,
-            'uuid' => ['$in' => $statementIds],
-            'owner_id' => TraxAuth::context('owner_id')
-        ]]);
-
-        $this->repository->updateByQuery($query, ['voided' => true]);
+            $target = $this->repository->addFilter([
+                'voided' => false,
+                'uuid' => $voiding->data->object->id,
+                'owner_id' => $voiding->owner_id
+            ])->get()->first();
+            
+            if ($target) {
+                $target->voided = true;
+                $target->save();
+            }
+        });
     }
 }

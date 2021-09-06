@@ -35,6 +35,11 @@ class StatementRequestService implements ReadableRepositoryContract
      */
     public function get(Query $query = null): Collection
     {
+        // Pending must not be set. False by dedault.
+        if (!$query->hasFilter('pending')) {
+            $query->addFilter(['pending' => false]);
+        }
+
         // No relation. Use the standard request.
         if (!config('trax-xapi-store.requests.relational', false)) {
             return $this->repository->get($query);
@@ -44,74 +49,13 @@ class StatementRequestService implements ReadableRepositoryContract
     }
     
     /**
-     * Get statements conforming with the standard xAPI process.
-     *
-     * @param \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Support\Collection
-     */
-    public function getWithStandardProcess(Query $query = null): Collection
-    {
-        // Sequence based request.
-        // Get only unvoided statements.
-        // Do not check targeted statements.
-
-        if ($query->hasLimit() || (
-            !$query->hasFilter('agent')
-            && !$query->hasFilter('verb')
-            && !$query->hasFilter('activity')
-            && !$query->hasFilter('registration')
-        )) {
-            // Force the limit.
-            if (!$query->hasLimit()) {
-                $query->setLimit(config('trax-xapi-store.limit', 100));
-            }
-            // Request.
-            return $this->getRelationalFirst(
-                $query->addFilter(['voided' => false])
-            );
-        }
-
-        // Not sequence based. We must check the targeted statements, including voided ones.
-        // This process is not perfect because it will happen under the default limit.
-        // So the number of returned statements may be under the default limit,
-        // which does not mean that there is no other matching statement.
-        // We recommended to limit the use of StatementRefs.
-
-        // Force the limit.
-        if (!$query->hasLimit()) {
-            $query->setLimit(config('trax-xapi-store.limit', 100));
-        }
-        // Request.
-        $all = $this->getRelationalFirst($query);
-        $result = $all->where('voided', false);
-
-        // Get targeting statements and add them to the result.
-        $targeting = $all;
-        while (!$targeting->isEmpty()) {
-            $targeting = $this->getRelationalFirst(new Query(['filters' => [
-                'data->object->objectType' => 'StatementRef',
-                'data->object->id' => ['$in' => $targeting->pluck('uuid')],
-            ]]));
-            $result = $result->concat($targeting);
-        }
-        
-        // Keep unvoided and unique statements.
-        return $result->where('voided', false)->unique('id');
-    }
-
-    /**
      * Try to use relational requests first on standard and UI filters.
      *
      * @param \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function getRelationalFirst(Query $query = null): Collection
+    protected function getRelationalFirst(Query $query = null): Collection
     {
-        // We can't use relations.
-        if (!config('trax-xapi-store.requests.relational', false)) {
-            return $this->repository->get($query);
-        }
-
         // We need both the $query filters and the filters passed with the `addFilter()` method.
         $query = isset($query) ? $query : new Query();
         $query->addFilter(
@@ -135,6 +79,62 @@ class StatementRequestService implements ReadableRepositoryContract
             $statements = $this->revealStatements($statements, $removeNames);
         }
         return $statements;
+    }
+
+    /**
+     * Get statements conforming with the full standard xAPI process.
+     *
+     * @param \Trax\Repo\Querying\Query  $query
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWithStandardProcess(Query $query = null): Collection
+    {
+        // Sequence based request.
+        // Get only unvoided statements.
+        // Do not check targeted statements.
+
+        if ($query->hasLimit() || (
+            !$query->hasFilter('agent')
+            && !$query->hasFilter('verb')
+            && !$query->hasFilter('activity')
+            && !$query->hasFilter('registration')
+        )) {
+            // Force the limit.
+            if (!$query->hasLimit()) {
+                $query->setLimit(config('trax-xapi-store.limit', 100));
+            }
+            // Request.
+            return $this->get(
+                $query->addFilter(['voided' => false])
+            );
+        }
+
+        // Not sequence based. We must check the targeted statements, including voided ones.
+        // This process is not perfect because it will happen under the default limit.
+        // So the number of returned statements may be under the default limit,
+        // which does not mean that there is no other matching statement.
+        // We recommended to limit the use of StatementRefs.
+
+        // Force the limit.
+        if (!$query->hasLimit()) {
+            $query->setLimit(config('trax-xapi-store.limit', 100));
+        }
+        // Request.
+        $all = $this->get($query);
+        $result = $all->where('voided', false);
+
+        // Get targeting statements and add them to the result.
+        $targeting = $all;
+        while (!$targeting->isEmpty()) {
+            $targeting = $this->get(new Query(['filters' => [
+                'data->object->objectType' => 'StatementRef',
+                'data->object->id' => ['$in' => $targeting->pluck('uuid')],
+            ]]));
+            $result = $result->concat($targeting);
+        }
+        
+        // Keep unvoided and unique statements.
+        return $result->where('voided', false)->unique('id');
     }
 
     /**

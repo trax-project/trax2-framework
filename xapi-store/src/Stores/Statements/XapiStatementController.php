@@ -157,7 +157,7 @@ class XapiStatementController extends XapiController
         $xapiRequest = $this->validateFindRequest($request);
 
         // Perform request.
-        $resources = $this->getResources($xapiRequest, 'getRelationalFirst', $service);
+        $resources = $this->getResources($xapiRequest, 'get', $service);
 
         // Check result.
         $response = $resources->last();
