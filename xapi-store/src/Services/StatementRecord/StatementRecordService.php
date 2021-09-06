@@ -38,26 +38,34 @@ class StatementRecordService
      *
      * @param  array  $statements
      * @param  array  $attachments
+     * @param  bool  $validated
+     * @param  object  $authority
+     * @param  boolean  $allowPseudo
+     * @param  boolean  $allowQueue
      * @return array
      */
-    public function createStatements(array $statements, array $attachments = []): array
+    public function createStatements(array $statements, array $attachments = [], bool $validated = false, object $authority = null, bool $allowPseudo = true, bool $allowQueue = true): array
     {
         // If we are not in a relational model, and if activities recording is disabled,
         // we can skip the "pending" status and record statements directly.
         if (!config('trax-xapi-store.requests.relational', false)
             && config('trax-xapi-store.processing.disable_activities', false)
         ) {
-            return $this->createStatementsWithoutPending($statements, $attachments);
+            return $this->createStatementsWithoutPending($statements, $attachments, $validated, $authority);
         }
 
         // Record pending statements.
-        $uuids = DB::transaction(function () use ($statements, $attachments) {
+        $uuids = DB::transaction(function () use ($statements, $attachments, $validated, $authority) {
             $this->recordAttachments($attachments);
-            return $this->recordPendingStatements($statements, $this->getAccessAuthority());
+            return $this->recordPendingStatements(
+                $statements,
+                isset($authority) ? $authority : $this->getAccessAuthority(),
+                $validated
+            );
         });
         
         // Dispatch the pending statements.
-        $this->dispatchPendingStatements($uuids);
+        $this->dispatchPendingStatements($uuids, $allowPseudo, $allowQueue);
 
         // Return the array of UUIDs.
         return $uuids;
@@ -69,13 +77,19 @@ class StatementRecordService
      *
      * @param  array  $statements
      * @param  array  $attachments
+     * @param  bool  $validated
+     * @param  object  $authority
      * @return array
      */
-    public function createStatementsWithoutPending(array $statements, array $attachments = []): array
+    public function createStatementsWithoutPending(array $statements, array $attachments = [], bool $validated = false, object $authority = null): array
     {
-        return DB::transaction(function () use ($statements, $attachments) {
+        return DB::transaction(function () use ($statements, $attachments, $validated, $authority) {
             $this->recordAttachments($attachments);
-            return $this->recordStatements($statements, $this->getAccessAuthority());
+            return $this->recordStatements(
+                $statements,
+                isset($authority) ? $authority : $this->getAccessAuthority(),
+                $validated
+            );
         });
     }
 
@@ -85,21 +99,16 @@ class StatementRecordService
      * @param  array  $statements
      * @param  int  $ownerId
      * @param  int  $entityId
-     * @param  boolean  $allowPseudonymization
+     * @param  boolean  $allowPseudo
      * @return void
      */
-    public function importStatements(array $statements, int $ownerId, int $entityId = null, bool $allowPseudonymization = true)
+    public function importStatements(array $statements, int $ownerId, int $entityId = null, bool $allowPseudo = true)
     {
-        // Set the import context.
         TraxAuth::setContext([
             'entity_id' => $entityId,
             'owner_id' => $ownerId,
         ]);
 
-        // Record pending statements.
-        $uuids = $this->recordPendingStatements($statements, $this->getImportAuthority());
-
-        // Dispatch the pending statements.
-        $this->dispatchPendingStatements($uuids, $allowPseudonymization);
+        $this->createStatements($statements, [], false, $this->getImportAuthority(), $allowPseudo, false);
     }
 }

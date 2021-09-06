@@ -10,17 +10,18 @@ trait DispatchPendingStatements
      * Process the pending statements.
      *
      * @param  array  $uuids
-     * @param  boolean  $allowPseudonymization
+     * @param  boolean  $allowPseudo
+     * @param  boolean  $allowQueue
      * @return void
      */
-    protected function dispatchPendingStatements(array $uuids, bool $allowPseudonymization = true): void
+    protected function dispatchPendingStatements(array $uuids, bool $allowPseudo = true, bool $allowQueue = true): void
     {
-        if (config('trax-xapi-store.queues.statements.enabled', false)) {
+        if ($allowQueue && config('trax-xapi-store.queues.statements.enabled', false)) {
             $this->startStatementsDispatching();
         } else {
             $this->processStatementsBatch(
                 $this->repository->whereUuidIn($uuids),
-                $allowPseudonymization
+                $allowPseudo
             );
         }
     }
@@ -38,14 +39,16 @@ trait DispatchPendingStatements
      * Process a batch of statements.
      *
      * @param  \Illuminate\Support\Collection  $statements
-     * @param  boolean  $allowPseudonymization
+     * @param  boolean  $allowPseudo
      * @return void
      */
-    protected function processStatementsBatch(Collection $statements, bool $allowPseudonymization): void
+    protected function processStatementsBatch(Collection $statements, bool $allowPseudo): void
     {
-        // We start chained processing with activities, agents, verbs,
-        // and finally with statements (voiding and pending status change).
-        app(\Trax\XapiStore\Services\Activity\ActivityService::class)
-            ->processPendingStatements($statements, $allowPseudonymization);
+        app(\Trax\XapiStore\Services\Activity\ActivityService::class)->processPendingStatements($statements);
+        if (config('trax-xapi-store.requests.relational', false)) {
+            app(\Trax\XapiStore\Services\Agent\AgentService::class)->processPendingStatements($statements, $allowPseudo);
+            app(\Trax\XapiStore\Services\Verb\VerbService::class)->processPendingStatements($statements);
+        }
+        app(\Trax\XapiStore\Services\StatementRecord\StatementRecordService::class)->processPendingStatements($statements, $allowPseudo);
     }
 }

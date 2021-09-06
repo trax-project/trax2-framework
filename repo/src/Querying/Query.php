@@ -95,9 +95,9 @@ class Query
         '$eq', '$gt', '$gte', '$lt', '$lte', '$ne',
         '$in', '$nin',
         '$text',
-        '$null', '$exists',
-        '$or', '$and', '$not', '$nor',
-        '$size',
+        '$exists',
+        '$has',
+        '$or', '$and',
     ];
 
     /**

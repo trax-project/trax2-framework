@@ -11,12 +11,12 @@ trait ReleaseStatements
      * Release a batch of statements.
      *
      * @param  \Illuminate\Support\Collection  $statements
-     * @param  boolean  $allowPseudonymization
+     * @param  boolean  $allowPseudo
      * @return void
      */
-    public function releaseStatements(Collection $statements, bool $allowPseudonymization)
+    public function releaseStatements(Collection $statements, bool $allowPseudo)
     {
-        if ($allowPseudonymization && config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if ($allowPseudo && config('trax-xapi-store.gdpr.pseudonymization', false)) {
             $this->removePendingStatusAndSave($statements);
         } else {
             $this->removePendingStatus($statements);
@@ -31,7 +31,7 @@ trait ReleaseStatements
      */
     public function removePendingStatusAndSave(Collection $statements)
     {
-        $statements->each(function (&$statement) {
+        $statements->each(function ($statement) {
             $statement->pending = false;
             $statement->save();
         });

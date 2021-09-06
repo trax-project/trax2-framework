@@ -13,15 +13,15 @@ trait PseudonymizeStatements
      *
      * @param  \Illuminate\Support\Collection  $statements
      * @param  \Illuminate\Support\Collection  $agents
-     * @param  boolean  $allowPseudonymization
+     * @param  boolean  $allowPseudo
      * @return void
      */
-    protected function pseudonymizeStatements(Collection $statements, Collection $agents, bool $allowPseudonymization): Collection
+    protected function pseudonymizeStatements(Collection $statements, Collection $agents, bool $allowPseudo): void
     {
-        if (!$allowPseudonymization || !config('trax-xapi-store.gdpr.pseudonymization', false)) {
-            return $statements;
+        if (!$allowPseudo || !config('trax-xapi-store.gdpr.pseudonymization', false)) {
+            return;
         }
-        return $statements->transform(function ($statement) use ($agents) {
+        $statements->transform(function ($statement) use ($agents) {
             return $this->pseudonymizeStatement($statement, $agents);
         });
     }

@@ -152,6 +152,7 @@ class EloquentQueryWrapper
     {
         $builder = $this->queriedBuilder($query, true);
         $builder->update($data);
+        $this->reinit();
     }
 
     /**
@@ -163,11 +164,8 @@ class EloquentQueryWrapper
     public function delete(Query $query): void
     {
         $builder = $this->queriedBuilder($query, true);
-
-        //print_r($builder->toSql());
-        //die;
-
         $builder->delete();
+        $this->reinit();
     }
 
     /**
@@ -179,7 +177,9 @@ class EloquentQueryWrapper
     public function count(Query $query = null): int
     {
         $builder = $this->queriedBuilder($query);
-        return $builder->count();
+        $count = $builder->count();
+        $this->reinit();
+        return $count;
     }
 
     /**
@@ -191,7 +191,9 @@ class EloquentQueryWrapper
     public function countAll(Query $query = null): int
     {
         $builder = $this->queriedBuilder($query, true);
-        return $builder->count();
+        $count = $builder->count();
+        $this->reinit();
+        return $count;
     }
 
     /**

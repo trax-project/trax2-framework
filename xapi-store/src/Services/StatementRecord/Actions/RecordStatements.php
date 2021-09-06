@@ -12,11 +12,12 @@ trait RecordStatements
      *
      * @param  array  $statements
      * @param  object  $authority
+     * @param  bool  $validated
      * @return array
      */
-    protected function recordPendingStatements(array $statements, object $authority): array
+    protected function recordPendingStatements(array $statements, object $authority, bool $validated = false): array
     {
-        return $this->recordStatements($statements, $authority, true);
+        return $this->recordStatements($statements, $authority, $validated, true);
     }
 
     /**
@@ -24,12 +25,13 @@ trait RecordStatements
      *
      * @param  array  $statements
      * @param  object  $authority
+     * @param  bool  $validated
      * @param  bool  $pending
      * @return array
      */
-    protected function recordStatements(array $statements, object $authority, bool $pending = false): array
+    protected function recordStatements(array $statements, object $authority, bool $validated = false, bool $pending = false): array
     {
-        $batch = $this->statementsBatch($statements, $authority, $pending);
+        $batch = $this->statementsBatch($statements, $authority, $validated, $pending);
         $this->repository->insert($batch->toArray());
         return $batch->pluck('uuid')->all();
     }
@@ -42,9 +44,9 @@ trait RecordStatements
      * @param  bool  $pending
      * @return \Illuminate\Support\Collection
      */
-    protected function statementsBatch(array $statements, object $authority, bool $pending = false): Collection
+    protected function statementsBatch(array $statements, object $authority, bool $validated = false, bool $pending = false): Collection
     {
-        return collect($statements)->map(function ($statement) use ($authority, $pending) {
+        return collect($statements)->map(function ($statement) use ($authority, $validated, $pending) {
 
             // Set the authority.
             $statement->authority = $authority;
@@ -58,8 +60,8 @@ trait RecordStatements
             return array_merge([
                 'uuid' => $statement->id,
                 'data' => $statement,
+                'validation' => $validated ? 1 : 0,
                 'pending' => $pending,
-                'validated' => !config('trax-xapi-store.processing.disable_validation', false)
             ], TraxAuth::context());
         });
     }
