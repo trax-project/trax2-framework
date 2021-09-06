@@ -58,7 +58,7 @@ class StatementController extends CrudController
             'data' => 'required|array',
             'voided' => 'boolean',
             'pending' => 'boolean',
-            'validated' => 'boolean',
+            'validation' => 'nullable|in:-1,0,1',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',
             'entity_id' => 'nullable|integer|exists:trax_entities,id',
             'client_id' => 'nullable|integer|exists:trax_clients,id',

@@ -63,7 +63,8 @@ class XapiStatementController extends XapiController
         // Save statements.
         $ids = $service->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments()
+            $xapiRequest->attachments(),
+            !config('trax-xapi-store.processing.disable_validation', false)
         );
 
         // Logging.
@@ -92,7 +93,8 @@ class XapiStatementController extends XapiController
         // Save statement.
         $service->createStatements(
             $xapiRequest->statements(),
-            $xapiRequest->attachments()
+            $xapiRequest->attachments(),
+            !config('trax-xapi-store.processing.disable_validation', false)
         );
 
         // Logging.

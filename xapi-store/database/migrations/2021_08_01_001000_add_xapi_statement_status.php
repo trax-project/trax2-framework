@@ -15,7 +15,7 @@ class AddXapiStatementStatus extends Migration
     {
         Schema::table('trax_xapi_statements', function (Blueprint $table) {
             $table->boolean('pending')->default(0)->index();
-            $table->boolean('validated')->default(1)->index();
+            $table->tinyInteger('validation')->default(0)->index();
         });
     }
 
@@ -28,7 +28,7 @@ class AddXapiStatementStatus extends Migration
     {
         Schema::table('trax_xapi_statements', function (Blueprint $table) {
             $table->dropColumn('pending');
-            $table->dropColumn('validated');
+            $table->dropColumn('valid');
         });
     }
 }
