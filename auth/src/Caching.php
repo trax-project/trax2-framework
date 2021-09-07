@@ -22,17 +22,26 @@ class Caching
      *
      * @return string
      */
-    public static function checkRedis()
+    public static function checkRedis(): string
     {
-        if (!config('cache.default') == 'redis') {
-            return 'TRAX LRS Redis cache is not activated. You should add CACHE_DRIVER=redis to your .env file...';
+        if (config('cache.default', 'file') != 'redis') {
+            return 'Redis cache is not activated. You should add CACHE_DRIVER=redis to your .env file...';
         }
     
-        Cache::store('redis')->put('check', 'check_value', 60);
-        
-        return Cache::store('redis')->get('check') == 'check_value'
-            ? 'TRAX LRS Redis cache is up and running!'
-            : 'TRAX LRS Redis cache does not work. Please, check the doc :(';
+        return self::checkRedisIO()
+            ? 'Redis cache is up and running!'
+            : 'Redis cache does not work. Please, check the doc :(';
+    }
+
+    /**
+     * Check and return a boolean.
+     *
+     * @return bool
+     */
+    public static function checkRedisIO(): bool
+    {
+        Cache::store('redis')->put('check', 'check_value', 1);
+        return Cache::store('redis')->get('check') == 'check_value';
     }
 
     /**

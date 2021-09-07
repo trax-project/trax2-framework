@@ -53,7 +53,7 @@ class DispatchPendingStatementsJob implements ShouldQueue, ShouldBeUnique
         TraxAuth::setContext([
             'owner_id' => $this->ownerId
         ]);
-
+        
         while (1) {
             $statements = app(\Trax\XapiStore\Stores\Statements\StatementRepository::class)->get(new Query([
                 'filters' => [
