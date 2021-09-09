@@ -6,7 +6,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Date;
 use Trax\Auth\Contracts\HasPermissionsContract;
 use Trax\Auth\Contracts\ConsumerContract;
 use Trax\Repo\ModelAttributes\ActivableModel;
@@ -39,6 +38,8 @@ class User extends Authenticatable implements HasPermissionsContract, ConsumerCo
      */
     protected $attributes = [
         'source' => 'internal',
+        'active' => true,
+        'admin' => false,
     ];
 
     /**

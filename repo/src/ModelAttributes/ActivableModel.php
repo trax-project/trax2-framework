@@ -15,8 +15,11 @@ trait ActivableModel
     protected function initializeActivableModel()
     {
         $this->casts['active'] = 'boolean';
-        $this->attributes['active'] = true;
         $this->fillable[] = 'active';
+        
+        // Since a recent framework update, default value here override the loaded value!!!
+        // So we move it to the attributes property of each model.
+        // $this->attributes['active'] = true;
     }
 
     /**

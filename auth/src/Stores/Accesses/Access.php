@@ -48,6 +48,9 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
     protected $attributes = [
         'cors' => '',
         'inherited_permissions' => true,
+        'permissions' => '[]',
+        'active' => true,
+        'admin' => false,
     ];
 
     /**
