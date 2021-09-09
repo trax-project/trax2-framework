@@ -22,8 +22,6 @@ trait DispatchPendingStatements
             && config('trax-xapi-store.queues.statements.enabled', false)
             && config('queue.default', 'sync') != 'sync'
         ) {
-            // We delay the job because we want to merge individual requests in batches.
-            // So we need time to get more data.
             DispatchPendingStatementsJob::dispatch(
                 TraxAuth::context('owner_id')
             );
