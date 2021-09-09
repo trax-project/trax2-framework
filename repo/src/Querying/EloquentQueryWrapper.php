@@ -47,6 +47,13 @@ class EloquentQueryWrapper
     protected $dynamicFilters;
 
     /**
+     * Don't use Eloquent to get data.
+     *
+     * @var string
+     */
+    protected $dontGetWithEloquent;
+
+    /**
      * Query.
      *
      * @var \Trax\Repo\Querying\Query
@@ -62,13 +69,14 @@ class EloquentQueryWrapper
      * @param array  $dynamicFilters
      * @return void
      */
-    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [])
+    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [], bool $dontGetWithEloquent = false)
     {
         $this->grammar = GrammarFactory::make();
         $this->repo = $repo;
         $this->model = $model;
         $this->table = $table;
         $this->dynamicFilters = $dynamicFilters;
+        $this->dontGetWithEloquent = $dontGetWithEloquent;
     }
 
     /**
@@ -134,6 +142,20 @@ class EloquentQueryWrapper
     }
 
     /**
+     * Update resources.
+     *
+     * @param \Trax\Repo\Querying\Query  $query
+     * @param array  $data
+     * @return void
+     */
+    public function update(Query $query, array $data): void
+    {
+        $builder = $this->queriedBuilder($query, true);
+        $builder->update($data);
+        $this->reinit();
+    }
+
+    /**
      * Delete resources.
      *
      * @param \Trax\Repo\Querying\Query  $query
@@ -142,11 +164,8 @@ class EloquentQueryWrapper
     public function delete(Query $query): void
     {
         $builder = $this->queriedBuilder($query, true);
-
-        //print_r($builder->toSql());
-        //die;
-
         $builder->delete();
+        $this->reinit();
     }
 
     /**
@@ -158,7 +177,9 @@ class EloquentQueryWrapper
     public function count(Query $query = null): int
     {
         $builder = $this->queriedBuilder($query);
-        return $builder->count();
+        $count = $builder->count();
+        $this->reinit();
+        return $count;
     }
 
     /**
@@ -170,7 +191,9 @@ class EloquentQueryWrapper
     public function countAll(Query $query = null): int
     {
         $builder = $this->queriedBuilder($query, true);
-        return $builder->count();
+        $count = $builder->count();
+        $this->reinit();
+        return $count;
     }
 
     /**
@@ -189,13 +212,27 @@ class EloquentQueryWrapper
             return $builder;
         }
 
-        // Get builder with With.
+        // Get builder with With and/or more filters.
         $this->query = $query->addFilter($this->filters);
         $builder = $this->builder();
 
         // Sort results.
         foreach ($query->sortInfo() as $sortInfo) {
-            $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
+            if (is_null($sortInfo['rel'])) {
+                // Simple orderBy.
+                $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
+            } else {
+                // Order by applied on a belongTo relation.
+                $table = (new $this->model)->getTable();
+                $relationName = $sortInfo['rel'];
+                $foreignKey = $table . '.' . $relationName . '_id';
+                $relation = (new $this->model)->$relationName();
+                $joinedTable = $relation->getRelated()->getTable();
+                $joinedTableforeignKey = $relation->getRelated()->getQualifiedKeyName();
+
+                $builder->join($joinedTable, $foreignKey, '=', $joinedTableforeignKey)
+                    ->orderBy($joinedTable . '.' . $sortInfo['col'], $sortInfo['dir']);
+            }
         }
 
         // Limit and skip.
@@ -394,7 +431,7 @@ class EloquentQueryWrapper
     protected function builder()
     {
         // Get the DB query builder when it is prefered to Eloquent.
-        if (isset($this->table)) {
+        if ($this->dontGetWithEloquent) {
             return DB::table($this->table);
         }
         // ELoquent query builder.

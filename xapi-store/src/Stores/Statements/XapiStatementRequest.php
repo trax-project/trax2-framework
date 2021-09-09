@@ -18,12 +18,16 @@ class XapiStatementRequest extends XapiRequest
      * Make a request.
      *
      * @param  array  $params
-     * @param  \stdClass|array  $content
+     * @param  object|array|null  $statements
      * @param  array  $attachments
      * @return void
      */
     public function __construct(array $params, $statements = null, $attachments = [])
     {
+        if (isset($statements) && !is_array($statements)) {
+            // Do not accept a single statement: push it into an array.
+            $statements = [$statements];
+        }
         parent::__construct($params, $statements);
         $this->attachments = $attachments;
     }
@@ -31,7 +35,7 @@ class XapiStatementRequest extends XapiRequest
     /**
      * Get statements.
      *
-     * @return \stdClass|array
+     * @return array
      */
     public function statements()
     {

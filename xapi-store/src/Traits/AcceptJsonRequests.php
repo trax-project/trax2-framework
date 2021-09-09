@@ -12,7 +12,7 @@ trait AcceptJsonRequests
      * Validate an JSON request and return the JSON object.
      *
      * @param \Illuminate\Http\Request  $request;
-     * @return  \stdClass|array
+     * @return  object|array
      *
      * @throws \Trax\XapiStore\Exceptions\XapiBadRequestException
      */

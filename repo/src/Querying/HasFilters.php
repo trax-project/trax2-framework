@@ -12,6 +12,17 @@ trait HasFilters
     protected $filters = [];
 
     /**
+     * Has a filter?
+     *
+     * @param  string  $name
+     * @return bool
+     */
+    public function hasFilter(string $name): bool
+    {
+        return !is_null($this->filter($name));
+    }
+
+    /**
      * Get filters.
      *
      * @return array
@@ -22,29 +33,6 @@ trait HasFilters
         $this->filters = $this->serializeFilters($this->filters);
 
         return $this->filters;
-    }
-
-    /**
-     * Get and remove filters.
-     *
-     * @return array
-     */
-    public function getAndRemove(): array
-    {
-        $response = $this->filters();
-        $this->clearFilters();
-        return $response;
-    }
-
-    /**
-     * Has a given filter?
-     *
-     * @param  string  $name
-     * @return bool
-     */
-    public function hasFilter(string $name): bool
-    {
-        return !is_null($this->filter($name));
     }
 
     /**
@@ -69,6 +57,31 @@ trait HasFilters
     }
 
     /**
+     * Add a filter.
+     *
+     * @param array  $filter
+     * @return \Trax\Repo\Querying\Query
+     */
+    public function addFilter(array $filter = [])
+    {
+        $filters = $this->serializeFilters($filter);
+        $this->filters = array_merge($this->filters(), $filters);
+        return $this;
+    }
+
+    /**
+     * Remove filters and return them.
+     *
+     * @return array
+     */
+    public function removeFilters(): array
+    {
+        $response = $this->filters();
+        $this->clearFilters();
+        return $response;
+    }
+
+    /**
      * Remove a given filter.
      *
      * @param  string  $name
@@ -90,19 +103,6 @@ trait HasFilters
                 }
             }
         }
-    }
-
-    /**
-     * Add a filter.
-     *
-     * @param array  $filter
-     * @return \Trax\Repo\Querying\Query
-     */
-    public function addFilter(array $filter = [])
-    {
-        $filters = $this->serializeFilters($filter);
-        $this->filters = array_merge($this->filters, $filters);
-        return $this;
     }
 
     /**

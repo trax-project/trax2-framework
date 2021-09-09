@@ -10,7 +10,7 @@ abstract class XapiDocumentRequest extends XapiRequest
      * Make a request.
      *
      * @param  array  $params
-     * @param  \stdClass|array  $content
+     * @param  object|array  $content
      * @param  string  $contentType
      * @return void
      */

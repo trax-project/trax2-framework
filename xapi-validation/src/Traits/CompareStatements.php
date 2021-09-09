@@ -54,11 +54,11 @@ trait CompareStatements
     /**
      * Compare 2 objects.
      *
-     * @param  \stdClass  $object1
-     * @param  \stdClass  $object2
+     * @param  object  $object1
+     * @param  object  $object2
      * @return bool
      */
-    protected static function compareObjects(\stdClass $object1, \stdClass $object2): bool
+    protected static function compareObjects(object $object1, object $object2): bool
     {
         $props = get_object_vars($object1);
         foreach ($props as $key => $val) {

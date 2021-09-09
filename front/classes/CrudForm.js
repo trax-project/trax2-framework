@@ -58,6 +58,8 @@ export default class CrudForm {
                 this.recording = false
                 if (err.response.status == 422) {
                     this.errors.set(err.response.data.errors)
+                } else {
+                    this.vm.$auth.handleErrorVm(err, this.vm)
                 }
             })
     }
@@ -69,10 +71,14 @@ export default class CrudForm {
             this.updating = true
         } else {
             this.loading = true
-            this.client.read(idOrObject).then(resp => {
-                this.data = this.mapData(resp.data.data)
-                this.updating = true
-            })
+            this.client.read(idOrObject)
+                .then(resp => {
+                    this.data = this.mapData(resp.data.data)
+                    this.updating = true
+                })
+                .catch(err => {
+                    this.vm.$auth.handleErrorVm(err, this.vm)
+                })
         }
         return new Promise((resolve) => {
             this.resolve = resolve
@@ -91,6 +97,8 @@ export default class CrudForm {
                 this.recording = false
                 if (err.response.status == 422) {
                     this.errors.set(err.response.data.errors)
+                } else {
+                    this.vm.$auth.handleErrorVm(err, this.vm)
                 }
             })
     }
@@ -102,10 +110,14 @@ export default class CrudForm {
             this.duplicating = true
         } else {
             this.loading = true
-            this.client.read(idOrObject).then(resp => {
-                this.data = this.mapData(resp.data.data)
-                this.duplicating = true
-            })
+            this.client.read(idOrObject)
+                .then(resp => {
+                    this.data = this.mapData(resp.data.data)
+                    this.duplicating = true
+                })
+                .catch(err => {
+                    this.vm.$auth.handleErrorVm(err, this.vm)
+                })
         }
         return new Promise((resolve) => {
             this.resolve = resolve
@@ -124,8 +136,10 @@ export default class CrudForm {
                 this.recording = false
                 if (err.response.status == 422) {
                     this.errors.set(err.response.data.errors)
+                } else {
+                    this.vm.$auth.handleErrorVm(err, this.vm)
                 }
-            })
+        })
     }
 
     watch(component, target) {

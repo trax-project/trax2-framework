@@ -2,16 +2,31 @@
 
 namespace Trax\XapiStore\Exceptions;
 
-use Trax\Core\ExceptionHandler;
+use Throwable;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
-use Throwable;
+use Trax\Core\ExceptionHandler;
 use Trax\XapiValidation\Exceptions\XapiValidationException;
 use Trax\XapiStore\Stores\Logs\Logger;
 use Trax\Core\Contracts\HttpException;
 
 class XapiExceptionHandler extends ExceptionHandler
 {
+    /**
+     * A list of the exception types that are not reported.
+     *
+     * @var array
+     */
+    protected $dontReport = [
+        XapiBadRequestException::class,
+        XapiAuthorizationException::class,
+        XapiNotFoundException::class,
+        XapiConflictException::class,
+        XapiPreconditionFailedException::class,
+        XapiNoContentException::class,
+        XapiValidationException::class,
+    ];
+
     /**
      * Render an exception into an HTTP response.
      *

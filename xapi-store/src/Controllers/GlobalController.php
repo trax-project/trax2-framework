@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Trax\Auth\Authorizer;
 use Trax\Auth\Stores\Owners\OwnerRepository;
-use Trax\XapiStore\Services\GlobalService;
+use Trax\XapiStore\Services\Destroyer\DestroyerService;
 
 class GlobalController extends Controller
 {
@@ -21,9 +21,9 @@ class GlobalController extends Controller
     protected $owners;
 
     /**
-     * @var \Trax\XapiStore\Services\GlobalService
+     * @var \Trax\XapiStore\Services\Destroyer\DestroyerService
      */
-    protected $service;
+    protected $destroyer;
 
 
     /**
@@ -31,14 +31,14 @@ class GlobalController extends Controller
      *
      * @param  \Trax\Auth\Authorizer  $authorizer
      * @param  \Trax\Auth\Stores\Owners\OwnerRepository  $owners
-     * @param  \Trax\XapiStore\Services\GlobalService  $service
+     * @param  \Trax\XapiStore\Services\Destroyer\DestroyerService  $destroyer
      * @return void
      */
-    public function __construct(Authorizer $authorizer, OwnerRepository $owners, GlobalService $service)
+    public function __construct(Authorizer $authorizer, OwnerRepository $owners, DestroyerService $destroyer)
     {
         $this->authorizer = $authorizer;
         $this->owners = $owners;
-        $this->service = $service;
+        $this->destroyer = $destroyer;
     }
 
     /**
@@ -53,7 +53,7 @@ class GlobalController extends Controller
         $this->authorizer->must('xapi-extra.manage');
 
         // Do it.
-        $this->service->clearStores();
+        $this->destroyer->clearStores();
 
         return response('', 204);
     }
@@ -73,7 +73,7 @@ class GlobalController extends Controller
         $this->authorizer->must('xapi-extra.manage');
 
         // Do it.
-        $this->service->clearStore($id);
+        $this->destroyer->clearStore($id);
 
         return response('', 204);
     }
@@ -93,7 +93,7 @@ class GlobalController extends Controller
         $this->authorizer->must('xapi-extra.manage');
 
         // Do it.
-        $this->service->deleteStore($id);
+        $this->destroyer->deleteStore($id);
 
         return response('', 204);
     }

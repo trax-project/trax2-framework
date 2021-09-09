@@ -11,6 +11,7 @@ class ValidationRules
      */
     public static function register()
     {
+        self::registerCustomPasswordRule();
         self::registerIriRule();
         self::registerIsoDateRule();
         self::registerIsoDurationRule();
@@ -23,6 +24,21 @@ class ValidationRules
         self::registerForbiddenRule();
         self::registerForbiddenWithRule();
         self::registerArrayOrJsonRule();
+    }
+
+    /**
+     * Custom password.
+     *
+     * @return void
+     */
+    protected static function registerCustomPasswordRule()
+    {
+        app('validator')->extend('custom_password', function ($attribute, $value, $parameters, $validator) {
+            if (!is_string($value)) {
+                return false;
+            }
+            return \Trax\Auth\Password::validate($value);
+        }, \Trax\Auth\Password::notice());
     }
 
     /**

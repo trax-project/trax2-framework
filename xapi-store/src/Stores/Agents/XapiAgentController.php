@@ -5,7 +5,7 @@ namespace Trax\XapiStore\Stores\Agents;
 use Illuminate\Http\Request;
 use Trax\XapiStore\Abstracts\XapiController;
 use Trax\XapiStore\Exceptions\XapiAuthorizationException;
-use Trax\XapiStore\Stores\Agents\AgentService;
+use Trax\XapiStore\Stores\Agents\AgentRepository;
 use Trax\XapiStore\Stores\Logs\Logger;
 
 class XapiAgentController extends XapiController
@@ -13,9 +13,9 @@ class XapiAgentController extends XapiController
     use XapiAgentValidation;
     
     /**
-     * The repository class.
+     * The repository.
      *
-     * @var \Trax\XapiStore\Stores\Agents\AgentService
+     * @var \Trax\XapiStore\Stores\Agents\AgentRepository
      */
     protected $repository;
 
@@ -29,10 +29,10 @@ class XapiAgentController extends XapiController
     /**
      * Create the constructor.
      *
-     * @param  \Trax\XapiStore\Stores\Agents\AgentService  $repository
+     * @param  \Trax\XapiStore\Stores\Agents\AgentRepository  $repository
      * @return void
      */
-    public function __construct(AgentService $repository)
+    public function __construct(AgentRepository $repository)
     {
         parent::__construct();
         $this->repository = $repository;
@@ -76,6 +76,8 @@ class XapiAgentController extends XapiController
      */
     public function get(Request $request)
     {
+        $service = app(\Trax\XapiStore\Services\Agent\AgentService::class);
+
         // Validate request.
         $xapiRequest = $this->validateGetRequest($request);
 
@@ -83,10 +85,10 @@ class XapiAgentController extends XapiController
         $resources = $this->getResources($xapiRequest);
         if ($resource = $resources->last()) {
             // Return the matching Person.
-            $person = $this->repository->getRealPerson($resource);
+            $person = $service->getRealPerson($resource);
         } else {
             // We generate the result from the request param.
-            $person = $this->repository->getVirtualPerson(
+            $person = $service->getVirtualPerson(
                 json_decode($xapiRequest->param('agent'))
             );
         }

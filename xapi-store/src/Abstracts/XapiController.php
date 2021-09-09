@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Trax\Auth\Authorizer;
 use Trax\XapiStore\Exceptions\XapiBadRequestException;
 use Trax\XapiStore\Traits\AcceptAlternateRequests;
+use Trax\XapiStore\XapiRequest;
 
 abstract class XapiController extends Controller
 {
@@ -140,7 +141,7 @@ abstract class XapiController extends Controller
         try {
             return $request->validate($rules);
         } catch (ValidationException $e) {
-            throw new XapiBadRequestException('One or more request inputs are not valid: ', $e->errors());
+            throw new XapiBadRequestException('One or more request inputs are not valid: '. "\n" . json_encode($e->errors()), $e->errors());
         }
     }
 
@@ -149,15 +150,19 @@ abstract class XapiController extends Controller
      *
      * @param  \Trax\XapiStore\XapiRequest  $xapiRequest
      * @param  string  $getMethod
+     * @param  mixed  $service
      * @return  \Illuminate\Support\Collection
      */
-    protected function getResources($xapiRequest, string $getMethod = 'get')
+    protected function getResources(XapiRequest $xapiRequest, string $getMethod = 'get', $service = null)
     {
         $filter = $this->authorizer->scopeFilter($this->permissionsDomain);
         if (is_null($filter)) {
             return collect([]);
         } else {
-            return $this->repository->addFilter($filter)->$getMethod($xapiRequest->query());
+            $service = isset($service) ? $service : $this->repository;
+            return $service->$getMethod(
+                $xapiRequest->query()->addFilter($filter)
+            );
         }
     }
 

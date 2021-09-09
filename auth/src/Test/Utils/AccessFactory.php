@@ -71,4 +71,14 @@ class AccessFactory extends Factory
     {
         return $this->app->make(AccessService::class)->create($this->data($data));
     }
+
+    /**
+     * Make an admin access.
+     */
+    public function makeAdmin()
+    {
+        return $this->app->make(AccessService::class)->create($this->data([
+            'client' => ['admin' => true],
+        ]));
+    }
 }

@@ -7,6 +7,7 @@ use Trax\Auth\TraxAuth;
 use Trax\Repo\Querying\Query;
 use Trax\Repo\CrudRepository;
 use Trax\XapiStore\Caching;
+use Trax\XapiStore\Relations\StatementVerb;
 
 class VerbRepository extends CrudRepository
 {
@@ -73,7 +74,7 @@ class VerbRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereIriIn(array $iris, Query $query = null)
+    public function whereIriIn(array $iris, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['iri' => ['$in' => $iris], 'owner_id' => $ownerId])->get();
@@ -86,9 +87,39 @@ class VerbRepository extends CrudRepository
      * @param  \Trax\Repo\Querying\Query  $query
      * @return \Illuminate\Support\Collection
      */
-    public function whereUiCombo(string $uiCombo, Query $query = null)
+    public function whereUiCombo(string $uiCombo, Query $query = null): Collection
     {
         $ownerId = TraxAuth::context('owner_id', $query);
         return $this->addFilter(['uiCombo' => $uiCombo, 'owner_id' => $ownerId])->get();
+    }
+
+    /**
+     * Insert verbs and returns models.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Support\Collection
+     */
+    public function insertAndGet(array $data): Collection
+    {
+        $insertedBatch = $this->insert($data);
+
+        // Get back the models.
+        $iris = collect($insertedBatch)->pluck('iri')->toArray();
+        $models = $this->whereIriIn($iris);
+
+        // Add them to the cache.
+        $this->cache($models);
+        return $models;
+    }
+
+    /**
+     * Insert relations between verbs and statements.
+     *
+     * @param  array  $data
+     * @return void
+     */
+    public function insertStatementsRelations(array $data): void
+    {
+        StatementVerb::insert($data);
     }
 }

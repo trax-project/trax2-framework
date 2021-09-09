@@ -19,6 +19,13 @@ class StatementAgent extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['agent_id', 'statement_id', 'type', 'sub', 'group'];
+
+    /**
      * Types of relation.
      */
     const TYPE_ACTOR = 1;

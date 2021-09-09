@@ -7,8 +7,8 @@ trait ReorderStatement
     /**
      * Reorder the statement props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     public static function reorderStatement($object)
     {
@@ -31,8 +31,8 @@ trait ReorderStatement
     /**
      * Reorder the actor props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     protected static function reorderActor($object)
     {
@@ -51,8 +51,8 @@ trait ReorderStatement
     /**
      * Reorder the object props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     protected static function reorderObject($object)
     {
@@ -75,8 +75,8 @@ trait ReorderStatement
     /**
      * Reorder the activity props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     protected static function reorderActivity($object)
     {
@@ -90,8 +90,8 @@ trait ReorderStatement
     /**
      * Reorder the context props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     protected static function reorderContext($object)
     {
@@ -135,8 +135,8 @@ trait ReorderStatement
     /**
      * Reorder a given object props.
      *
-     * @param  \stdClass  $object
-     * @return \stdClass
+     * @param  object  $object
+     * @return object
      */
     protected static function reorder($object)
     {

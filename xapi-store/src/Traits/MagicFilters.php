@@ -10,7 +10,7 @@ trait MagicFilters
      * @param  string  $field
      * @return bool
      */
-    protected function relationalMagicAgent($field)
+    public function relationalMagicAgent($field)
     {
         return $this->getMagicPrefixedField($field, 'account')
             || $this->getMagicPrefixedField($field, 'openid')
@@ -24,7 +24,7 @@ trait MagicFilters
      * @param  string  $field
      * @return bool
      */
-    protected function relationalMagicVerb($field)
+    public function relationalMagicVerb($field)
     {
         return true;
     }
@@ -35,43 +35,53 @@ trait MagicFilters
      * @param  string  $field
      * @return bool
      */
-    protected function relationalMagicActivity($field)
+    public function relationalMagicActivity($field)
     {
         return $this->getMagicPrefixedField($field, 'type')
             || $this->getMagicHttpField($field);
     }
 
     /**
+     * Does context filter support relational request?
+     *
+     * @param  string  $field
+     * @param  string  $target
+     * @param  bool  $fulltext
+     * @return bool
+     */
+    public function relationalMagicContext($field)
+    {
+        return !empty($this->getMagicContextAgentFilter($field))
+            || !empty($this->getMagicContextActivityFilter($field, 'parent'))
+            || !empty($this->getMagicContextActivityFilter($field, 'grouping'))
+            || !empty($this->getMagicContextActivityFilter($field, 'category'))
+            // No relational search by profile currently. The cost is too hight. We should index profiles.
+            || empty($this->getMagicContextProfileFilter($field))
+            ;
+    }
+
+    /**
      * Check if there is an agent filter.
      *
      * @param  string  $field
-     * @return array
+     * @return bool
      */
-    protected function hasMagicAgentFilter($field)
+    public function hasMagicAgentFilter($field): bool
     {
-        // Account filter.
-        if ($account = $this->getMagicPrefixedField($field, 'account')) {
-            return true;
-        }
-
-        // Mbox filter.
-        if ($mbox = $this->getMagicAgentMbox($field)) {
-            return true;
-        }
-
-        // Openid filter.
-        if ($openid = $this->getMagicPrefixedField($field, 'openid')) {
-            return true;
-        }
-
-        // Sha1sum filter.
-        if ($sha1sum = $this->getMagicPrefixedField($field, 'sha1sum')) {
-            return true;
-        }
-
         // Fulltext search on name has been removed because it can't be used
         // on pseudonymized agents with the reveal option.
-        return false;
+        return $this->relationalMagicAgent($field);
+    }
+
+    /**
+     * Check if there is an agent filter in the magic context.
+     *
+     * @param  string  $field
+     * @return bool
+     */
+    public function hasMagicContextAgentFilter($field): bool
+    {
+        return !empty($this->getMagicContextAgentFilter($field));
     }
 
     /**
@@ -197,6 +207,97 @@ trait MagicFilters
         return $this->getMagicIriFilter($field, $target);
     }
 
+    /**
+     * Get context agent filter.
+     *
+     * @param  string  $field
+     * @return array
+     */
+    protected function getMagicContextAgentFilter($field)
+    {
+        // Account filter.
+        if (\Str::startsWith($field, 'account:')) {
+            $field = \Str::after($field, 'account:');
+            if (empty($field)) {
+                return [];
+            }
+            $parts = explode('@', $field);
+            if (count($parts) == 1) {
+                return [
+                    ['$or' => [
+                        'data->context->instructor->account->name' => $parts[0],
+                        'data->context->team->account->name' => $parts[0],
+                    ]],
+                ];
+            } else {
+                return [
+                    ['$or' => [
+                        ['$and' => [
+                            'data->context->instructor->account->name' => $parts[0],
+                            'data->context->instructor->account->homePage' => $parts[1],
+                        ]],
+                        ['$and' => [
+                            'data->context->team->account->name' => $parts[0],
+                            'data->context->team->account->homePage' => $parts[1],
+                        ]],
+                    ]],
+                ];
+            }
+        }
+
+        // Mbox filter.
+        $parts = explode('@', $field);
+        if (count($parts) > 1) {
+            return [
+                ['$or' => [
+                    'data->context->instructor->mbox' => 'mailto:' . $field,
+                    'data->context->team->mbox' => 'mailto:' . $field,
+                ]],
+            ];
+        }
+
+        return [];
+    }
+
+    /**
+     * Get context agent filter.
+     *
+     * @param  string  $field
+     * @param  string  $relation
+     * @return array
+     */
+    protected function getMagicContextActivityFilter($field, $relation)
+    {
+        if (\Str::startsWith($field, $relation.':')) {
+            $field = \Str::after($field, $relation.':');
+            if (empty($field)) {
+                return [];
+            }
+            return [
+                ['data->context->contextActivities->'.$relation.'[*]->id' => $field],
+            ];
+        }
+    }
+
+    /**
+     * Get profile filter.
+     *
+     * @param  string  $field
+     * @return array
+     */
+    protected function getMagicContextProfileFilter($field)
+    {
+        if (\Str::startsWith($field, 'profile:')) {
+            $field = \Str::after($field, 'profile:');
+            if (empty($field)) {
+                return [];
+            }
+            return [
+                ['data->context->contextActivities->category[*]->id' => ['$text' => $field]],
+            ];
+        }
+    }
+    
     /**
      * Get IRI filter.
      *

@@ -4,6 +4,8 @@ namespace Trax\Auth\Stores\Users;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 use Trax\Repo\Contracts\ModelFactoryContract;
 use Trax\Auth\Events\PasswordChanged;
 
@@ -40,11 +42,11 @@ class UserFactory implements ModelFactoryContract
         // Encrypt password when provided!
         // In other cases, define a random password.
         if (isset($data['password'])) {
-            $user->password = Hash::make($data['password']);
+            $user->setPassword($data['password']);
         } elseif (App::environment('local') && !empty(config('trax-auth.user.default-password', ''))) {
-            $user->password = Hash::make(config('trax-auth.user.default-password'));
+            $user->setPassword(config('trax-auth.user.default-password'));
         } else {
-            $user->password = Hash::make(\Str::random(20));
+            $user->setPassword(\Str::random(20));
         }
 
         // Required firstname.
@@ -114,6 +116,7 @@ class UserFactory implements ModelFactoryContract
         // Encrypt password!
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
+            $data['password_changed_at'] = Date::now();
             $passwordChanged = true;
         }
         

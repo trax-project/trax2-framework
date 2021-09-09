@@ -80,7 +80,7 @@ class UserController extends CrudController
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'username' => "required|string|unique:$userTable,username$unicity",
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|custom_password',
             'active' => 'boolean',
             'admin' => 'boolean',
             'source' => (new UserSources)->rule(),
@@ -106,7 +106,7 @@ class UserController extends CrudController
         $content = !$withContent ? null : $request->validate([
             'firstname' => "string",
             'lastname' => "string",
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|custom_password|confirmed',
         ]);
         return new CrudRequest($params, $content);
     }
@@ -172,8 +172,8 @@ class UserController extends CrudController
 
         // Validate request.
         $data = $request->validate([
-            'current_password' => 'required|string|min:8|password',
-            'new_password' => 'required|string|min:8|confirmed',
+            'current_password' => 'required|string|password',
+            'new_password' => 'required|string|custom_password|confirmed',
         ]);
 
         // Perform task.
@@ -231,7 +231,7 @@ class UserController extends CrudController
                 return Trax::select((new UserSources)->all());
             case 'csrf-token':
                 return csrf_token();
-            case 'ui-config':
+            case 'config':
                 return $this->uiConfig();
         }
     }
@@ -249,7 +249,8 @@ class UserController extends CrudController
             ],
             'xapi' => [
                 // No need to give default values here because the Starter Edition does not need it.
-                'tables' => config('trax-xapi-store.tables'),
+                'requests' => config('trax-xapi-store.requests'),
+                'processing' => config('trax-xapi-store.processing'),
                 'gdpr' => config('trax-xapi-store.gdpr'),
                 'logging' => config('trax-xapi-store.logging'),
             ],

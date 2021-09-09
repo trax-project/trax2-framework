@@ -56,6 +56,20 @@ class ResetPasswordController extends Controller
     }
 
     /**
+     * Get the password reset validation rules.
+     *
+     * @return array
+     */
+    protected function rules()
+    {
+        return [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|custom_password',
+        ];
+    }
+
+    /**
      * Get the password reset credentials from the request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -68,6 +82,18 @@ class ResetPasswordController extends Controller
             $this->nativeCredentials($request),
             ['active' => true]
         );
+    }
+
+    /**
+     * Set the user's password.
+     *
+     * @param  \Trax\Auth\Stores\Users\User  $user
+     * @param  string  $password
+     * @return void
+     */
+    protected function setUserPassword($user, $password)
+    {
+        $user->setPassword($password);
     }
 
     /**
