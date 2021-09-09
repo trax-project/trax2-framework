@@ -19,7 +19,10 @@ trait ModelWithPermissions
     {
         $this->casts['permissions'] = 'array';
         $this->fillable[] = 'permissions';
-        $this->attributes['permissions'] = json_encode([]);
+        
+        // Since a recent framework update, default value here override the loaded value!!!
+        // So we move it to the attributes property of each model.
+        //$this->attributes['permissions'] = json_encode([]);
     }
 
     /**

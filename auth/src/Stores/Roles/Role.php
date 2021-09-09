@@ -25,6 +25,15 @@ class Role extends Model implements StorePermissionsContract
     ];
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'permissions' => '[]',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

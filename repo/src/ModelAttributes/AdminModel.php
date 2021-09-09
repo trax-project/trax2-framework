@@ -15,8 +15,11 @@ trait AdminModel
     protected function initializeAdminModel()
     {
         $this->casts['admin'] = 'boolean';
-        $this->attributes['admin'] = false;
         $this->fillable[] = 'admin';
+        
+        // Since a recent framework update, default value here override the loaded value!!!
+        // So we move it to the attributes property of each model.
+        // $this->attributes['admin'] = false;
     }
 
     /**

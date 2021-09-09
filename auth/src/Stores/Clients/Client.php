@@ -27,6 +27,17 @@ class Client extends Model implements StorePermissionsContract
     ];
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'permissions' => '[]',
+        'active' => true,
+        'admin' => false,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

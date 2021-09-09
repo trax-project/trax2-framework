@@ -8,6 +8,13 @@ use Trax\Repo\Querying\Query;
 interface CrudRepositoryContract extends ReadableRepositoryContract, WritableRepositoryContract
 {
     /**
+     * Skip Eloquent for get requests.
+     *
+     * @return void
+     */
+    public function dontGetWithEloquent();
+
+    /**
      * Return an Eloquent model instance.
      *
      * @return \Illuminate\Database\Eloquent\Model
