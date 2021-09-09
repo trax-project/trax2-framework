@@ -18,13 +18,6 @@ abstract class CrudRepository implements CrudRepositoryContract
     protected $builder;
 
     /**
-     * Don't use Eloquent to get data.
-     *
-     * @var string
-     */
-    protected $dontGetWithEloquent = false;
-
-    /**
      * Constructor.
      *
      * @return void
@@ -35,9 +28,18 @@ abstract class CrudRepository implements CrudRepositoryContract
             $this,
             $this->factory()::modelClass(),
             $this->table(),
-            $this->dynamicFilters(),
-            $this->dontGetWithEloquent
+            $this->dynamicFilters()
         );
+    }
+
+    /**
+     * Skip Eloquent for get requests.
+     *
+     * @return void
+     */
+    public function dontGetWithEloquent()
+    {
+        $this->builder->dontGetWithEloquent();
     }
 
     /**

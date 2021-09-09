@@ -12,18 +12,6 @@ class StatementRepository extends CrudRepository
     use XapiStatementRepository, StatementFilters;
 
     /**
-     * Constructor.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        // We don't need Eloquent for pure JSON queries. We skip it to improve performances.
-        $this->dontGetWithEloquent = !config('trax-xapi-store.requests.relational', false);
-        parent::__construct();
-    }
-
-    /**
      * Return model factory.
      *
      * @return \Trax\XapiStore\Stores\Statements\StatementFactory

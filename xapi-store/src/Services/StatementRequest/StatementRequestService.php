@@ -25,6 +25,11 @@ class StatementRequestService implements ReadableRepositoryContract
     public function __construct(Container $container)
     {
         $this->repository = $container->make(\Trax\XapiStore\Stores\Statements\StatementRepository::class);
+
+        // We don't need Eloquent for pure JSON queries. We skip it to improve performances.
+        if (!config('trax-xapi-store.requests.relational', false)) {
+            $this->repository->dontGetWithEloquent();
+        }
     }
 
     /**

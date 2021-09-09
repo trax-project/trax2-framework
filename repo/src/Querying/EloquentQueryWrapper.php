@@ -51,7 +51,7 @@ class EloquentQueryWrapper
      *
      * @var string
      */
-    protected $dontGetWithEloquent;
+    protected $dontGetWithEloquent = false;
 
     /**
      * Query.
@@ -69,14 +69,23 @@ class EloquentQueryWrapper
      * @param array  $dynamicFilters
      * @return void
      */
-    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [], bool $dontGetWithEloquent = false)
+    public function __construct(CrudRepositoryContract $repo, string $model, string $table = null, array $dynamicFilters = [])
     {
         $this->grammar = GrammarFactory::make();
         $this->repo = $repo;
         $this->model = $model;
         $this->table = $table;
         $this->dynamicFilters = $dynamicFilters;
-        $this->dontGetWithEloquent = $dontGetWithEloquent;
+    }
+
+    /**
+     * Skip Eloquent for get requests.
+     *
+     * @return void
+     */
+    public function dontGetWithEloquent()
+    {
+        $this->dontGetWithEloquent = true;
     }
 
     /**
