@@ -53,7 +53,7 @@ trait ValidateStatements
      *
      * @throws \Trax\XapiStore\Exceptions\XapiBadRequestException
      */
-    protected static function validateStatements($statements): void
+    public static function validateStatements($statements): void
     {
         $statements = is_array($statements) ? collect($statements) : collect([$statements]);
 
@@ -84,7 +84,7 @@ trait ValidateStatements
      * @param  object|array  $statements
      * @return void
      */
-    protected static function validateStatementIds($statements): void
+    public static function validateStatementIds($statements): void
     {
         // Get the ids.
         $statements = is_array($statements) ? collect($statements) : collect([$statements]);
@@ -111,7 +111,7 @@ trait ValidateStatements
      * @param  bool  $globalCheck  Perform the global checks (on a batch or unique statement)
      * @return  array  The attachments that are referenced by the statements and only them.
      */
-    protected static function validateAttachments($statements, array $attachments = [], $globalCheck = true): array
+    public static function validateAttachments($statements, array $attachments = [], $globalCheck = true): array
     {
         $usedAttachments = [];
         if (is_array($statements)) {
@@ -182,7 +182,7 @@ trait ValidateStatements
      * @param  object|array  $statements
      * @return  void
      */
-    protected static function validateSignedAttachment(object $jsonAttachment, object $rawAttachment, $statements): void
+    public static function validateSignedAttachment(object $jsonAttachment, object $rawAttachment, $statements): void
     {
         // Not a signed statement.
         if ($jsonAttachment->usageType != 'http://adlnet.gov/expapi/attachments/signature') {

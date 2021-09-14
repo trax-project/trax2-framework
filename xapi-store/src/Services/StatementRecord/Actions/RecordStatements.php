@@ -4,6 +4,7 @@ namespace Trax\XapiStore\Services\StatementRecord\Actions;
 
 use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
+use Trax\XapiValidation\Statement;
 
 trait RecordStatements
 {
@@ -32,7 +33,16 @@ trait RecordStatements
     protected function recordStatements(array $statements, object $authority, bool $validated = false, bool $pending = false): array
     {
         $batch = $this->statementsBatch($statements, $authority, $validated, $pending);
-        $this->repository->insert($batch->toArray());
+        try {
+            $this->repository->insert($batch->toArray());
+        } catch (\Illuminate\Database\QueryException $e) {
+            // This may be a unicity issue on statements ID which has not been validated (import or disabled
+            // validation), or a concurrency issue (after validation, 2 requests insert statements with same ids).
+            // So we try to validate IDs again.
+            Statement::validateStatementIds($statements);
+            // No error, so it was not a unicity issue. We throw the exception.
+            throw $e;
+        }
         return $batch->pluck('uuid')->all();
     }
 
