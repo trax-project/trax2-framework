@@ -9,6 +9,8 @@ use Trax\XapiStore\Relations\StatementActivity;
 
 trait RecordStatementsActivities
 {
+    use RecordStatementsActivityTypes, RecordStatementsStatementCategories;
+
     /**
      * Save the statements activities.
      *
@@ -28,15 +30,21 @@ trait RecordStatementsActivities
         $newActivitiesInfo = $this->getNewActivitiesInfo($existingActivities, $activitiesInfo);
         try {
             $newActivities = $this->insertAndGetActivities($newActivitiesInfo);
+            $recordedActivities = $existingActivities->concat($newActivities);
         } catch (\Exception $e) {
             // We may have a concurrency issue when queues are not used.
             // We accept to loose some data here when 2 processes try to create the same activity.
-            $this->recordStatementsRelations($existingActivities, $activitiesInfo);
-            return;
+            $recordedActivities = $existingActivities;
         }
 
         // Record statements relations.
-        $this->recordStatementsRelations($existingActivities->concat($newActivities), $activitiesInfo);
+        $this->recordStatementsRelations($recordedActivities, $activitiesInfo);
+
+        // Record statements activity types.
+        $this->recordStatementsActivityTypes($activitiesInfo);
+
+        // Record statements statement categories.
+        $this->recordStatementsStatementCategories($activitiesInfo);
     }
 
     /**

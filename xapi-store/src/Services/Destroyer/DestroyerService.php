@@ -58,6 +58,16 @@ class DestroyerService
     protected $verbs;
 
     /**
+     * @var \Trax\XapiStore\Stores\ActivityTypes\ActivityTypeRepository
+     */
+    protected $activityTypes;
+
+    /**
+     * @var \Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository
+     */
+    protected $statementCategories;
+
+    /**
      * @var \Trax\XapiStore\Stores\Logs\LogRepository
      */
     protected $logs;
@@ -81,6 +91,8 @@ class DestroyerService
         $this->attachments = $container->make(\Trax\XapiStore\Stores\Attachments\AttachmentRepository::class);
         $this->persons = $container->make(\Trax\XapiStore\Stores\Persons\PersonRepository::class);
         $this->verbs = $container->make(\Trax\XapiStore\Stores\Verbs\VerbRepository::class);
+        $this->activityTypes = $container->make(\Trax\XapiStore\Stores\ActivityTypes\ActivityTypeRepository::class);
+        $this->statementCategories = $container->make(\Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository::class);
         $this->logs = $container->make(\Trax\XapiStore\Stores\Logs\LogRepository::class);
     }
 
@@ -102,6 +114,8 @@ class DestroyerService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
+        $this->activityTypes->deleteByQuery($query);
+        $this->statementCategories->deleteByQuery($query);
         $this->logs->deleteByQuery($query);
     }
 
@@ -123,6 +137,8 @@ class DestroyerService
         $this->attachments->deleteByQuery($query);
         $this->persons->deleteByQuery($query);
         $this->verbs->deleteByQuery($query);
+        $this->activityTypes->deleteByQuery($query);
+        $this->statementCategories->deleteByQuery($query);
         $this->logs->deleteByQuery($query);
     }
 

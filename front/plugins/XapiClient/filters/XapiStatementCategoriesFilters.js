@@ -1,0 +1,26 @@
+import XapiFilters from './XapiFilters'
+
+export default class XapiStatementCategoriesFilters extends XapiFilters {
+
+    reset() {
+        super.reset()
+        this.id = null
+    }
+
+    empty() {
+        return !this.id
+            && super.empty()
+    }
+
+    addParams(params) {
+        this.addId(params)
+    }
+
+    addId(params) {
+        if (!this.id) {
+            return false
+        }
+        params.filters['uiCombo'] = this.id.trim()
+        return true
+    }
+}

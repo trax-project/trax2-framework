@@ -127,12 +127,6 @@ trait StatementFilters
             return $filter;
         }
 
-        // profile.
-        $filter = $this->getMagicContextProfileFilter($field);
-        if (!empty($filter)) {
-            return $filter;
-        }
-
         // Search in all context activities.
         return [
             ['$or' => [

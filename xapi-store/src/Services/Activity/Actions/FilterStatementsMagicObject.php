@@ -64,8 +64,7 @@ trait FilterStatementsMagicObject
         return function ($query) use ($activityIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_activity')
                 ->whereIn('activity_id', $activityIds)
-                ->where('type', StatementActivity::TYPE_OBJECT)
-                ->where('sub', false);
+                ->where('type', StatementActivity::TYPE_OBJECT);
         };
     }
 }

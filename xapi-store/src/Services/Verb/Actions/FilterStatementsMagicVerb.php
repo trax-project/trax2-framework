@@ -65,8 +65,7 @@ trait FilterStatementsMagicVerb
     {
         return function ($query) use ($verbIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_verb')
-                ->whereIn('verb_id', $verbIds)
-                ->where('sub', false);
+                ->whereIn('verb_id', $verbIds);
         };
     }
 
@@ -80,8 +79,7 @@ trait FilterStatementsMagicVerb
     {
         return function ($query) use ($verbIds) {
             return $query
-                ->whereIn('verb_id', $verbIds)
-                ->where('sub', false);
+                ->whereIn('verb_id', $verbIds);
         };
     }
 }

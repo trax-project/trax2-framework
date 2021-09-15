@@ -7,6 +7,8 @@ import XapiActivityProfilesFilters from "./filters/XapiActivityProfilesFilters";
 import XapiAgentProfilesFilters from "./filters/XapiAgentProfilesFilters";
 import XapiStatesFilters from "./filters/XapiStatesFilters";
 import XapiVerbsFilters from "./filters/XapiVerbsFilters";
+import XapiActivityTypesFilters from "./filters/XapiActivityTypesFilters";
+import XapiStatementCategoriesFilters from "./filters/XapiStatementCategoriesFilters";
 import XapiLogsFilters from "./filters/XapiLogsFilters";
 
 // Loaders.
@@ -26,6 +28,8 @@ export default {
             agentProfiles: new XapiAgentProfilesFilters(contextFilters),
             states: new XapiStatesFilters(contextFilters),
             verbs: new XapiVerbsFilters(contextFilters),
+            activityTypes: new XapiActivityTypesFilters(contextFilters),
+            statementCategories: new XapiStatementCategoriesFilters(contextFilters),
             logs: new XapiLogsFilters(contextFilters),
         }
 
@@ -39,6 +43,8 @@ export default {
                 agentProfiles: new XapiLoader('/trax/api/front/xapi/ext/agent_profiles', filters.agentProfiles),
                 states: new XapiLoader('/trax/api/front/xapi/ext/states', filters.states),
                 verbs: new XapiLoader('/trax/api/front/xapi/ext/verbs', filters.verbs),
+                activityTypes: new XapiLoader('/trax/api/front/xapi/ext/activity_types', filters.activityTypes),
+                statementCategories: new XapiLoader('/trax/api/front/xapi/ext/statement_categories', filters.statementCategories),
                 logs: new XapiLoader('/trax/api/front/xapi/ext/logs', filters.logs),
             }
         }

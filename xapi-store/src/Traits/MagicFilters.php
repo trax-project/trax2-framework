@@ -55,8 +55,7 @@ trait MagicFilters
             || !empty($this->getMagicContextActivityFilter($field, 'parent'))
             || !empty($this->getMagicContextActivityFilter($field, 'grouping'))
             || !empty($this->getMagicContextActivityFilter($field, 'category'))
-            // No relational search by profile currently. The cost is too hight. We should index profiles.
-            || empty($this->getMagicContextProfileFilter($field))
+            || !empty($this->getMagicContextActivityFilter($field, 'other'))
             ;
     }
 
@@ -180,6 +179,32 @@ trait MagicFilters
     }
 
     /**
+     * Get activity type filter.
+     *
+     * @param  string  $field
+     * @param  string  $target
+     * @return array
+     */
+    protected function getMagicActivityTypeFilter($field, string $target = null)
+    {
+        $target = isset($target) ? $target.'->id' : 'iri';
+        return $this->getMagicIriFilter($field, $target);
+    }
+
+    /**
+     * Get statement category filter.
+     *
+     * @param  string  $field
+     * @param  string  $target
+     * @return array
+     */
+    protected function getMagicStatementCategoryFilter($field, string $target = null)
+    {
+        $target = isset($target) ? $target.'->id' : 'iri';
+        return $this->getMagicIriFilter($field, $target);
+    }
+
+    /**
      * Get activity filter.
      *
      * @param  string  $field
@@ -275,25 +300,6 @@ trait MagicFilters
             }
             return [
                 ['data->context->contextActivities->'.$relation.'[*]->id' => $field],
-            ];
-        }
-    }
-
-    /**
-     * Get profile filter.
-     *
-     * @param  string  $field
-     * @return array
-     */
-    protected function getMagicContextProfileFilter($field)
-    {
-        if (\Str::startsWith($field, 'profile:')) {
-            $field = \Str::after($field, 'profile:');
-            if (empty($field)) {
-                return [];
-            }
-            return [
-                ['data->context->contextActivities->category[*]->id' => ['$text' => $field]],
             ];
         }
     }

@@ -62,8 +62,7 @@ trait FilterStatementsMagicContext
         return function ($query) use ($agentIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
                 ->whereIn('agent_id', $agentIds)
-                ->whereIn('type', [StatementAgent::TYPE_INSTRUCTOR, StatementAgent::TYPE_TEAM])
-                ->where('sub', false);
+                ->whereIn('type', [StatementAgent::TYPE_INSTRUCTOR, StatementAgent::TYPE_TEAM]);
         };
     }
 }

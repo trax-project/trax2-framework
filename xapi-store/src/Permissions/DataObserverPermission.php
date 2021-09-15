@@ -28,6 +28,8 @@ class DataObserverPermission extends Permission
         'agent.read.owner',
         'person.read.owner',
         'verb.read.owner',
+        'activity_type.read.owner',
+        'statement_category.read.owner',
 
         'entity.read.owner',    // For filtering
         'client.read.owner',    // For filtering

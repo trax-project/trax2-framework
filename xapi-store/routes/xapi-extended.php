@@ -13,20 +13,13 @@ TraxRouting::mixedCrudRoutes(
     ]
 );
 
-TraxRouting::mixedCrudRoutes(
-    'trax/api',
-    'xapi/ext/activities',
-    \Trax\XapiStore\Stores\Activities\ActivityController::class
-);
-
-TraxRouting::mixedCrudRoutes(
-    'trax/api',
-    'xapi/ext/agents',
-    \Trax\XapiStore\Stores\Agents\AgentController::class,
-    [
-        'destroyByQuery' => true,
-    ]
-);
+if (!config('trax-xapi-store.processing.disable_activities', false)) {
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/activities',
+        \Trax\XapiStore\Stores\Activities\ActivityController::class
+    );
+}
 
 TraxRouting::mixedCrudRoutes(
     'trax/api',
@@ -55,17 +48,45 @@ TraxRouting::mixedCrudRoutes(
     ]
 );
 
-TraxRouting::mixedCrudRoutes(
-    'trax/api',
-    'xapi/ext/persons',
-    \Trax\XapiStore\Stores\Persons\PersonController::class
-);
+if (config('trax-xapi-store.requests.relational', false)) {
 
-TraxRouting::mixedCrudRoutes(
-    'trax/api',
-    'xapi/ext/verbs',
-    \Trax\XapiStore\Stores\Verbs\VerbController::class
-);
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/agents',
+        \Trax\XapiStore\Stores\Agents\AgentController::class,
+        [
+            'destroyByQuery' => true,
+        ]
+    );
+
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/persons',
+        \Trax\XapiStore\Stores\Persons\PersonController::class
+    );
+
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/verbs',
+        \Trax\XapiStore\Stores\Verbs\VerbController::class
+    );
+}
+
+if (config('trax-xapi-store.processing.record_activity_types', false)) {
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/activity_types',
+        \Trax\XapiStore\Stores\ActivityTypes\ActivityTypeController::class
+    );
+}
+
+if (config('trax-xapi-store.processing.record_statement_categories', false)) {
+    TraxRouting::mixedCrudRoutes(
+        'trax/api',
+        'xapi/ext/statement_categories',
+        \Trax\XapiStore\Stores\StatementCategories\StatementCategoryController::class
+    );
+}
 
 if (config('trax-xapi-store.logging.enabled', false)) {
     TraxRouting::mixedCrudRoutes(
