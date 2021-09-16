@@ -211,6 +211,13 @@
                 "button": "Delete",
                 "confirm": "Do you really want to delete the statements? This is a definitive action!",
                 "error": "Sorry, there was an issue during statements deletion :-("
+            },
+            "delete-logs": {
+                "title": "Delete Logs",
+                "description": "All the logs of the selected entity/client/access will be deleted.",
+                "button": "Delete",
+                "confirm": "Do you really want to delete the logs? This is a definitive action!",
+                "error": "Sorry, there was an issue during logs deletion :-("
             }
         },
         "log": {

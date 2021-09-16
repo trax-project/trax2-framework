@@ -93,7 +93,10 @@ if (config('trax-xapi-store.logging.enabled', false)) {
         'trax/api',
         'xapi/ext/logs',
         \Trax\XapiStore\Stores\Logs\LogController::class,
-        ['except' => ['store', 'destroy', 'update']]
+        [
+            'except' => ['store', 'destroy', 'update'],
+            'destroyByQuery' => true,
+        ],
     );
 }
 
