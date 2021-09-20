@@ -44,7 +44,7 @@ trait GetAuthority
      */
     protected function getImportAuthority(): object
     {
-        $authority = config('trax-lrs.importer.authority', false);
+        $authority = config('trax-lrs.file.importer.authority', false);
 
         if (!$authority) {
             $authority = config('trax-xapi-store.authority', [
