@@ -199,8 +199,8 @@
         },
         "management": {
             "clear-all": {
-                "title": "Clear all xAPI data",
-                "description": "All xAPI data will be deleted (Statements, Activities, Agents, States, Profiles).",
+                "title": "Clear data",
+                "description": "All xAPI related data will be deleted, including pure xAPI data (Statements, Activities, Agents, States, Profiles, States), as well as vocabulary and logs.",
                 "button": "Clear all",
                 "confirm": "Do you really want to delete all the LRS data? This is a definitive action!",
                 "error": "Sorry, there was an issue during data deletion :-("

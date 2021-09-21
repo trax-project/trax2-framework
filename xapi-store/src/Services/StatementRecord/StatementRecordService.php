@@ -55,17 +55,23 @@ class StatementRecordService
         }
 
         // Record pending statements.
-        $uuids = DB::transaction(function () use ($statements, $attachments, $validated, $authority) {
+        $uuids = DB::transaction(function () use ($statements, $attachments, $validated, $authority, $allowPseudo, $allowQueue) {
+            // Record the attachments.
             $this->recordAttachments($attachments);
-            return $this->recordPendingStatements(
+
+            // Record the pending statements.
+            $uuids = $this->recordPendingStatements(
                 $statements,
                 isset($authority) ? $authority : $this->getAccessAuthority(),
                 $validated
             );
+            
+            // Dispatch the pending statements.
+            // We do it inside the transaction because queues may not be used.
+            $this->dispatchPendingStatements($uuids, $allowPseudo, $allowQueue);
+
+            return $uuids;
         });
-        
-        // Dispatch the pending statements.
-        $this->dispatchPendingStatements($uuids, $allowPseudo, $allowQueue);
 
         // Return the array of UUIDs.
         return $uuids;
@@ -100,15 +106,16 @@ class StatementRecordService
      * @param  int  $ownerId
      * @param  int  $entityId
      * @param  boolean  $allowPseudo
+     * @param  string  $authorityConfig
      * @return void
      */
-    public function importStatements(array $statements, int $ownerId, int $entityId = null, bool $allowPseudo = true)
+    public function importStatements(array $statements, int $ownerId, int $entityId = null, bool $allowPseudo = true, string $authorityConfig = null)
     {
         TraxAuth::setContext([
             'entity_id' => $entityId,
             'owner_id' => $ownerId,
         ]);
 
-        $this->createStatements($statements, [], false, $this->getImportAuthority(), $allowPseudo, false);
+        $this->createStatements($statements, [], false, $this->getImportAuthority($authorityConfig), $allowPseudo, false);
     }
 }

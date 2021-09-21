@@ -99,7 +99,7 @@ trait ValidateStatements
         $repository = app(\Trax\XapiStore\Stores\Statements\StatementRepository::class);
         $existing = $repository->whereStatementIdIn($ids->unique()->all());
         if (!$existing->isEmpty()) {
-            throw new XapiBadRequestException("Statement(s) with similar ID already exist in the database.");
+            throw new XapiBadRequestException("Statement(s) with similar ID already exist in the store.");
         }
     }
     
