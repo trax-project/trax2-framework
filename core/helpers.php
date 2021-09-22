@@ -19,12 +19,43 @@ if (!function_exists('traxUrl')) {
      * Override the Laravel url() function in order to get a secure URL
      * depending of the app config.
      *
-     * @param  string|null  $path
-     * @param  mixed  $parameters
+     * @param  string  $path
+     * @return string
+     */
+    function traxUrl(string $path = '')
+    {
+        //return url($path, [], config('app.secure'));
+
+        // Remove trailing slash on the base url.
+        $base = config('app.url');
+        if (\Str::of($base)->endsWith('/')) {
+            $base = \Str::of($base)->beforeLast('/');
+        }
+
+        // Root without trailing slash.
+        if (empty($path)) {
+            return $base;
+        }
+        
+        // Sub-url.
+        return \Str::of($path)->startsWith('/')
+            ? $base . $path
+            : $base . '/' . $path;
+    }
+}
+
+if (!function_exists('traxRequestUrl')) {
+    /**
+     * Override the Laravel url() function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    function traxUrl($path = null, $parameters = [])
+    function traxRequestUrl(\Illuminate\Http\Request $request)
     {
-        return url($path, $parameters, config('app.secure'));
+        return traxUrl(
+            \Str::of($request->url())->after(url())
+        );
     }
 }
