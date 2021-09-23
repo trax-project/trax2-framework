@@ -10,7 +10,7 @@ if (!function_exists('traxAsset')) {
      */
     function traxAsset($path)
     {
-        return asset($path, config('app.secure'));
+        return traxUrl($path);
     }
 }
 
@@ -24,8 +24,6 @@ if (!function_exists('traxUrl')) {
      */
     function traxUrl(string $path = '')
     {
-        //return url($path, [], config('app.secure'));
-
         // Remove trailing slash on the base url.
         $base = config('app.url');
         if (\Str::of($base)->endsWith('/')) {
@@ -46,7 +44,7 @@ if (!function_exists('traxUrl')) {
 
 if (!function_exists('traxRequestUrl')) {
     /**
-     * Override the Laravel url() function in order to get a secure URL
+     * Override the Laravel $request->url() function in order to get a secure URL
      * depending of the app config.
      *
      * @param  \Illuminate\Http\Request  $request
