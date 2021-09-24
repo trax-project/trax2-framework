@@ -203,14 +203,16 @@
                 "description": "All xAPI related data will be deleted, including pure xAPI data (Statements, Activities, Agents, States, Profiles, States), as well as vocabulary and logs.",
                 "button": "Clear all",
                 "confirm": "Do you really want to delete all the LRS data? This is a definitive action!",
-                "error": "Sorry, there was an issue during data deletion :-("
+                "error": "Sorry, there was an issue during data deletion :-(",
+                "conflict": "Sorry, there are too many data. This operation should be done from the console."
             },
             "delete-statements": {
                 "title": "Delete Statements",
                 "description": "All the statements of the selected entity/client/access will be deleted.",
                 "button": "Delete",
                 "confirm": "Do you really want to delete the statements? This is a definitive action!",
-                "error": "Sorry, there was an issue during statements deletion :-("
+                "error": "Sorry, there was an issue during statements deletion :-(",
+                "conflict": "Sorry, there are too many data. This operation should be done from the console."
             },
             "delete-logs": {
                 "title": "Delete Logs",

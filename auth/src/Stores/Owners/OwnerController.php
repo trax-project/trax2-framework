@@ -3,6 +3,7 @@
 namespace Trax\Auth\Stores\Owners;
 
 use Illuminate\Http\Request;
+use Trax\Repo\CrudRequest;
 use Trax\Auth\Controllers\CrudController;
 use Trax\Core\Helpers as Trax;
 
@@ -40,6 +41,18 @@ class OwnerController extends CrudController
             'name' => "required|string|unique:trax_owners,name$unicity",
             'meta' => 'array',
         ];
+    }
+
+    /**
+     * Hook before an index request.
+     *
+     * @param  \Trax\Repo\CrudRequest  $crudRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function beforeIndex(CrudRequest $crudRequest, Request $request)
+    {
+        $crudRequest->addFilter(['deleted_at' => null]);
     }
 
     /**

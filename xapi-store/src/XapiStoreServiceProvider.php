@@ -31,7 +31,7 @@ class XapiStoreServiceProvider extends ServiceProvider
         \Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository::class => \Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository::class,
         \Trax\XapiStore\Stores\Logs\LogRepository::class => \Trax\XapiStore\Stores\Logs\LogRepository::class,
         // Services.
-        \Trax\XapiStore\Services\Destroyer\DestroyerService::class => \Trax\XapiStore\Services\Destroyer\DestroyerService::class,
+        \Trax\XapiStore\Services\Cleaner\CleanerService::class => \Trax\XapiStore\Services\Cleaner\CleanerService::class,
         \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class => \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class,
         \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class => \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class,
         \Trax\XapiStore\Services\Activity\ActivityService::class => \Trax\XapiStore\Services\Activity\ActivityService::class,

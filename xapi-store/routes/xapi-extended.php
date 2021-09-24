@@ -101,7 +101,7 @@ if (config('trax-xapi-store.logging.enabled', false)) {
 }
 
 Route::namespace('Trax\XapiStore\Controllers')->group(function () {
-    TraxRouting::mixedPostRoute('trax/api', 'xapi/ext/stores/clear', 'GlobalController@clearStores');
-    TraxRouting::mixedPostRoute('trax/api', 'xapi/ext/stores/{id}/clear', 'GlobalController@clearStore');
     TraxRouting::mixedDeleteRoute('trax/api', 'xapi/ext/stores/{id}', 'GlobalController@deleteStore');
+    TraxRouting::mixedPostRoute('trax/api', 'xapi/ext/stores/{id}/clear', 'GlobalController@clearStore');
+    TraxRouting::mixedPostRoute('trax/api', 'xapi/ext/stores/{id}/statements/clear', 'GlobalController@clearStoreStatements');
 });
