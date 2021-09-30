@@ -7,6 +7,19 @@ use Trax\XapiStore\Abstracts\XapiDocumentRequest;
 class XapiStateRequest extends XapiDocumentRequest
 {
     /**
+     * Make a request.
+     *
+     * @param  array  $params
+     * @param  object|array|null  $content
+     * @param  string  $method
+     * @return void
+     */
+    public function __construct(array $params, $content = null, string $method = null)
+    {
+        parent::__construct($params, $content, 'state', $method);
+    }
+
+    /**
      * Return the property name used to identify a document.
      *
      * @return string

@@ -59,6 +59,7 @@ class AccessController extends CrudController
             'cors' => 'nullable|string',
             'active' => 'boolean',
             'admin' => 'boolean',
+            'visible' => 'boolean',
             'permissions' => 'array',
             'inherited_permissions' => 'boolean',
             'meta' => 'array',

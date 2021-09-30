@@ -22,11 +22,8 @@ return [
     'statements_write_name' => 'Statements/Write',
     'statements_write_description' => 'Write any statement.',
 
-    'statements_read_mine_client_name' => 'Statements/Read/Mine (client)',
-    'statements_read_mine_client_description' => 'Read statements written by the same client.',
-        
-    'statements_read_mine_access_name' => 'Statements/Read/Mine (access)',
-    'statements_read_mine_access_description' => 'Read statements written by the same access.',
+    'statements_read_mine_name' => 'Statements/Read/Mine',
+    'statements_read_mine_description' => 'Read statements written by the same client.',
     
     'statements_read_name' => 'Statements/Read',
     'statements_read_description' => 'Read any statement.',

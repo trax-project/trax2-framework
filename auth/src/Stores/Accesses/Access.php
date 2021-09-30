@@ -51,6 +51,7 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
         'permissions' => '[]',
         'active' => true,
         'admin' => false,
+        'visible' => true,
     ];
 
     /**
@@ -97,6 +98,16 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
     public function getEntityIdAttribute($value)
     {
         return $this->client->entity_id;
+    }
+
+    /**
+     * Get the access endpoint.
+     *
+     * @return int
+     */
+    public function getEndpointAttribute($value)
+    {
+        return traxUrl("trax/api/$this->uuid/xapi/std");
     }
 
     /**
