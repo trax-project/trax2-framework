@@ -53,7 +53,7 @@ if (!function_exists('traxRequestUrl')) {
     function traxRequestUrl(\Illuminate\Http\Request $request)
     {
         return traxUrl(
-            \Str::of($request->url())->after(url())
+            \Str::of($request->url())->after(url(''))
         );
     }
 }

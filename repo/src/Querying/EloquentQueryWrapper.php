@@ -207,7 +207,8 @@ class EloquentQueryWrapper
                 $joinedTable = $relation->getRelated()->getTable();
                 $joinedTableforeignKey = $relation->getRelated()->getQualifiedKeyName();
 
-                $builder->join($joinedTable, $foreignKey, '=', $joinedTableforeignKey)
+                $builder->select("$table.*")
+                    ->join($joinedTable, $foreignKey, '=', $joinedTableforeignKey)
                     ->orderBy($joinedTable . '.' . $sortInfo['col'], $sortInfo['dir']);
             }
         }
