@@ -6,7 +6,8 @@ use Trax\Repo\Querying\Query;
 
 trait BuildStatementsQuery
 {
-    use FilterStatementsAgent, FilterStatementsMagicActor, FilterStatementsMagicContext, FilterStatementsMagicObject;
+    use FilterStatementsAgent, FilterStatementsRelatedAgents,
+        FilterStatementsMagicActor, FilterStatementsMagicContext, FilterStatementsMagicObject;
 
     /**
      * Statement filtering.
@@ -17,6 +18,7 @@ trait BuildStatementsQuery
     public function buildStatementsQuery(Query $query): void
     {
         $this->filterStatementsAgent($query);
+        $this->filterStatementsRelatedAgents($query);
         $this->filterStatementsMagicActor($query);
         $this->filterStatementsMagicObject($query);
         $this->filterStatementsMagicContext($query);

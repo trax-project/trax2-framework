@@ -43,6 +43,16 @@ class ClientFactory implements ModelFactoryContract
             $client->admin = $data['admin'];
         }
 
+        // Optional boolean.
+        if (isset($data['visible'])) {
+            $client->visible = $data['visible'];
+        }
+
+        // Optional string.
+        if (isset($data['category'])) {
+            $client->category = $data['category'];
+        }
+
         // Set permissions.
         self::setModelPermissions($client, $data);
 

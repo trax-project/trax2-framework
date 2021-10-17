@@ -1,4 +1,4 @@
-# TRAX Framework 2.0 (beta 5)
+# TRAX Framework 2.0 (RC1)
 
 
 ## About TRAX Framework

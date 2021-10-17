@@ -5,6 +5,7 @@ namespace Trax\XapiStore\Stores\States;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Traits\MagicFilters;
 use Trax\XapiStore\Traits\XapiDocumentFilters;
+use Trax\XapiStore\Stores\Agents\AgentFactory;
 
 trait StateFilters
 {
@@ -22,7 +23,7 @@ trait StateFilters
             'stateId', 'activityId', 'agent', 'since',
 
             // Additional filters.
-            'uiAgent', 'uiActivity', 'uiState',
+            'uiAgent', 'uiActivity', 'uiState', 'agents'
         ];
     }
 
@@ -73,6 +74,24 @@ trait StateFilters
         }
         return [
             ['state_id' => ['$text' => $field]],
+        ];
+    }
+
+    /**
+     * Filter: agents.
+     *
+     * @param  array  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function agentsFilter($field, Query $query = null)
+    {
+        $vids = array_map(function ($agent) {
+            return AgentFactory::virtualId($agent);
+        }, $field);
+        
+        return [
+            ['vid' => ['$in' => $vids]]
         ];
     }
 }

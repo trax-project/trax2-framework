@@ -35,6 +35,7 @@ class Client extends Model implements StorePermissionsContract
         'permissions' => '[]',
         'active' => true,
         'admin' => false,
+        'visible' => true,
     ];
 
     /**

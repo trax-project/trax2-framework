@@ -16,7 +16,7 @@ trait ReleaseStatements
      */
     public function releaseStatements(Collection $statements, bool $allowPseudo)
     {
-        if ($allowPseudo && config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if ($allowPseudo && config('trax-xapi-store.privacy.pseudonymization', false)) {
             $this->removePendingStatusAndSave($statements);
         } else {
             $this->removePendingStatus($statements);

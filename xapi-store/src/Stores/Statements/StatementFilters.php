@@ -24,6 +24,7 @@ trait StatementFilters
             'uiVerb',
             'uiObject',
             'uiContext',
+            'relatedAgents',
         ]);
     }
 
@@ -136,5 +137,21 @@ trait StatementFilters
                 'data->context->contextActivities->other[*]->id' => $field,
             ]],
         ];
+    }
+
+    /**
+     * Filter: relatedAgents.
+     *
+     * @param  array  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function relatedAgentsFilter($field, Query $query = null)
+    {
+        $conditions = [];
+        foreach ($field as $agent) {
+            $conditions = array_merge($conditions, $this->relatedAgentConditions($agent));
+        }
+        return ['$or' => $conditions];
     }
 }

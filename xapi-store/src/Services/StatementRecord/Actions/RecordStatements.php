@@ -58,6 +58,11 @@ trait RecordStatements
     {
         return collect($statements)->map(function ($statement) use ($authority, $validated, $pending) {
 
+            // Be sure to work on objects.
+            if (is_array($statement)) {
+                $statement = json_decode(json_encode($statement));
+            }
+            
             // Set the authority.
             $statement->authority = $authority;
 

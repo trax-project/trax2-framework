@@ -34,7 +34,7 @@ trait FilterStatementsAgent
 
         // Adapt the query.
         $callback = $query->hasOption('related_agents') && $query->option('related_agents') == 'true'
-            ? $this->filterStatementsRelatedAgentsCallback($agentId)
+            ? $this->filterStatementsRelatedAgentCallback($agentId)
             : $this->filterStatementsAgentCallback($agentId);
 
         // Modify the filters.
@@ -64,7 +64,7 @@ trait FilterStatementsAgent
      * @param  int  $agentId
      * @return callable
      */
-    protected function filterStatementsRelatedAgentsCallback(int $agentId): callable
+    protected function filterStatementsRelatedAgentCallback(int $agentId): callable
     {
         return function ($query) use ($agentId) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')

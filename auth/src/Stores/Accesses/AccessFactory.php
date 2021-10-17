@@ -62,6 +62,11 @@ class AccessFactory implements ModelFactoryContract
             $access->visible = $data['visible'];
         }
 
+        // Optional string.
+        if (isset($data['category'])) {
+            $access->category = $data['category'];
+        }
+
         // Set permissions.
         self::setModelPermissions($access, $data);
 

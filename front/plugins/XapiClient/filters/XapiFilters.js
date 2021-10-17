@@ -8,8 +8,9 @@ export default class XapiFilters {
         this.reset()
     }
 
-    attach(component) {
+    attach(component, scope) {
         this.vm = component
+        this.scope = scope
     }
     
     reset() {
@@ -27,6 +28,9 @@ export default class XapiFilters {
         this.errors.clearAll()
         params = this.contextFilters.get(params)
         params.sort = ['id']    // Default value. Needed!
+        if (this.scope) {
+            params.scope = this.scope
+        }
         this.addParams(params)
         return this.errors.added() ? false : params
     }

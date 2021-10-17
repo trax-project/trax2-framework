@@ -18,7 +18,7 @@ trait RevealStatements
     public function revealStatements(Collection $statements, bool $removeNames = false): Collection
     {
         // Nothing to do if pseudnonymization is not active.
-        if (!config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if (!config('trax-xapi-store.privacy.pseudonymization', false)) {
             return $statements;
         }
 

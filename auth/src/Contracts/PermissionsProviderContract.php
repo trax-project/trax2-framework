@@ -58,9 +58,10 @@ interface PermissionsProviderContract
      * Get a filter that should be applied to all requests in order to return only allowed items.
      * Return null when no resource should be returned.
      *
-     * @param string  $domain
      * @param \Trax\Auth\Contracts\HasPermissionsContract  $consumer
+     * @param string  $domain
+     * @param string  $maxScope
      * @return array|null
      */
-    public function scopeFilter(HasPermissionsContract $consumer, string $domain);
+    public function scopeFilter(HasPermissionsContract $consumer, string $domain, string $maxScope = null);
 }

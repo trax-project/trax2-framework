@@ -25,7 +25,8 @@
         "description": "Description",
         "email": "Email",
         "endpoint": "Endpoint",
-        "error": "ASTRAL detected an error (status {status}).",
+        "error": "Unwaited error (status {status}).",
+        "examples": "Examples",
         "filters": "Filters",
         "go-back": "Go back",
         "go-back-home": "Go back home!",
@@ -48,6 +49,7 @@
         "paging-count": "Showing {from} to {to} of {total} items",
         "password": "Password",
         "permissions": "Permissions",
+        "privacy": "Privacy",
         "protocol": "Protocol",
         "refresh": "Refresh",
         "retry": "Retry",
@@ -148,6 +150,7 @@
             "activity-types": "Activity Types",
             "actor": "Actor",
             "agent-id": "Agent ID",
+            "agent": "Agent",
             "agents": "Agents",
             "agent-profiles": "Agent Profiles",
             "authority": "Authority",
@@ -180,6 +183,14 @@
             "verb": "Verb",
             "verb-id": "Verb ID",
             "verbs": "Verbs"
+        },
+        "agents": {
+            "destroy-user-agents": "Destroy all the xAPI data associated with these agents",
+            "destroy-user-agents-confirm": "Are you sure you want to destroy all the xAPI data associated with these agents?",
+            "id-placeholder": "See the examples below...",
+            "new": "Add Agent",
+            "no-agent": "There is currently no agent associated with this user.",
+            "remove-from-user-confirm": "Are you sure you want to remove this agent from this user?"
         },
         "statements": {
             "search": {
@@ -235,6 +246,18 @@
             "response": "Response",
             "status": "Status",
             "time": "Time"
+        },
+        "privacy": {
+            "my-agents": "My Agents",
+            "my-statements": "My Statements",
+            "my-profiles": "My Profiles",
+            "my-states": "My States",
+            "my-endpoint": "My Endpoint",
+            "my-endpoint-username": "A username for the Basic HTTP authentication",
+            "my-endpoint-password": "A password for the Basic HTTP authentication",
+            "my-endpoint-empty": "Fill-in the following form and click on [Create] to create your personal endpoint.",
+            "my-endpoint-existing": "Below are the endpoint URL and your Basic HTTP credentials. You can change the username and password.",
+            "my-endpoint-token-error": "There is no agent associated with your account so you can't create an endpoint for the moment."
         }
     }
 }

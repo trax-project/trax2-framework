@@ -72,6 +72,7 @@ class CrudRequest
             'relations' => 'array',
             'accessors' => 'array',
             'sort' => 'array',
+            'scope' => 'string',
             'limit' => 'integer|min:1',
             'skip' => 'integer|min:0',
             'after' => 'array_or_json',
@@ -158,6 +159,19 @@ class CrudRequest
     public function removeParam(string $name)
     {
         unset($this->params[$name]);
+    }
+
+    /**
+     * Get the scope.
+     *
+     * @return string|null
+     */
+    public function scope()
+    {
+        if (!$this->hasParam('scope')) {
+            return null;
+        }
+        return $this->param('scope');
     }
 
     /**

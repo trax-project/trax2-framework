@@ -42,6 +42,9 @@ but activity definitions will not be saved nor updated.',
 
     // Extra permissions.
 
+    'my_observe_name' => 'Observe only my xAPI data',
+    'my_observe_description' => 'Access my xAPI data (read-only).',
+
     'observe_name' => 'Observe xAPI data',
     'observe_description' => 'Access xAPI data (read-only).',
 

@@ -5,6 +5,7 @@ namespace Trax\XapiStore\Stores\AgentProfiles;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Traits\MagicFilters;
 use Trax\XapiStore\Traits\XapiDocumentFilters;
+use Trax\XapiStore\Stores\Agents\AgentFactory;
 
 trait AgentProfileFilters
 {
@@ -22,7 +23,7 @@ trait AgentProfileFilters
             'profileId', 'agent', 'since',
 
             // Additional filters.
-            'uiAgent', 'uiProfile',
+            'uiAgent', 'uiProfile', 'agents',
         ];
     }
 
@@ -57,6 +58,24 @@ trait AgentProfileFilters
         }
         return [
             ['profile_id' => ['$text' => $field]],
+        ];
+    }
+
+    /**
+     * Filter: agents.
+     *
+     * @param  array  $field
+     * @param  \Trax\Repo\Querying\Query  $query
+     * @return array
+     */
+    public function agentsFilter($field, Query $query = null)
+    {
+        $vids = array_map(function ($agent) {
+            return AgentFactory::virtualId($agent);
+        }, $field);
+        
+        return [
+            ['vid' => ['$in' => $vids]]
         ];
     }
 }

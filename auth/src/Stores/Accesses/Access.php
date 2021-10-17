@@ -105,7 +105,7 @@ class Access extends Model implements ConsumerContract, StorePermissionsContract
      *
      * @return int
      */
-    public function getEndpointAttribute($value)
+    public function getXapiEndpointAttribute($value)
     {
         return traxUrl("trax/api/$this->uuid/xapi/std");
     }
