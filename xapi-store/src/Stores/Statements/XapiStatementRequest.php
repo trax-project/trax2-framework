@@ -28,7 +28,7 @@ class XapiStatementRequest extends XapiRequest
             // Do not accept a single statement: push it into an array.
             $statements = [$statements];
         }
-        parent::__construct($params, $statements);
+        parent::__construct($params, $statements, 'statement', isset($statements) ? 'post' : 'get');
         $this->attachments = $attachments;
     }
 

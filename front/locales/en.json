@@ -25,7 +25,8 @@
         "description": "Description",
         "email": "Email",
         "endpoint": "Endpoint",
-        "error": "ASTRAL detected an error (status {status}).",
+        "error": "Unwaited error (status {status}).",
+        "examples": "Examples",
         "filters": "Filters",
         "go-back": "Go back",
         "go-back-home": "Go back home!",
@@ -48,6 +49,7 @@
         "paging-count": "Showing {from} to {to} of {total} items",
         "password": "Password",
         "permissions": "Permissions",
+        "privacy": "Privacy",
         "protocol": "Protocol",
         "refresh": "Refresh",
         "retry": "Retry",
@@ -61,6 +63,7 @@
         "settings": "Settings",
         "store": "Store",
         "stores": "Stores",
+        "type": "Type",
         "unauthorized": "You are not allowed to access this page :-(",
         "update": "Update",       
         "upload": "Upload",
@@ -144,12 +147,15 @@
             "activities": "Activities",
             "activity-id": "Activity ID",
             "activity-profiles": "Activity Profiles",
+            "activity-types": "Activity Types",
             "actor": "Actor",
             "agent-id": "Agent ID",
+            "agent": "Agent",
             "agents": "Agents",
             "agent-profiles": "Agent Profiles",
             "authority": "Authority",
             "authorization-scopes": "Authorization scopes",
+            "category-id": "Category ID",
             "context": "Context",
             "extra-permissions": "Extra permissions",
             "homePage": "homePage",
@@ -168,6 +174,7 @@
                 "no-result": "There is no result with these filters :-("
             },
             "scopes": "Scopes",
+            "statement-categories": "Statement Categories",
             "statements": "Statements",
             "state-id": "State ID",
             "states": "States",
@@ -177,13 +184,21 @@
             "verb-id": "Verb ID",
             "verbs": "Verbs"
         },
+        "agents": {
+            "destroy-user-agents": "Destroy all the xAPI data associated with these agents",
+            "destroy-user-agents-confirm": "Are you sure you want to destroy all the xAPI data associated with these agents?",
+            "id-placeholder": "See the examples below...",
+            "new": "Add Agent",
+            "no-agent": "There is currently no agent associated with this user.",
+            "remove-from-user-confirm": "Are you sure you want to remove this agent from this user?"
+        },
         "statements": {
             "search": {
                 "actor-placeholder": "'john@doe.com'  'account:jdoe'  'account:jdoe@http://homePage.com'  'openid:http://openid.org/21'  'sha1sum:kdhrnfj'",
                 "verb-placeholder": "'completed'  'http://adlnet.gov/expapi/verbs/completed'",
                 "verb-error": "Only one word, please",
                 "object-placeholder": "'act/xapi101'  'name:xAPI'  'type:scorm'  'john@doe.com'  'account:jdoe'",
-                "context-placeholder": "'http://lms.com/course01'  'profile:cmi5'  'john@doe.com'  'account:jdoe'",
+                "context-placeholder": "'http://lms.com/course01'  'john@doe.com'  'account:jdoe'  'parent:http://lms.com/course01'",
                 "from": "From (>=)",
                 "from-placeholder": "'2020'  '2020-12-01'  '2020-12-01 24:59:59'",
                 "to": "To (<)",
@@ -195,18 +210,27 @@
         },
         "management": {
             "clear-all": {
-                "title": "Clear all xAPI data",
-                "description": "All xAPI data will be deleted (Statements, Activities, Agents, States, Profiles).",
+                "title": "Clear data",
+                "description": "All xAPI related data will be deleted, including pure xAPI data (Statements, Activities, Agents, States, Profiles, States), as well as vocabulary and logs.",
                 "button": "Clear all",
                 "confirm": "Do you really want to delete all the LRS data? This is a definitive action!",
-                "error": "Sorry, there was an issue during data deletion :-("
+                "error": "Sorry, there was an issue during data deletion :-(",
+                "conflict": "Sorry, there are too many data. This operation should be done from the console."
             },
             "delete-statements": {
                 "title": "Delete Statements",
                 "description": "All the statements of the selected entity/client/access will be deleted.",
                 "button": "Delete",
                 "confirm": "Do you really want to delete the statements? This is a definitive action!",
-                "error": "Sorry, there was an issue during statements deletion :-("
+                "error": "Sorry, there was an issue during statements deletion :-(",
+                "conflict": "Sorry, there are too many data. This operation should be done from the console."
+            },
+            "delete-logs": {
+                "title": "Delete Logs",
+                "description": "All the logs of the selected entity/client/access will be deleted.",
+                "button": "Delete",
+                "confirm": "Do you really want to delete the logs? This is a definitive action!",
+                "error": "Sorry, there was an issue during logs deletion :-("
             }
         },
         "log": {
@@ -222,6 +246,18 @@
             "response": "Response",
             "status": "Status",
             "time": "Time"
+        },
+        "privacy": {
+            "my-agents": "My Agents",
+            "my-statements": "My Statements",
+            "my-profiles": "My Profiles",
+            "my-states": "My States",
+            "my-endpoint": "My Endpoint",
+            "my-endpoint-username": "A username for the Basic HTTP authentication",
+            "my-endpoint-password": "A password for the Basic HTTP authentication",
+            "my-endpoint-empty": "Fill-in the following form and click on [Create] to create your personal endpoint.",
+            "my-endpoint-existing": "Below are the endpoint URL and your Basic HTTP credentials. You can change the username and password.",
+            "my-endpoint-token-error": "There is no agent associated with your account so you can't create an endpoint for the moment."
         }
     }
 }

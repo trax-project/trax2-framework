@@ -126,12 +126,18 @@ class ActivityFactory implements ModelFactoryContract
     /**
      * Check if source object includes a target object.
      *
-     * @param  object  $source
-     * @param  object  $target
+     * @param  object|array  $source
+     * @param  object|array  $target
      * @return bool
      */
-    public static function objectIncludes(object $source, object $target): bool
+    public static function objectIncludes($source, $target): bool
     {
+        // Source and target should always be objects.
+        // However, an empty object may be transformed in an empty array when decoding JSON.
+        // So we check this...
+        $source = is_array($source) ? (object)$source : $source;
+        $target = is_array($target) ? (object)$target : $target;
+
         $sourceProps = get_object_vars($source);
         $targetProps = get_object_vars($target);
 

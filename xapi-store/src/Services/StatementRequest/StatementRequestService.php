@@ -155,7 +155,7 @@ class StatementRequestService implements ReadableRepositoryContract
     protected function shouldRevealAgents(Query $query): bool
     {
         // Always reveal when there is no pseudonymization.
-        if (!config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if (!config('trax-xapi-store.privacy.pseudonymization', false)) {
             return true;
         }
 
@@ -171,7 +171,7 @@ class StatementRequestService implements ReadableRepositoryContract
 
         // Don't reveal when the agent filter is a pseudonymized agent.
         $agent = json_decode($query->filter('agent'));
-        if (isset($agent->account) && $agent->account->homePage == config('trax-xapi-store.gdpr.pseudo_iri', 'http://pseudo.traxlrs.com')) {
+        if (isset($agent->account) && $agent->account->homePage == config('trax-xapi-store.privacy.pseudo_iri', 'http://pseudo.traxlrs.com')) {
             return false;
         }
 

@@ -28,6 +28,8 @@ class DataManagerPermission extends Permission
         'agent.read.owner', 'agent.write.owner', 'agent.delete.owner',
         'person.read.owner', 'person.write.owner', 'person.delete.owner',
         'verb.read.owner', 'verb.write.owner', 'verb.delete.owner',
+        'activity_type.read.owner', 'activity_type.write.owner', 'activity_type.delete.owner',
+        'statement_category.read.owner', 'statement_category.write.owner', 'statement_category.delete.owner',
 
         'entity.read.owner',    // For filtering
         'client.read.owner',    // For filtering

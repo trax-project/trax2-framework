@@ -9,10 +9,11 @@ use Trax\Repo\CrudRepository;
 use Trax\XapiStore\Traits\MergeableModelRepo;
 use Trax\XapiStore\Caching;
 use Trax\XapiStore\Relations\StatementActivity;
+use Trax\XapiStore\Traits\IriBasedRepo;
 
 class ActivityRepository extends CrudRepository
 {
-    use MergeableModelRepo, ActivityFilters;
+    use IriBasedRepo, MergeableModelRepo, ActivityFilters;
 
     /**
      * Return model factory.
@@ -53,64 +54,6 @@ class ActivityRepository extends CrudRepository
             $activity = $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
             return $activity ? $activity->id : false;
         }, $ownerId);
-    }
-
-    /**
-     * Find an existing activity given its IRI.
-     *
-     * @param  string  $iri
-     * @param  \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Database\Eloquent\Model|false
-     */
-    public function findByIri(string $iri, Query $query = null)
-    {
-        $ownerId = TraxAuth::context('owner_id', $query);
-        return $this->addFilter(['iri' => $iri, 'owner_id' => $ownerId])->get()->first();
-    }
-
-    /**
-     * Find a collection of activities given their IRIs.
-     *
-     * @param  array  $iris
-     * @param  \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Support\Collection
-     */
-    public function whereIriIn(array $iris, Query $query = null): Collection
-    {
-        $ownerId = TraxAuth::context('owner_id', $query);
-        return $this->addFilter(['iri' => ['$in' => $iris], 'owner_id' => $ownerId])->get();
-    }
-
-    /**
-     * Find activities given their uiCombo.
-     *
-     * @param  string  $uiCombo
-     * @param  \Trax\Repo\Querying\Query  $query
-     * @return \Illuminate\Support\Collection
-     */
-    public function whereUiCombo(string $uiCombo, Query $query = null): Collection
-    {
-        $ownerId = TraxAuth::context('owner_id', $query);
-        return $this->addFilter(['uiCombo' => $uiCombo, 'owner_id' => $ownerId])->get();
-    }
-
-    /**
-     * Insert activities and returns models.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Support\Collection
-     */
-    public function insertAndGet(array $data): Collection
-    {
-        $insertedBatch = $this->insert($data);
-
-        // Get back the models.
-        $iris = collect($insertedBatch)->pluck('iri')->toArray();
-        $models = $this->whereIriIn($iris);
-
-        // Add them to the cache.
-        $this->cache($models);
-        return $models;
     }
 
     /**

@@ -54,8 +54,7 @@ trait FilterStatementsMagicActor
         return function ($query) use ($agentIds) {
             return $query->select('statement_id')->from('trax_xapi_statement_agent')
                 ->whereIn('agent_id', $agentIds)
-                ->where('type', StatementAgent::TYPE_ACTOR)
-                ->where('sub', false);
+                ->where('type', StatementAgent::TYPE_ACTOR);
         };
     }
 }

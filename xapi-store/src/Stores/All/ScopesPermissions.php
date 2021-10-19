@@ -26,8 +26,7 @@ class ScopesPermissions extends PermissionsProvider
 
         'xapi-scope.statements-write' => \Trax\XapiStore\Permissions\StatementsWritePermission::class,
         'xapi-scope.statements-read' => \Trax\XapiStore\Permissions\StatementsReadPermission::class,
-        'xapi-scope.statements-read-mine-client' => \Trax\XapiStore\Permissions\StatementsReadMineClientPermission::class,
-        'xapi-scope.statements-read-mine-access' => \Trax\XapiStore\Permissions\StatementsReadMineAccessPermission::class,
+        'xapi-scope.statements-read-mine' => \Trax\XapiStore\Permissions\StatementsReadMinePermission::class,
 
         'xapi-scope.state' => \Trax\XapiStore\Permissions\StatePermission::class,
         'xapi-scope.profile' => \Trax\XapiStore\Permissions\ProfilePermission::class,

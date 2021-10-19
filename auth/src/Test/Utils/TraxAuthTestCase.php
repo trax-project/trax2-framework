@@ -13,49 +13,49 @@ class TraxAuthTestCase extends TestCase
     /**
      * Clients API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\ClientFactory
      */
     public $clients;
 
     /**
      * Accesses API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\AccessFactory
      */
     public $accesses;
     
     /**
      * Users API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\UserFactory
      */
     public $users;
     
     /**
      * Roles API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\RoleFactory
      */
     public $roles;
     
     /**
      * Entities API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\EntityFactory
      */
     public $entities;
     
     /**
      * Owners API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\OwnerFactory
      */
     public $owners;
     
     /**
      * Statements extended API.
      *
-     * @var \Trax\Auth\Test\Utils\ResourceApi
+     * @var \Trax\Auth\Test\Utils\StatementFactory
      */
     public $statements;
     

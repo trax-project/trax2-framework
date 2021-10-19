@@ -28,7 +28,7 @@ class AddXapiStatementStatus extends Migration
     {
         Schema::table('trax_xapi_statements', function (Blueprint $table) {
             $table->dropColumn('pending');
-            $table->dropColumn('valid');
+            $table->dropColumn('validation');
         });
     }
 }

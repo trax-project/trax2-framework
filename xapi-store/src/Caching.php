@@ -93,6 +93,32 @@ class Caching extends AuthCaching
         return self::xapiItemId($iri, 'activity', $callback, $ownerId);
     }
 
+    /**
+     * Return a activity type.
+     *
+     * @param  string  $iri
+     * @param  callable  $callback
+     * @param  int  $ownerId
+     * @return int
+     */
+    public static function activityTypeId(string $iri, $callback, $ownerId = null)
+    {
+        return self::xapiItemId($iri, 'activity_type', $callback, $ownerId);
+    }
+
+    /**
+     * Return a statement category.
+     *
+     * @param  string  $iri
+     * @param  callable  $callback
+     * @param  int  $ownerId
+     * @return int
+     */
+    public static function statementCategoryId(string $iri, $callback, $ownerId = null)
+    {
+        return self::xapiItemId($iri, 'statement_category', $callback, $ownerId);
+    }
+
      /**
      * Cache items.
      *

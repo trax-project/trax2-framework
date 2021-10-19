@@ -129,7 +129,7 @@ class XapiStatementController extends XapiController
         $response = ['statements' => $resources->pluck('data')->all()];
 
         // Add the more link.
-        if ($more = $service->moreUrl($request->url(), $xapiRequest, $resources)) {
+        if ($more = $service->moreUrl(traxRequestUrl($request), $xapiRequest, $resources)) {
             $response['more'] = $more;
         }
 

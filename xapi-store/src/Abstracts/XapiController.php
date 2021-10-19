@@ -155,7 +155,7 @@ abstract class XapiController extends Controller
      */
     protected function getResources(XapiRequest $xapiRequest, string $getMethod = 'get', $service = null)
     {
-        $filter = $this->authorizer->scopeFilter($this->permissionsDomain);
+        $filter = $this->authorizer->scopeFilter($this->permissionsDomain, $xapiRequest->scope());
         if (is_null($filter)) {
             return collect([]);
         } else {

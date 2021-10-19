@@ -76,13 +76,11 @@ trait FilterStatementsMagicContext
                         StatementActivity::TYPE_CONTEXT_GROUPING,
                         StatementActivity::TYPE_CONTEXT_CATEGORY,
                         StatementActivity::TYPE_CONTEXT_OTHER
-                    ])
-                    ->where('sub', false);
+                    ]);
             } else {
                 return $query->select('statement_id')->from('trax_xapi_statement_activity')
                     ->where('activity_id', $activityId)
-                    ->where('type', $type)
-                    ->where('sub', false);
+                    ->where('type', $type);
             }
         };
     }

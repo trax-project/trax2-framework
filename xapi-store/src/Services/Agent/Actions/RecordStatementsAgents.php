@@ -268,7 +268,7 @@ trait RecordStatementsAgents
 
         // Insert pseudonymized agents.
         $pseudos = collect([]);
-        if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if (config('trax-xapi-store.privacy.pseudonymization', false)) {
             $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons) {
                 $objectType = isset($agentInfo->agent->objectType) ? $agentInfo->agent->objectType : 'Agent';
                 return $this->newPseudoData($objectType, $persons->pop()->id);
@@ -278,7 +278,7 @@ trait RecordStatementsAgents
 
         // Insert native agents.
         $batch = $uniqueAgentsInfo->map(function ($agentInfo) use ($persons, $pseudos) {
-            if (config('trax-xapi-store.gdpr.pseudonymization', false)) {
+            if (config('trax-xapi-store.privacy.pseudonymization', false)) {
                 $pseudo = $pseudos->pop();
                 return $this->newAgentData($agentInfo->agent, $pseudo->person_id, $pseudo->id);
             } else {
@@ -314,7 +314,7 @@ trait RecordStatementsAgents
                 'objectType' => $objectType,
                 'account' => [
                     'name' => \Str::uuid(),
-                    'homePage' => config('trax-xapi-store.gdpr.pseudo_iri', 'http://pseudo.traxlrs.com'),
+                    'homePage' => config('trax-xapi-store.privacy.pseudo_iri', 'http://pseudo.traxlrs.com'),
                 ]
             ],
             'person_id' => $personId,

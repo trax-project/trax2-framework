@@ -18,7 +18,7 @@ trait PseudonymizeStatements
      */
     protected function pseudonymizeStatements(Collection $statements, Collection $agents, bool $allowPseudo): void
     {
-        if (!$allowPseudo || !config('trax-xapi-store.gdpr.pseudonymization', false)) {
+        if (!$allowPseudo || !config('trax-xapi-store.privacy.pseudonymization', false)) {
             return;
         }
         $statements->transform(function ($statement) use ($agents) {
@@ -85,7 +85,7 @@ trait PseudonymizeStatements
     protected function pseudonymizeGroup(object $group, Collection $agents)
     {
         // Identified group.
-        if (config('trax-xapi-store.gdpr.pseudonymize_groups', true)) {
+        if (config('trax-xapi-store.privacy.pseudonymize_groups', true)) {
             if (!is_null(AgentFactory::virtualId($group))) {
                 $this->pseudonymizeAgent($group, $agents);
             }
@@ -110,6 +110,11 @@ trait PseudonymizeStatements
     {
         if (!$model = $agents->firstWhere('vid', AgentFactory::virtualId($agent))) {
             // This may happen when agents recording fail (e.g. concurrency issues)
+            return;
+        }
+
+        if (is_null($model->pseudo)) {
+            // This may happen when data were recorded before pseudonymization.
             return;
         }
         

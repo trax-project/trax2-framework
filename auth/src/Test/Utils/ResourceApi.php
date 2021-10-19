@@ -60,31 +60,33 @@ class ResourceApi
     /**
      * Get resources.
      *
+     * @param array  $data
      * @param array  $params
      * @param \Trax\Auth\Contracts\ConsumerContract  $consumer
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function get(array $params = [], $consumer = null)
+    public function get(array $data = [], array $params = [], $consumer = null)
     {
         return $this->testCase($consumer)->json(
             'GET',
-            $this->endpoint($consumer),
-            $params
+            $this->endpoint($consumer, null, $params),
+            $data
         );
     }
 
     /**
      * Delete a set of resource.
      *
+     * @param array  $data
      * @param array  $params
      * @param \Trax\Auth\Contracts\ConsumerContract  $consumer
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function deleteByQuery(array $params = [], $consumer = null)
+    public function deleteByQuery(array $data = [], array $params = [], $consumer = null)
     {
         return $this->testCase($consumer)->deleteJson(
-            $this->endpoint($consumer),
-            $params
+            $this->endpoint($consumer, null, $params),
+            $data
         );
     }
 
@@ -122,13 +124,14 @@ class ResourceApi
      *
      * @param mixed  $model
      * @param array  $data
+     * @param array  $params
      * @param \Trax\Auth\Contracts\ConsumerContract  $consumer
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function put($model, array $data = [], $consumer = null)
+    public function put($model, array $data = [], array $params = [], $consumer = null)
     {
         return $this->testCase($consumer)->putJson(
-            $this->endpoint($consumer, $model->id),
+            $this->endpoint($consumer, $model->id, $params),
             $this->factory->data($data, $model)
         );
     }
@@ -137,13 +140,14 @@ class ResourceApi
      * CReate a resource given some data.
      *
      * @param array  $data
+     * @param array  $params
      * @param \Trax\Auth\Contracts\ConsumerContract  $consumer
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function post(array $data = [], $consumer = null)
+    public function post(array $data = [], array $params = [], $consumer = null)
     {
         return $this->testCase($consumer)->postJson(
-            $this->endpoint($consumer),
+            $this->endpoint($consumer, null, $params),
             $this->factory->data($data)
         );
     }
@@ -174,7 +178,7 @@ class ResourceApi
     {
         return $this->isApp($consumer)
             ? [
-                'Authorization' => 'Basic ' . base64_encode($consumer->credentials->username . ':' . $consumer->credentials->password),
+                'Authorization' => $consumer->credentials->authorization,
                 'X-Experience-API-Version' => '1.0.0'
             ]
             : [];
@@ -185,16 +189,17 @@ class ResourceApi
      *
      * @param \Trax\Auth\Contracts\ConsumerContract  $consumer
      * @param int  $id
+     * @param array  $params
      * @return string
      */
-    protected function endpoint($consumer = null, $id = null): string
+    protected function endpoint($consumer = null, $id = null, $params = []): string
     {
         if (!isset($consumer) && $this->testCase->asUser) {
             $consumer = $this->testCase->admin;
         }
         return $this->isUser($consumer)
-            ? $this->userEndpoint($id)
-            : $this->appEndpoint($consumer, $id);
+            ? $this->userEndpoint($id, $params)
+            : $this->appEndpoint($consumer, $id, $params);
     }
 
     /**
@@ -202,26 +207,34 @@ class ResourceApi
      *
      * @param \Trax\Auth\Stores\Accesses\Access  $consumer
      * @param int  $id
+     * @param array  $params
      * @return string
      */
-    protected function appEndpoint($access = null, $id = null): string
+    protected function appEndpoint($access = null, $id = null, $params = []): string
     {
         $base = isset($access)
             ? "/{$this->project}/api/{$access->uuid}/{$this->api}"
             : "/{$this->project}/api/513f4660-983f-4800-b3b4-5a52a29606da/{$this->api}";
-        return isset($id) ? $base . '/' . $id : $base;
+        $endpoint = isset($id) ? $base . '/' . $id : $base;
+        return empty($params)
+            ? $endpoint
+            : $endpoint . '?' .  http_build_query($params);
     }
 
     /**
      * Get the user endpoint.
      *
      * @param int  $id
+     * @param array  $params
      * @return string
      */
-    protected function userEndpoint($id = null)
+    protected function userEndpoint($id = null, $params = [])
     {
         $base = "/{$this->project}/api/front/{$this->api}";
-        return isset($id) ? $base . '/' . $id : $base;
+        $endpoint = isset($id) ? $base . '/' . $id : $base;
+        return empty($params)
+            ? $endpoint
+            : $endpoint . '?' .  http_build_query($params);
     }
 
     /**

@@ -69,7 +69,9 @@ trait XapiStatementValidation
         // Prevent unknown inputs.
         $params = $this->preventUnkownInputs($request, []);
 
-        return new XapiStatementRequest($params, $statements, $attachments);
+        // Return the request after contextual validation.
+        $xapiRequest = new XapiStatementRequest($params, $statements, $attachments);
+        return $xapiRequest->validate();
     }
 
     /**
@@ -137,7 +139,10 @@ trait XapiStatementValidation
             );
             throw $e;
         }
-        return new XapiStatementRequest($params);
+
+        // Return the request after contextual validation.
+        $xapiRequest = new XapiStatementRequest($params);
+        return $xapiRequest->validate();
     }
 
     /**
@@ -171,7 +176,10 @@ trait XapiStatementValidation
             );
             throw $e;
         }
-        return new XapiStatementRequest($params);
+
+        // Return the request after contextual validation.
+        $xapiRequest = new XapiStatementRequest($params);
+        return $xapiRequest->validate();
     }
 
     /**

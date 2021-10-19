@@ -35,6 +35,7 @@ class Client extends Model implements StorePermissionsContract
         'permissions' => '[]',
         'active' => true,
         'admin' => false,
+        'visible' => true,
     ];
 
     /**
@@ -51,7 +52,7 @@ class Client extends Model implements StorePermissionsContract
      */
     public function getAccessesCountAttribute(): int
     {
-        return $this->accesses->count();
+        return $this->accesses->where('visible', true)->count();
     }
 
     /**
@@ -81,7 +82,7 @@ class Client extends Model implements StorePermissionsContract
      */
     public function accesses()
     {
-        return $this->hasMany(\Trax\Auth\Stores\Accesses\Access::class);
+        return $this->hasMany(\Trax\Auth\Stores\Accesses\Access::class)->where('visible', true);
     }
 
     /**

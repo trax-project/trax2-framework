@@ -59,8 +59,10 @@ trait ValidateDocument
             $this->alternateInputs($request)
         ));
 
+        // Return the request after contextual validation.
         $class = $this->xapiRequestClass;
-        return new $class($params, $content, $type);
+        $xapiRequest = new $class($params, ['content' => $content, 'type' => $type], 'post');
+        return $xapiRequest->validate();
     }
 
     /**
@@ -80,8 +82,10 @@ trait ValidateDocument
             $this->alternateInputs($request)
         ));
 
+        // Return the request after contextual validation.
         $class = $this->xapiRequestClass;
-        return new $class($params);
+        $xapiRequest = new $class($params, null, 'get');
+        return $xapiRequest->validate();
     }
 
     /**
@@ -101,8 +105,10 @@ trait ValidateDocument
             $this->alternateInputs($request)
         ));
 
+        // Return the request after contextual validation.
         $class = $this->xapiRequestClass;
-        return new $class($params);
+        $xapiRequest = new $class($params, null, 'delete');
+        return $xapiRequest->validate();
     }
     
     /**

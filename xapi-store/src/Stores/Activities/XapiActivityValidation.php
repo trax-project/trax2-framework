@@ -67,7 +67,9 @@ trait XapiActivityValidation
             $this->alternateInputs($request)
         ));
 
-        return new XapiRequest($params);
+        // Return the request after contextual validation.
+        $xapiRequest = new XapiRequest($params, null, 'activity', 'get');
+        return $xapiRequest->validate();
     }
 
     /**

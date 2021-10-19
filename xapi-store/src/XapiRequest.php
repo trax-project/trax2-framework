@@ -5,6 +5,7 @@ namespace Trax\XapiStore;
 use Trax\Repo\CrudRequest;
 use Trax\Repo\Querying\Query;
 use Trax\XapiStore\Traits\AcceptAlternateRequests;
+use Trax\Auth\TraxAuth;
 
 class XapiRequest extends CrudRequest
 {
@@ -44,5 +45,23 @@ class XapiRequest extends CrudRequest
         })->values()->all();
 
         return new Query($query);
+    }
+
+    /**
+     * Validate the request against contextual rules.
+     *
+     * @return \Trax\XapiStore\XapiRequest
+     */
+    public function validate(bool $flag = false): XapiRequest
+    {
+        if (TraxAuth::isUser()) {
+            return $this;
+        }
+        if (!isset(TraxAuth::access()->meta['validation_class'])) {
+            return $this;
+        }
+        $class = TraxAuth::access()->meta['validation_class'];
+        (new $class)->validate($this);
+        return $this;
     }
 }

@@ -452,7 +452,8 @@ abstract class CrudController extends Controller
      */
     protected function getResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null)
     {
-        $filter = $this->authorizer->scopeFilter($domain);
+        $scope = isset($crudRequest) ? $crudRequest->scope() : null;
+        $filter = $this->authorizer->scopeFilter($domain, $scope);
         if (is_null($filter)) {
             return collect([]);
         } elseif (isset($crudRequest)) {
@@ -476,7 +477,8 @@ abstract class CrudController extends Controller
      */
     protected function countResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null): int
     {
-        $filter = $this->authorizer->scopeFilter($domain);
+        $scope = isset($crudRequest) ? $crudRequest->scope() : null;
+        $filter = $this->authorizer->scopeFilter($domain, $scope);
         if (is_null($filter)) {
             return 0;
         } elseif (isset($crudRequest)) {
@@ -500,7 +502,8 @@ abstract class CrudController extends Controller
      */
     protected function countAllResources(string $domain, ReadableRepositoryContract $repository, CrudRequest $crudRequest = null): int
     {
-        $filter = $this->authorizer->scopeFilter($domain);
+        $scope = isset($crudRequest) ? $crudRequest->scope() : null;
+        $filter = $this->authorizer->scopeFilter($domain, $scope);
         if (is_null($filter)) {
             return 0;
         } elseif (isset($crudRequest)) {

@@ -20,9 +20,7 @@ class ExtraPermissions extends PermissionsProvider
      * @var array
      */
     protected $permissionClasses = [
-        
         'xapi-extra.observe' => \Trax\XapiStore\Permissions\DataObserverPermission::class,
         'xapi-extra.manage' => \Trax\XapiStore\Permissions\DataManagerPermission::class,
-        
     ];
 }

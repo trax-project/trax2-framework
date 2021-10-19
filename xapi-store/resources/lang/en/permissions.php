@@ -22,11 +22,8 @@ return [
     'statements_write_name' => 'Statements/Write',
     'statements_write_description' => 'Write any statement.',
 
-    'statements_read_mine_client_name' => 'Statements/Read/Mine (client)',
-    'statements_read_mine_client_description' => 'Read statements written by the same client.',
-        
-    'statements_read_mine_access_name' => 'Statements/Read/Mine (access)',
-    'statements_read_mine_access_description' => 'Read statements written by the same access.',
+    'statements_read_mine_name' => 'Statements/Read/Mine',
+    'statements_read_mine_description' => 'Read statements written by the same client.',
     
     'statements_read_name' => 'Statements/Read',
     'statements_read_description' => 'Read any statement.',
@@ -44,6 +41,9 @@ but activity definitions will not be saved nor updated.',
 
 
     // Extra permissions.
+
+    'my_observe_name' => 'Observe only my xAPI data',
+    'my_observe_description' => 'Access my xAPI data (read-only).',
 
     'observe_name' => 'Observe xAPI data',
     'observe_description' => 'Access xAPI data (read-only).',

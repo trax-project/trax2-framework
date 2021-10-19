@@ -40,17 +40,18 @@ trait GetAuthority
     /**
      * Get the autority.
      *
+     * @param  string  $authorityConfig
      * @return object
      */
-    protected function getImportAuthority(): object
+    protected function getImportAuthority(string $authorityConfig = null): object
     {
-        $authority = config('trax-lrs.importer.authority', false);
-
-        if (!$authority) {
+        if (!isset($authorityConfig) || !config($authorityConfig, false)) {
             $authority = config('trax-xapi-store.authority', [
                 'name' => 'authority',
                 'homePage' => 'http://traxlrs.com',
             ]);
+        } else {
+            $authority = config($authorityConfig, false);
         }
 
         return (object)[

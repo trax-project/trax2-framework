@@ -88,8 +88,26 @@ trait XapiStatementFilters
                 //$this->agentFilterConditions('data->object->member[*]', $agent),
             ]];
         }
+
         // Related.
-        return ['$or' => [
+        return ['$or' => $this->relatedAgentConditions($agent)];
+    }
+
+    /**
+     * Get the related agent conditions.
+     *
+     * @param  string|array|object  $agent
+     * @return array
+     */
+    protected function relatedAgentConditions($agent)
+    {
+        if (is_string($agent)) {
+            $agent = json_decode($agent, true);
+        } elseif (is_object($agent)) {
+            $agent = json_decode(json_encode($agent), true);
+        }
+        
+        return [
 
             // Statement.
             $this->agentFilterConditions('data->actor', $agent),
@@ -114,7 +132,7 @@ trait XapiStatementFilters
             // Authority.
             $this->agentFilterConditions('data->authority', $agent),
             $this->agentFilterConditions('data->authority->member[*]', $agent),
-        ]];
+        ];
     }
 
     /**

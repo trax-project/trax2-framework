@@ -27,9 +27,11 @@ class XapiStoreServiceProvider extends ServiceProvider
         \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class => \Trax\XapiStore\Stores\Attachments\AttachmentRepository::class,
         \Trax\XapiStore\Stores\Persons\PersonRepository::class => \Trax\XapiStore\Stores\Persons\PersonRepository::class,
         \Trax\XapiStore\Stores\Verbs\VerbRepository::class => \Trax\XapiStore\Stores\Verbs\VerbRepository::class,
+        \Trax\XapiStore\Stores\ActivityTypes\ActivityTypeRepository::class => \Trax\XapiStore\Stores\ActivityTypes\ActivityTypeRepository::class,
+        \Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository::class => \Trax\XapiStore\Stores\StatementCategories\StatementCategoryRepository::class,
         \Trax\XapiStore\Stores\Logs\LogRepository::class => \Trax\XapiStore\Stores\Logs\LogRepository::class,
         // Services.
-        \Trax\XapiStore\Services\Destroyer\DestroyerService::class => \Trax\XapiStore\Services\Destroyer\DestroyerService::class,
+        \Trax\XapiStore\Services\Cleaner\CleanerService::class => \Trax\XapiStore\Services\Cleaner\CleanerService::class,
         \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class => \Trax\XapiStore\Services\StatementRecord\StatementRecordService::class,
         \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class => \Trax\XapiStore\Services\StatementRequest\StatementRequestService::class,
         \Trax\XapiStore\Services\Activity\ActivityService::class => \Trax\XapiStore\Services\Activity\ActivityService::class,
@@ -54,6 +56,8 @@ class XapiStoreServiceProvider extends ServiceProvider
         'attachment' => \Trax\XapiStore\Stores\Attachments\AttachmentPermissions::class,
         'person' => \Trax\XapiStore\Stores\Persons\PersonPermissions::class,
         'verb' => \Trax\XapiStore\Stores\Verbs\VerbPermissions::class,
+        'activity_type' => \Trax\XapiStore\Stores\ActivityTypes\ActivityTypePermissions::class,
+        'statement_category' => \Trax\XapiStore\Stores\StatementCategories\StatementCategoryPermissions::class,
         'log' => \Trax\XapiStore\Stores\Logs\LogPermissions::class,
     ];
 

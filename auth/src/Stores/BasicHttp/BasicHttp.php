@@ -37,4 +37,14 @@ class BasicHttp extends Model
     {
         return $this->morphOne(Access::class, 'credentials');
     }
+
+    /**
+     * Get authorization field.
+     *
+     * @return string
+     */
+    public function getAuthorizationAttribute($value): string
+    {
+        return 'Basic ' . base64_encode($this->username . ':' . $this->password);
+    }
 }

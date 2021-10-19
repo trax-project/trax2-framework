@@ -64,6 +64,8 @@ class ClientController extends CrudController
             'name' => "required|string",
             'active' => 'boolean',
             'admin' => 'boolean',
+            'visible' => 'boolean',
+            'category' => 'nullable|string',
             'permissions' => 'array',
             'entity_id' => "nullable|integer|exists:trax_entities,id",
             'owner_id' => "nullable|integer|exists:trax_owners,id",

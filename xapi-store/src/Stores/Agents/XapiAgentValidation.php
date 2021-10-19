@@ -67,7 +67,9 @@ trait XapiAgentValidation
             $this->alternateInputs($request)
         ));
 
-        return new XapiRequest($params);
+        // Return the request after contextual validation.
+        $xapiRequest = new XapiRequest($params, null, 'agent', 'get');
+        return $xapiRequest->validate();
     }
 
     /**

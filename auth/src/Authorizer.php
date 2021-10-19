@@ -155,13 +155,14 @@ class Authorizer
      * Return null when no resource should be returned.
      *
      * @param string  $domain
+     * @param string  $maxScope
      * @return array|null
      */
-    public function scopeFilter(string $domain)
+    public function scopeFilter(string $domain, string $maxScope = null)
     {
         if (!isset($this->permissionProviders[$domain])) {
             return null;
         }
-        return $this->permissionProviders[$domain]->scopeFilter($this->auth->consumer(), $domain);
+        return $this->permissionProviders[$domain]->scopeFilter($this->auth->consumer(), $domain, $maxScope);
     }
 }

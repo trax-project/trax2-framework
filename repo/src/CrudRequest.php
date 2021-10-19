@@ -21,6 +21,20 @@ class CrudRequest
     protected $content;
 
     /**
+     * API.
+     *
+     * @var string
+     */
+    protected $api;
+
+    /**
+     * Method.
+     *
+     * @var string
+     */
+    protected $method;
+
+    /**
      * Params casting.
      *
      * @var array
@@ -39,10 +53,12 @@ class CrudRequest
      * @param  object|array|null  $content
      * @return void
      */
-    public function __construct(array $params, $content = null)
+    public function __construct(array $params, $content = null, $api = null, $method = null)
     {
         $this->params = $this->castParams($params);
         $this->content = $content;
+        $this->api = $api;
+        $this->method = $method;
     }
 
     /**
@@ -56,6 +72,7 @@ class CrudRequest
             'relations' => 'array',
             'accessors' => 'array',
             'sort' => 'array',
+            'scope' => 'string',
             'limit' => 'integer|min:1',
             'skip' => 'integer|min:0',
             'after' => 'array_or_json',
@@ -63,6 +80,26 @@ class CrudRequest
             'filters' => 'array_or_json',
             'options' => 'array_or_json',
         ];
+    }
+
+    /**
+     * Get the API.
+     *
+     * @return string
+     */
+    public function api(): string
+    {
+        return $this->api;
+    }
+
+    /**
+     * Get the method.
+     *
+     * @return string
+     */
+    public function method(): string
+    {
+        return $this->method;
     }
 
     /**
@@ -122,6 +159,19 @@ class CrudRequest
     public function removeParam(string $name)
     {
         unset($this->params[$name]);
+    }
+
+    /**
+     * Get the scope.
+     *
+     * @return string|null
+     */
+    public function scope()
+    {
+        if (!$this->hasParam('scope')) {
+            return null;
+        }
+        return $this->param('scope');
     }
 
     /**

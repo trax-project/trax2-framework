@@ -2,8 +2,8 @@
 
 namespace Trax\Auth\Traits;
 
-use Trax\Auth\Contracts\HasPermissionsContract;
 use Illuminate\Database\Eloquent\Model;
+use Trax\Auth\Contracts\HasPermissionsContract;
 
 trait OwnerScope
 {
