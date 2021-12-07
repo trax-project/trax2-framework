@@ -30,6 +30,7 @@ class DataManagerPermission extends Permission
         'verb.read.owner', 'verb.write.owner', 'verb.delete.owner',
         'activity_type.read.owner', 'activity_type.write.owner', 'activity_type.delete.owner',
         'statement_category.read.owner', 'statement_category.write.owner', 'statement_category.delete.owner',
+        'log.read.owner', 'log.write.owner', 'log.delete.owner',
 
         'entity.read.owner',    // For filtering
         'client.read.owner',    // For filtering
