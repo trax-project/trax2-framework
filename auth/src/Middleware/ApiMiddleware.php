@@ -8,6 +8,7 @@ use Illuminate\Auth\AuthenticationException;
 use Trax\Auth\Caching;
 use Trax\Auth\Stores\Accesses\AccessService;
 use Trax\Auth\Authentifier;
+use Trax\Auth\Stores\Accesses\Access;
 
 class ApiMiddleware
 {
@@ -56,7 +57,10 @@ class ApiMiddleware
         }
 
         // Get the access instance from cache first.
-        $access = Caching::validateAccess($request, $source, $this);
+        $access = Caching::getAccess($source, $this->accesses);
+
+        // Validate the access.
+        $this->validateAccess($request, $access);
 
         // Set the access.
         $this->authentifier->setAccess($access);
@@ -68,15 +72,13 @@ class ApiMiddleware
      * Get and validate the access.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $source
-     * @return \Trax\Auth\Stores\Accesses\Access
+     * @param  \Trax\Auth\Stores\Accesses\Access  $access
+     * @return void
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    public function validateAccess(Request $request, string $source)
+    public function validateAccess(Request $request, Access $access = null)
     {
-        $access = $this->accesses->findByUuid($source);
-
         // Not found.
         if (!$access) {
             throw new AuthenticationException();
@@ -95,7 +97,5 @@ class ApiMiddleware
         if (!$authorized) {
             throw new AuthenticationException();
         }
-
-        return $access;
     }
 }

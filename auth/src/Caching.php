@@ -4,6 +4,7 @@ namespace Trax\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Trax\Auth\Stores\Accesses\AccessService;
 
 class Caching
 {
@@ -45,26 +46,22 @@ class Caching
     }
 
     /**
-     * Validate and return an access.
+     * Get the access from the cache first.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string $source
-     * @param  \Trax\Auth\Middleware\ApiMiddleware $middleware
+     * @param  string  $source
+     * @param  string  \Trax\Auth\Stores\Accesses\AccessService
      * @return \Trax\Auth\Stores\Accesses\Access
      */
-    public static function validateAccess(Request $request, string $source, $middleware)
+    public static function getAccess(string $source, AccessService $accesses)
     {
-        // ALways cache the access, be it in a file.
+        // Always cache the access, be it in a file.
 
-        // We keep the access 30 seconds in cache to speed series of requests.
+        // We keep the access 5 seconds in cache to speed series of requests.
         // The cache is not reset when the access is modified or deleted,
-        // so there will be a 30 delay to reflect changes.
+        // so there will be a 5 delay to reflect changes.
 
-        // We check the request credentials only when we load again the access from DB
-        // because it speeds up performances without big risk.
-
-        return Cache::remember("access_$source", 30, function () use ($request, $source, $middleware) {
-            return $middleware->validateAccess($request, $source);
+        return Cache::remember("access_$source", 5, function () use ($source, $accesses) {
+            return $accesses->findByUuid($source);
         });
     }
 }
