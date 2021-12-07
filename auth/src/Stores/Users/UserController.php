@@ -244,9 +244,6 @@ class UserController extends CrudController
     protected function uiConfig()
     {
         return [
-            'app' => [
-                'env' => config('app.env'),
-            ],
             'xapi' => [
                 // No need to give default values here because the Starter Edition does not need it.
                 'requests' => config('trax-xapi-store.requests'),
