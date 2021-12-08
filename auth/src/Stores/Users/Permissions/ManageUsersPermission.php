@@ -19,9 +19,9 @@ class ManageUsersPermission extends Permission
      * @var array
      */
     protected $capabilities = [
-        'user.read.owner', 'user.write.owner', 'user.delete.owner',
+        'user.read.entity', 'user.write.entity', 'user.delete.entity',
         'role.read.owner',
-        'entity.read.owner',
+        'entity.read.mine',
     ];
 
     /**

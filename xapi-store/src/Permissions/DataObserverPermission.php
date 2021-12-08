@@ -19,21 +19,26 @@ class DataObserverPermission extends Permission
      * @var array
      */
     protected $capabilities = [
+
+        // Entity scope.
         'statement.read.entity',
+        'attachment.read.entity',
+        'log.read.entity',
+
+        // Owner scope.
         'state.read.owner',
         'activity_profile.read.owner',
         'agent_profile.read.owner',
-        'attachment.read.entity',
         'activity.read.owner',
         'agent.read.owner',
         'person.read.owner',
         'verb.read.owner',
         'activity_type.read.owner',
         'statement_category.read.owner',
-        'log.read.owner',
 
-        'entity.read.owner',    // For filtering
-        'client.read.owner',    // For filtering
+        // For filtering.
+        'entity.read.mine',
+        'client.read.entity',
     ];
 
     /**

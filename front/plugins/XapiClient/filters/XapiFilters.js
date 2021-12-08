@@ -2,7 +2,7 @@ import FormErrors from '../../../classes/FormErrors'
 
 export default class XapiFilters {
 
-    constructor(contextFilters) {
+    constructor(contextFilters = null) {
         this.contextFilters = contextFilters
         this.errors = new FormErrors()
         this.reset()
@@ -14,10 +14,15 @@ export default class XapiFilters {
     }
     
     reset() {
-        this.contextFilters.reset()
+        if (this.contextFilters) {
+            this.contextFilters.reset()
+        }
     }
 
     empty() {
+        if (!this.contextFilters) {
+            return true
+        }
         return this.contextFilters.empty()
     }
 
@@ -26,7 +31,9 @@ export default class XapiFilters {
 
     get(params) {
         this.errors.clearAll()
-        params = this.contextFilters.get(params)
+        if (this.contextFilters) {
+            params = this.contextFilters.get(params)
+        }
         params.sort = ['id']    // Default value. Needed!
         if (this.scope) {
             params.scope = this.scope

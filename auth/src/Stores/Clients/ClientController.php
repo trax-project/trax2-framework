@@ -9,11 +9,12 @@ use Trax\Auth\Controllers\CrudController;
 use Trax\Auth\Stores\Owners\OwnerRepository;
 use Trax\Auth\Stores\Entities\EntityRepository;
 use Trax\Auth\Traits\HasOwner;
+use Trax\Auth\Traits\HasEntity;
 use Trax\Core\Helpers as Trax;
 
 class ClientController extends CrudController
 {
-    use HasOwner;
+    use HasOwner, HasEntity;
 
     /**
      * The resource parameter name.
@@ -85,6 +86,7 @@ class ClientController extends CrudController
     protected function beforeWrite(CrudRequest $crudRequest, Request $request)
     {
         $this->checkOwner($crudRequest);
+        $this->checkEntity($crudRequest);
     }
 
     /**

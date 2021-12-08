@@ -96,8 +96,6 @@ class GlobalController extends Controller
     public function clearStoreStatements(Request $request, $id)
     {
         // Check permissions.
-        $owner = $this->owners->findOrFail($id);
-        $this->authorizer->must('owner.delete', $owner);
         $this->authorizer->must('xapi-extra.manage');
 
         // Get the filters.
