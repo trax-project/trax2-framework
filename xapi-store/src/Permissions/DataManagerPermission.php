@@ -26,15 +26,15 @@ class DataManagerPermission extends Permission
         'log.read.entity', 'log.write.entity', 'log.delete.entity',
 
         // Owner scope.
-        'state.read.owner',
-        'activity_profile.read.owner',
-        'agent_profile.read.owner',
-        'activity.read.owner',
-        'agent.read.owner',
-        'person.read.owner',
-        'verb.read.owner',
-        'activity_type.read.owner',
-        'statement_category.read.owner',
+        'state.read.owner', 'state.write.owner', 'state.delete.owner',
+        'activity_profile.read.owner', 'activity_profile.write.owner', 'activity_profile.delete.owner',
+        'agent_profile.read.owner', 'agent_profile.write.owner', 'agent_profile.delete.owner',
+        'activity.read.owner', 'activity.write.owner', 'activity.delete.owner',
+        'agent.read.owner', 'agent.write.owner', 'agent.delete.owner',
+        'person.read.owner', 'person.write.owner', 'person.delete.owner',
+        'verb.read.owner', 'verb.write.owner', 'verb.delete.owner',
+        'activity_type.read.owner', 'activity_type.write.owner', 'activity_type.delete.owner',
+        'statement_category.read.owner', 'statement_category.write.owner', 'statement_category.delete.owner',
 
         // For filtering.
         'entity.read.mine',
