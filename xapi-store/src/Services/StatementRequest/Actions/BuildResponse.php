@@ -19,22 +19,22 @@ trait BuildResponse
      */
     public function moreUrl(string $apiUrl, $xapiRequest, Collection $resources)
     {
-        $limit = $xapiRequest->param('limit') ?: 0;
-        $ascending = $xapiRequest->param('ascending') == 'true';
-        $nav = $ascending ? 'after' : 'before';
-        
         if ($resources->isEmpty()) {
             return false;
         }
 
-        if (!$this->repository->addFilter(['voided' => false])->$nav($resources->last()->id)) {
-            return false;
-        }
-        return $apiUrl . '?' . http_build_query([
+        $nav = $xapiRequest->param('ascending') == 'true' ? 'after' : 'before';
+        $params = [
             $nav.'[id]' => $resources->last()->id,
-            'limit' => $limit,
-            'ascending' => $ascending ? 'true' : 'false',
-        ]);
+        ];
+
+        foreach (['agent', 'verb', 'activity', 'registration', 'related_activities', 'related_agents', 'since', 'until', 'limit', 'format', 'attachments', 'ascending'] as $name) {
+            if ($xapiRequest->hasParam($name)) {
+                $params[$name] = $xapiRequest->param($name);
+            }
+        }
+
+        return $apiUrl . '?' . http_build_query($params);
     }
 
     /**

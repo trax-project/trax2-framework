@@ -69,7 +69,7 @@ class AccessPermissions extends PermissionsProvider
     protected function owner(HasPermissionsContract $consumer, Access $access): bool
     {
         // When a consumer is not associated with an owner, it can access all data.
-        return empty($consumer->owner_id) || $access->owner_id == $consumer->owner_id;
+        return empty($consumer->owner_id) || $access->client->owner_id == $consumer->owner_id;
     }
 
     /**
@@ -87,6 +87,42 @@ class AccessPermissions extends PermissionsProvider
 
         $clients = resolve(\Trax\Auth\Stores\Clients\ClientRepository::class);
         $clientIds = $clients->addFilter(['owner_id' => $consumer->owner_id])->get()->pluck('id')->toArray();
+        return [['client_id' => ['$in' => $clientIds]]];
+    }
+    
+    /**
+     * Check if a resource belongs to the consumer scope.
+     *
+     * @param \Trax\Auth\Contracts\HasPermissionsContract  $consumer
+     * @param \Trax\Auth\Stores\Accesses\Access  $access
+     * @return bool
+     */
+    protected function entity(HasPermissionsContract $consumer, Access $access): bool
+    {
+        // When a consumer is not associated with an entity, it works with the owner data.
+        if (is_null($consumer->entity_id)) {
+            return $this->owner($consumer, $access);
+        }
+
+        // When a consumer is associated with an entity, it works only with this entity data.
+        return $access->client->entity_id == $consumer->entity_id;
+    }
+
+    /**
+     * Get a filter for requests to fit with the consumer scope.
+     *
+     * @param \Trax\Auth\Contracts\HasPermissionsContract  $consumer
+     * @return array|null
+     */
+    public function entityFilter(HasPermissionsContract $consumer)
+    {
+        // When a consumer is not associated with an entity, it works with the owner data.
+        if (is_null($consumer->entity_id)) {
+            return $this->ownerFilter($consumer);
+        }
+
+        $clients = resolve(\Trax\Auth\Stores\Clients\ClientRepository::class);
+        $clientIds = $clients->addFilter(['entity_id' => $consumer->entity_id])->get()->pluck('id')->toArray();
         return [['client_id' => ['$in' => $clientIds]]];
     }
 }

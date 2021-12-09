@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use Trax\Repo\CrudRequest;
 use Trax\Auth\Controllers\CrudController;
 use Trax\Auth\Traits\HasOwner;
+use Trax\Auth\Traits\HasEntity;
 use Trax\XapiStore\Stores\Logs\LogRepository;
 
 class LogController extends CrudController
 {
-    use HasOwner;
+    use HasOwner, HasEntity;
     
     /**
      * The resource parameter name.
@@ -63,5 +64,6 @@ class LogController extends CrudController
     protected function beforeWrite(CrudRequest $crudRequest, Request $request)
     {
         $this->checkOwner($crudRequest);
+        $this->checkEntity($crudRequest);
     }
 }

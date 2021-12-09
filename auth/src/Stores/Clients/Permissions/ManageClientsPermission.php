@@ -19,9 +19,9 @@ class ManageClientsPermission extends Permission
      * @var array
      */
     protected $capabilities = [
-        'client.read.owner', 'client.write.owner', 'client.delete.owner',
-        'access.read.owner', 'access.write.owner', 'access.delete.owner',
-        'entity.read.owner',
+        'client.read.entity', 'client.write.entity', 'client.delete.entity',
+        'access.read.entity', 'access.write.entity', 'access.delete.entity',
+        'entity.read.mine',
     ];
 
     /**

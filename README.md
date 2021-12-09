@@ -1,4 +1,4 @@
-# TRAX Framework 2.0 (RC1)
+# TRAX Framework 2.0
 
 
 ## About TRAX Framework

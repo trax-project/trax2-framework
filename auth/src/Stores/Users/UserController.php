@@ -13,11 +13,12 @@ use Trax\Auth\Stores\Roles\RoleRepository;
 use Trax\Auth\Stores\Users\UserSources;
 use Trax\Auth\Authentifier;
 use Trax\Auth\Traits\HasOwner;
+use Trax\Auth\Traits\HasEntity;
 use Trax\Core\Helpers as Trax;
 
 class UserController extends CrudController
 {
-    use HasOwner;
+    use HasOwner, HasEntity;
 
     /**
      * The resource parameter name.
@@ -194,6 +195,7 @@ class UserController extends CrudController
     protected function beforeWrite(CrudRequest $crudRequest, Request $request)
     {
         $this->checkOwner($crudRequest);
+        $this->checkEntity($crudRequest);
     }
 
     /**
@@ -244,9 +246,6 @@ class UserController extends CrudController
     protected function uiConfig()
     {
         return [
-            'app' => [
-                'env' => config('app.env'),
-            ],
             'xapi' => [
                 // No need to give default values here because the Starter Edition does not need it.
                 'requests' => config('trax-xapi-store.requests'),

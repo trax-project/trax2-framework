@@ -11,16 +11,19 @@ export default class XapiContextFilters {
     }
 
     loadOptions() {
-        let filters = Vue.prototype.$auth.owner
+        let entityFilters = Vue.prototype.$auth.owner
             ? { owner_id: Vue.prototype.$auth.owner.id }
             : {}
 
+        let clientFilters = {...entityFilters}
+        clientFilters.visible = true
+
         axios.get('/trax/api/front/clients', { params: {
             relations: ['accesses'],
-            filters: filters
+            filters: clientFilters
         }}).then(respClients => {
             axios.get('/trax/api/front/entities', { params: {
-                filters: filters
+                filters: entityFilters
             }}).then(respEntities => {
                 this.optionsLoaded(respClients.data.data, respEntities.data.data)
                 this.resolve()
