@@ -1,0 +1,25 @@
+{
+    "name": "trax2/framework",
+    "description": "A framework for TRAX LRS",
+    "keywords": ["trax", "lrs", "xapi"],
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "homepage": "http://traxlrs.com",
+    "authors": [
+        {
+            "name": "Sébastien Fraysse",
+            "email": "sebastien@fraysse.eu",
+            "homepage": "http://fraysse.eu"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Trax\\Auth\\": "auth/src/",
+            "Trax\\Core\\": "core/src/",
+            "Trax\\Repo\\": "repo/src/",
+            "Trax\\XapiStore\\": "xapi-store/src/",
+            "Trax\\XapiValidation\\": "xapi-validation/src/"
+        }
+    }
+}
