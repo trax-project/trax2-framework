@@ -264,22 +264,10 @@ class Routing
     public function crudRoutes(string $endpoint, string $controllerClass, array $middlewares, array $options = []): void
     {
         Route::middleware($middlewares)->group(function () use ($endpoint, $controllerClass, $options) {
-            
-            // Standard CRUD routes.
-            $apiOptions = [
-                // We remove all the route names to avoid some conflicts.
-                'names' => ['index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>'']
-            ];
-            if (isset($options['except'])) {
-                $apiOptions['except'] = $options['except'];
-            }
-            Route::apiResource($endpoint, $controllerClass, $apiOptions);
-            $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
-
-            // Determine the name of the resource param.
-            $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
 
             // Additional routes.
+            $namespace = implode("\\", array_slice(explode("\\", $controllerClass), 0, -1));
+            $paramName = \Str::of($endpoint)->afterLast('/')->singular()->replace('-', '_');
             Route::namespace($namespace)->group(function () use ($endpoint, $controllerClass, $options, $paramName) {
 
                 // Count route.
@@ -295,6 +283,18 @@ class Routing
                     Route::delete($endpoint, class_basename($controllerClass) . '@destroyByQuery');
                 }
             });
+            
+            // Standard CRUD routes.
+            // Keep them after the additional routes because addtional routes must be checked before CRUD
+            // for potential schema conflict reason.
+            $apiOptions = [
+                // We remove all the route names to avoid some conflicts.
+                'names' => ['index' => '', 'store' =>'',  'destroy' =>'',  'update' =>'',  'show' =>'']
+            ];
+            if (isset($options['except'])) {
+                $apiOptions['except'] = $options['except'];
+            }
+            Route::apiResource($endpoint, $controllerClass, $apiOptions);
         });
     }
 
