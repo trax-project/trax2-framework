@@ -511,7 +511,7 @@ abstract class CrudController extends Controller
                 $crudRequest->query()->addFilter($filter)
             );
         } else {
-            return $repository->addFilter($filter)->countAll(
+            return $repository->countAll(
                 (new Query)->addFilter($filter)
             );
         }
