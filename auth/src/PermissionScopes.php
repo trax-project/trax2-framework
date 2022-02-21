@@ -51,6 +51,6 @@ class PermissionScopes
         $levels = collect($scopes)->map(function ($scope) use ($scopeLevels) {
             return $scopeLevels[$scope];
         })->all();
-        return self::names()[max($levels)];
+        return self::names()[min($levels)];
     }
 }
