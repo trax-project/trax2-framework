@@ -46,4 +46,21 @@ trait HasOwner
         }
         $crudRequest->setContentField('owner_id', $owner->id);
     }
+
+    /**
+     * Check the owner.
+     *
+     * @return \Trax\Repo\CrudRequest
+     */
+    protected function ownerCrudRequest()
+    {
+        $ownerFilter = new CrudRequest([]);
+        if (request()->has('filters')) {
+            $filters = json_decode(request()->input('filters'));
+            if (isset($filters->owner_id)) {
+                $ownerFilter->addFilter(['owner_id' => $filters->owner_id]);
+            }
+        }
+        return $ownerFilter;
+    }
 }

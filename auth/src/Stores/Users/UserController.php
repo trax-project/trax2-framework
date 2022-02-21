@@ -222,13 +222,16 @@ class UserController extends CrudController
      */
     protected function includeData(string $name)
     {
+        // The owner filter from the request may also apply to complementary data.
+        $ownerFilter = $this->ownerCrudRequest();
+
         switch ($name) {
             case 'owners':
-                return Trax::select($this->getResources('owner', $this->owners));
+                return Trax::select($this->getResources('owner', $this->owners, $ownerFilter));
             case 'entities':
-                return Trax::select($this->getResources('entity', $this->entities));
+                return Trax::select($this->getResources('entity', $this->entities, $ownerFilter));
             case 'roles':
-                return Trax::select($this->getResources('role', $this->roles));
+                return Trax::select($this->getResources('role', $this->roles, $ownerFilter));
             case 'sources':
                 return Trax::select((new UserSources)->all());
             case 'csrf-token':

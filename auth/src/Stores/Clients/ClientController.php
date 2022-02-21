@@ -118,13 +118,16 @@ class ClientController extends CrudController
      */
     protected function includeData(string $name)
     {
+        // The owner filter from the request may also apply to complementary data.
+        $ownerFilter = $this->ownerCrudRequest();
+
         switch ($name) {
             case 'permissions':
                 return $this->authorizer->permissions('app');
             case 'owners':
-                return Trax::select($this->getResources('owner', $this->owners));
+                return Trax::select($this->getResources('owner', $this->owners, $ownerFilter));
             case 'entities':
-                return Trax::select($this->getResources('entity', $this->entities));
+                return Trax::select($this->getResources('entity', $this->entities, $ownerFilter));
         }
     }
 }
