@@ -4,7 +4,7 @@ namespace Trax\Auth\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Asm89\Stack\CorsService;
+use Fruitcake\Cors\CorsService;
 use Trax\Auth\Stores\Accesses\AccessService;
 
 class CorsMiddleware
