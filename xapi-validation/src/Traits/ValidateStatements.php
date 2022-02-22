@@ -26,7 +26,7 @@ trait ValidateStatements
         $parser = new Parser($schema);
         $errors = $parser->validate($data, 'statement');
         if (!empty($errors)) {
-            throw new XapiValidationException('This statement is not valid: ', $data, $errors);
+            throw new XapiValidationException('This statement is not valid: '. "\n" . json_encode($errors), $data, $errors);
         }
     }
 
