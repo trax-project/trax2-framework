@@ -49,9 +49,18 @@ class EloquentQueryWrapper
     /**
      * Don't use Eloquent to get data.
      *
-     * @var string
+     * @var bool
      */
     protected $dontGetWithEloquent = false;
+
+    /**
+     * Does the query use a JOIN.
+     * There is nurrently only one such case which is when a sort param is based on a relation.
+     * This property is used to adapt the query in really specific limited cases.
+     *
+     * @var bool
+     */
+    protected $joined = false;
 
     /**
      * Query.
@@ -214,6 +223,8 @@ class EloquentQueryWrapper
      */
     protected function queriedBuilder(Query $query = null, bool $noLimit = false)
     {
+        $this->joined = false;
+
         // Simple query with filters.
         if (!isset($query)) {
             $builder = $this->builder();
@@ -232,14 +243,14 @@ class EloquentQueryWrapper
                 $builder->orderBy($sortInfo['col'], $sortInfo['dir']);
             } else {
                 // Order by applied on a belongTo relation.
-                $table = (new $this->model)->getTable();
+                $this->joined = true;
                 $relationName = $sortInfo['rel'];
-                $foreignKey = $table . '.' . $relationName . '_id';
+                $foreignKey = $this->table . '.' . $relationName . '_id';
                 $relation = (new $this->model)->$relationName();
                 $joinedTable = $relation->getRelated()->getTable();
                 $joinedTableforeignKey = $relation->getRelated()->getQualifiedKeyName();
 
-                $builder->select("$table.*")
+                $builder->select("$this->table.*")
                     ->join($joinedTable, $foreignKey, '=', $joinedTableforeignKey)
                     ->orderBy($joinedTable . '.' . $sortInfo['col'], $sortInfo['dir']);
             }
@@ -381,6 +392,7 @@ class EloquentQueryWrapper
 
         // Unit tests replace * by __asterisk__
         $prop = str_replace('__asterisk__', '*', $prop);
+        $prop = $this->joined ? $this->table.'.'.$prop : $prop;
 
         // Scalar value (string, integer, etc.) or JSON value.
         // JSON values must be in an array form, with more than 1 property!
