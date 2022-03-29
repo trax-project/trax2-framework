@@ -441,6 +441,8 @@ class EloquentQueryWrapper
                     return $builder->{$where.'Null'}($prop);
                 }
             case '$has':
+                // Be sure to skip the table name before passing the relation to the whereHas function.
+                $prop = (string) \Str::of($prop)->afterLast('.');
                 return $builder->{$where.'Has'}($prop, $value);
         }
     }
