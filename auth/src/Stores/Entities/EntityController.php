@@ -52,6 +52,8 @@ class EntityController extends CrudController
         return [
             'name' => "required|string",
             'meta' => 'array',
+            'type' => 'nullable|string',
+            'parent_id' => "nullable|integer|exists:trax_entities,id",
             'owner_id' => "nullable|integer|exists:trax_owners,id",
         ];
     }

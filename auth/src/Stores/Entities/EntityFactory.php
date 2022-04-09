@@ -41,6 +41,16 @@ class EntityFactory implements ModelFactoryContract
             $entity->owner_id = $data['owner_id'];
         }
 
+        // Nullable type.
+        if (isset($data['type'])) {
+            $entity->type = $data['type'];
+        }
+
+        // Nullable parent ID.
+        if (isset($data['parent_id'])) {
+            $entity->parent_id = $data['parent_id'];
+        }
+
         return $entity;
     }
 
