@@ -25,7 +25,7 @@ class Entity extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'meta', 'owner_id'];
+    protected $fillable = ['name', 'meta', 'type', 'parent_id', 'owner_id'];
 
     /**
      * Get the owner.
@@ -56,5 +56,25 @@ class Entity extends Model
     public function clients()
     {
         return $this->hasMany(\Trax\Auth\Stores\Clients\Client::class);
+    }
+
+    /**
+     * Get the parent.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parent()
+    {
+        return $this->belongsTo(\Trax\Auth\Stores\Entities\Entity::class, 'parent_id');
+    }
+
+    /**
+     * Get the children associated with this entity.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children()
+    {
+        return $this->hasMany(\Trax\Auth\Stores\Entities\Entity::class, 'parent_id')->orderBy('name');
     }
 }

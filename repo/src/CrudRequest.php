@@ -237,14 +237,25 @@ class CrudRequest
     }
 
     /**
-     * Get a content field.
+     * Check if there is a given content field.
+     *
+     * @param  string  $field
+     * @return bool
+     */
+    public function hasContentField(string $field): bool
+    {
+        return isset($this->content[$field]);
+    }
+
+    /**
+     * Get a given content field.
      *
      * @param string  $field
      * @return mixed
      */
     public function contentField(string $field)
     {
-        return $this->content[$field];
+        return $this->hasContentField($field) ? $this->content[$field] : null;
     }
 
     /**
