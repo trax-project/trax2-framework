@@ -81,7 +81,7 @@ trait XapiStatementContentValidation
         
         // JSON validity.
         if (!$statements = json_decode($statements->content)) {
-            throw new XapiBadRequestException('Invalid JSON content in multipart request.');
+            throw new XapiBadRequestException('Invalid JSON content in multipart request: '.$statements->content);
         }
         
         // Check attachments.
