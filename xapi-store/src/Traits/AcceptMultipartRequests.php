@@ -73,7 +73,7 @@ trait AcceptMultipartRequests
             
             // Content.
             $content = implode($crlf.$crlf, $sub);
-            $content = str_replace($crlf.'--'.$boundary.'--'.$crlf, '', $content);
+            $content = trim(str_replace($crlf.'--'.$boundary.'--', '', $content));
             
             // Result.
             $partRes = (object)array();
