@@ -15,7 +15,7 @@ class CreateTraxXapiActivitiesTable extends Migration
     {
         Schema::create('trax_xapi_activities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('iri');
+            $table->string('iri', 348);
             $table->json('data');
             $table->timestamps();
 
