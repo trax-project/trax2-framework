@@ -42,6 +42,21 @@ if (!function_exists('traxUrl')) {
     }
 }
 
+if (!function_exists('traxCurrentUrl')) {
+    /**
+     * Override the Laravel url()->current() function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @return string
+     */
+    function traxCurrentUrl()
+    {
+        return  traxUrl(
+            \Str::of(url()->current())->after(url(''))
+        );
+    }
+}
+
 if (!function_exists('traxRequestUrl')) {
     /**
      * Override the Laravel $request->url() function in order to get a secure URL
@@ -54,6 +69,23 @@ if (!function_exists('traxRequestUrl')) {
     {
         return traxUrl(
             \Str::of($request->url())->after(url(''))
+        );
+    }
+}
+
+if (!function_exists('traxRoute')) {
+    /**
+     * Override the Laravel route() function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @param  string  $path
+     * @param  array  $params
+     * @return string
+     */
+    function traxRoute(string $path = '', array $params = [])
+    {
+        return  traxUrl(
+            \Str::of(route($path, $params))->after(url(''))
         );
     }
 }
