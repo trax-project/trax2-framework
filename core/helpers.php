@@ -89,3 +89,21 @@ if (!function_exists('traxRoute')) {
         );
     }
 }
+
+if (!function_exists('traxIntendedUrl')) {
+    /**
+     * Override the Laravel redirect()->intended()->getTargetUrl() function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function traxIntendedUrl(string $path = '')
+    {
+        $url = redirect()->intended($path)->getTargetUrl();
+
+        return  traxUrl(
+            \Str::of($url)->after(url(''))
+        );
+    }
+}
