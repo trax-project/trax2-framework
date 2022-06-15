@@ -107,3 +107,19 @@ if (!function_exists('traxIntendedUrl')) {
         );
     }
 }
+
+if (!function_exists('traxRedirect')) {
+    /**
+     * Override the Laravel redirect(...) function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @param  string  $path
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    function traxRedirect(string $path = '')
+    {
+        return redirect(
+            traxUrl($path)
+        );
+    }
+}
