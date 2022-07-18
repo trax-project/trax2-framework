@@ -74,6 +74,22 @@ class CleanerService
     }
 
     /**
+     * Clear all stores.
+     *
+     * @param  bool  $force
+     * @return void
+     */
+    public function clearAllStores(bool $force = false): void
+    {
+        if (!$force) {
+            $this->checkMaxDeletableStatements(new Query);
+        }
+        foreach ($this->repositories as $repository) {
+            $repository->deleteByQuery(new Query);
+        }
+    }
+
+    /**
      * Clear a store.
      *
      * @param  int|string  $ownerId

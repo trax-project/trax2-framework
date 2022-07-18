@@ -16,7 +16,7 @@ class CreateTraxXapiAgentProfilesTable extends Migration
         Schema::create('trax_xapi_agent_profiles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('profile_id');
-            $table->string('vid')->index();    // A virtual ID based on the xAPI identification.
+            $table->string('vid', 191)->index();    // A virtual ID based on the xAPI identification.
             $table->json('data');
             $table->string('timestamp');
             $table->timestamps();

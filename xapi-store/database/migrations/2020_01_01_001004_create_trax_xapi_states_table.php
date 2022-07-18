@@ -15,9 +15,9 @@ class CreateTraxXapiStatesTable extends Migration
     {
         Schema::create('trax_xapi_states', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('state_id');
-            $table->string('activity_id')->index();
-            $table->string('vid')->index();    // A virtual ID based on the xAPI identification.
+            $table->string('state_id', 191);
+            $table->string('activity_id', 348)->index();
+            $table->string('vid', 191)->index();    // A virtual ID based on the xAPI identification.
             $table->uuid('registration')->nullable();
             $table->json('data');
             $table->string('timestamp');

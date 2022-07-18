@@ -19,7 +19,7 @@ class StatementsWritePermission extends Permission
      * @var array
      */
     protected $capabilities = [
-        'statement.read.entity', 'statement.write.entity',
+        'statement.write.entity',
     ];
 
     /**

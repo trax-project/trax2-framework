@@ -296,13 +296,24 @@ export default class Auth {
         Vue.prototype.$auth.owner = data.owner
     }
 
-    setUiConfig(data) {
-        localStorage.setItem('uiconfig', JSON.stringify(data))
+    setUiConfig(data, prop) {
+        if (prop) {
+            let config = JSON.parse(localStorage.getItem('uiconfig'))
+            config = config ? config : {}
+            config[prop] = data
+            localStorage.setItem('uiconfig', JSON.stringify(config))
+        } else {
+            localStorage.setItem('uiconfig', JSON.stringify(data))
+        }
     }
 
-    getUiConfig() {
+    getUiConfig(prop) {
         let config = JSON.parse(localStorage.getItem('uiconfig'))
-        return config ? config : {}
+        if (prop) {
+            return config ? config[prop] : null
+        } else {
+            return config ? config : {}
+        }
     }
 
     resetUiConfig() {

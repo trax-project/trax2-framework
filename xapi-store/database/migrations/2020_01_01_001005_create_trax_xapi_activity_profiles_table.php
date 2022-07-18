@@ -16,7 +16,7 @@ class CreateTraxXapiActivityProfilesTable extends Migration
         Schema::create('trax_xapi_activity_profiles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('profile_id');
-            $table->string('activity_id')->index();
+            $table->string('activity_id', 348)->index();
             $table->json('data');
             $table->string('timestamp');
             $table->timestamps();
