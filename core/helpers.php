@@ -78,14 +78,14 @@ if (!function_exists('traxRoute')) {
      * Override the Laravel route() function in order to get a secure URL
      * depending of the app config.
      *
-     * @param  string  $path
+     * @param  string  $pathOrName
      * @param  array  $params
      * @return string
      */
-    function traxRoute(string $path = '', array $params = [])
+    function traxRoute(string $pathOrName = '', array $params = [])
     {
         return  traxUrl(
-            \Str::of(route($path, $params))->after(url(''))
+            \Str::of(route($pathOrName, $params))->after(url(''))
         );
     }
 }
@@ -120,6 +120,23 @@ if (!function_exists('traxRedirect')) {
     {
         return redirect(
             traxUrl($path)
+        );
+    }
+}
+
+if (!function_exists('traxRedirectRoute')) {
+    /**
+     * Override the Laravel redirect()->route(...) function in order to get a secure URL
+     * depending of the app config.
+     *
+     * @param  string  $name
+     * @param  array  $params
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    function traxRedirectRoute(string $pathOrName = '', array $params = [])
+    {
+        return redirect(
+            traxRoute($pathOrName, $params)
         );
     }
 }
