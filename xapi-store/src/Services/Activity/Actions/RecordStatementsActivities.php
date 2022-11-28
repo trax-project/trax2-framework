@@ -282,13 +282,16 @@ trait RecordStatementsActivities
             return;
         }
         $relations = collect($activitiesInfo)->map(function ($info) use ($activities) {
+            if (!$activity = $activities->where('iri', $info->iri)->first()) {
+                return false;
+            }
             return [
-                'activity_id' => $activities->where('iri', $info->iri)->first()->id,
+                'activity_id' => $activity->id,
                 'statement_id' => $info->statementId,
                 'type' => intval($info->type),
                 'sub' => $info->sub,
             ];
         });
-        $this->repository->insertStatementsRelations($relations->all());
+        $this->repository->insertStatementsRelations($relations->filter()->all());
     }
 }

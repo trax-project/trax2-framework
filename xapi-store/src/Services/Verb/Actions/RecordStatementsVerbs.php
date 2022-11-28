@@ -129,12 +129,15 @@ trait RecordStatementsVerbs
     protected function recordStatementsRelations(Collection $verbs, array $verbsInfo): void
     {
         $relations = collect($verbsInfo)->map(function ($info) use ($verbs) {
+            if (!$verb = $verbs->where('iri', $info->iri)->first()) {
+                return false;
+            }
             return [
-                'verb_id' => $verbs->where('iri', $info->iri)->first()->id,
+                'verb_id' => $verb->id,
                 'statement_id' => $info->statementId,
                 'sub' => $info->sub,
             ];
         });
-        $this->repository->insertStatementsRelations($relations->all());
+        $this->repository->insertStatementsRelations($relations->filter()->all());
     }
 }

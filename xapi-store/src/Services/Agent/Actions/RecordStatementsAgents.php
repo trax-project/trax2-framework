@@ -351,14 +351,17 @@ trait RecordStatementsAgents
     protected function recordStatementsRelations(Collection $agents, array $agentsInfo): void
     {
         $relations = collect($agentsInfo)->map(function ($info) use ($agents) {
+            if (!$agent = $agents->where('vid', $info->vid)->first()) {
+                return false;
+            }
             return [
-                'agent_id' => $agents->where('vid', $info->vid)->first()->id,
+                'agent_id' => $agent->id,
                 'statement_id' => $info->statementId,
                 'type' => intval($info->type),
                 'sub' => $info->sub,
                 'group' => $info->group,
             ];
         });
-        $this->repository->insertStatementsRelations($relations->all());
+        $this->repository->insertStatementsRelations($relations->filter()->all());
     }
 }

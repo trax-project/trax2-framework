@@ -65,7 +65,7 @@ class StatementRecordService
                 isset($authority) ? $authority : $this->getAccessAuthority(),
                 $validated
             );
-            
+
             // Dispatch the pending statements.
             // We do it inside the transaction because queues may not be used.
             $this->dispatchPendingStatements($uuids, $allowPseudo, $allowQueue);
