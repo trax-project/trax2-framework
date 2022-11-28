@@ -41,7 +41,7 @@ class ActivityProfileController extends CrudController
     {
         return [
             'profile_id' => 'required|string',
-            'activity_id' => 'required|url',
+            'activity_id' => 'required|iri',
             'data.content' => 'required',
             'data.type' => 'required|content_type',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',

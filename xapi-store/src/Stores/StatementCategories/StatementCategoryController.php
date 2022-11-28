@@ -40,7 +40,7 @@ class StatementCategoryController extends CrudController
     protected function validationRules(Request $request)
     {
         return [
-            'iri' => 'required|url',
+            'iri' => 'required|iri',
             'owner_id' => 'nullable|integer|exists:trax_owners,id',
             'profile' => 'nullable|boolean',
         ];

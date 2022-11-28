@@ -29,7 +29,7 @@ class XapiActivityProfileController extends XapiDocumentController
      * PUT rules.
      */
     protected $putRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'profileId' => 'required|string|forbidden_with:since',
     ];
 
@@ -37,7 +37,7 @@ class XapiActivityProfileController extends XapiDocumentController
      * GET rules.
      */
     protected $getRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'profileId' => 'string|forbidden_with:since',
         'since' => 'iso_date|forbidden_with:profileId'
     ];
@@ -46,7 +46,7 @@ class XapiActivityProfileController extends XapiDocumentController
      * FIND rules.
      */
     protected $deleteRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'profileId' => 'required|string',
     ];
 

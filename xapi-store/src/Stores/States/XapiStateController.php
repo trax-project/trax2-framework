@@ -28,7 +28,7 @@ class XapiStateController extends XapiDocumentController
      * PUT rules.
      */
     protected $putRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'agent' => 'required|xapi_agent',
         'registration' => 'uuid',
         'stateId' => 'required|string|forbidden_with:since',
@@ -38,7 +38,7 @@ class XapiStateController extends XapiDocumentController
      * GET rules.
      */
     protected $getRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'agent' => 'required|xapi_agent',
         'registration' => 'uuid',
         'stateId' => 'string|forbidden_with:since',
@@ -49,7 +49,7 @@ class XapiStateController extends XapiDocumentController
      * FIND rules.
      */
     protected $deleteRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
         'agent' => 'required|xapi_agent',
         'registration' => 'uuid',
         'stateId' => 'string',

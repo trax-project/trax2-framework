@@ -21,7 +21,7 @@ trait XapiActivityValidation
      * GET rules.
      */
     protected $getRules = [
-        'activityId' => 'required|url',
+        'activityId' => 'required|iri',
     ];
 
     /**

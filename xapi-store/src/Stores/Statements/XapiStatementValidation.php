@@ -32,8 +32,8 @@ trait XapiStatementValidation
      */
     protected $getRules = [
         'agent' => 'xapi_agent',
-        'verb' => 'url',
-        'activity' => 'url',
+        'verb' => 'iri',
+        'activity' => 'iri',
         'registration' => 'uuid',
         'related_activities' => 'json_boolean',
         'related_agents' => 'json_boolean',

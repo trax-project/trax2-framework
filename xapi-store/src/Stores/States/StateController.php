@@ -41,7 +41,7 @@ class StateController extends CrudController
     {
         return [
             'state_id' => 'required|string',
-            'activity_id' => 'required|url',
+            'activity_id' => 'required|iri',
             'agent' => 'required|xapi_agent',
             'registration' => 'nullable|uuid',
             'data.content' => 'required',
