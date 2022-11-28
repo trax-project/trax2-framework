@@ -52,7 +52,7 @@ class ResetPasswordController extends Controller
         }
 
         // Else, we redirect.
-        return redirect("$redirect/$token");
+        return traxRedirect("$redirect/$token");
     }
 
     /**

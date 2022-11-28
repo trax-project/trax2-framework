@@ -3,6 +3,7 @@
 namespace Trax\Auth\Stores\Users\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
@@ -122,6 +123,19 @@ class LoginController extends Controller
     {
         $user = app(\Trax\Auth\Authentifier::class)->user();
         event(new LoggedOut($user));
-        return $this->nativeLogout($request);
+
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        if ($response = $this->loggedOut($request)) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+            ? new JsonResponse([], 204)
+            : traxRedirect('/');
     }
 }
