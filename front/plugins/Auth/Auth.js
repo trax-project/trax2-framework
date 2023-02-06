@@ -30,7 +30,7 @@ export default class Auth {
             next({ name: 'home' })
         })
         .catch(err => {
-            Vue.prototype.$auth.resetUiConfig()
+            //Vue.prototype.$auth.resetUiConfig()
             next()
         })
     }
@@ -297,18 +297,20 @@ export default class Auth {
     }
 
     setUiConfig(data, prop) {
+        let key = 'uiconfig_' + Vue.prototype.$auth.user.id
         if (prop) {
-            let config = JSON.parse(localStorage.getItem('uiconfig'))
+            let config = JSON.parse(localStorage.getItem(key))
             config = config ? config : {}
             config[prop] = data
-            localStorage.setItem('uiconfig', JSON.stringify(config))
+            localStorage.setItem(key, JSON.stringify(config))
         } else {
-            localStorage.setItem('uiconfig', JSON.stringify(data))
+            localStorage.setItem(key, JSON.stringify(data))
         }
     }
 
     getUiConfig(prop) {
-        let config = JSON.parse(localStorage.getItem('uiconfig'))
+        let key = 'uiconfig_' + Vue.prototype.$auth.user.id
+        let config = JSON.parse(localStorage.getItem(key))
         if (prop) {
             return config ? config[prop] : null
         } else {
@@ -317,7 +319,8 @@ export default class Auth {
     }
 
     resetUiConfig() {
-        localStorage.setItem('uiconfig', JSON.stringify({}))
+        let key = 'uiconfig_' + Vue.prototype.$auth.user.id
+        //localStorage.setItem(key, JSON.stringify({}))
     }
 
     redirect() {
