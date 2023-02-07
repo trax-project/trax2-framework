@@ -53,7 +53,7 @@ export default class CrudController {
             });
             // Callback.
             if (this.callbacks.listed) {
-                this.callbacks.listed(this.rows)
+                this.callbacks.listed(this.rows, resp)
             }
             // Update paging.
             if (resp.data.paging) {
