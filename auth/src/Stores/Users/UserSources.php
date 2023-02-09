@@ -22,6 +22,10 @@ class UserSources extends Options
                 'id' => 'ldap',
                 'name' => __('trax-auth::options.user_sources_ldap'),
             ],
+            [
+                'id' => 'ldap2',
+                'name' => __('trax-auth::options.user_sources_ldap2'),
+            ],
         ];
     }
 }
