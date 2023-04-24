@@ -3,6 +3,7 @@
 namespace Trax\XapiStore\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Trax\XapiStore\HttpRequest;
 use Trax\XapiStore\Exceptions\XapiBadRequestException;
 use Trax\XapiStore\Exceptions\XapiConflictException;
@@ -29,7 +30,16 @@ trait ManageConcurrency
                 throw new XapiPreconditionFailedException('If-Match header does not match with the existing content.');
             } else {
                 $content = is_string($resource->data->content) ?: json_encode($resource->data->content);
-                if (HttpRequest::header($request, 'If-Match') != '"'.sha1($content).'"') {
+                
+                // Remove the 'W/' which may be added by some servers or proxies:
+                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Match
+                // This should probably be solved by the client.
+                $etag = HttpRequest::header($request, 'If-Match');
+                if (Str::of($etag)->startsWith('W/')) {
+                    $etag = Str::of($etag)->after('W/');
+                }
+
+                if ($etag != '"'.sha1($content).'"') {
                     throw new XapiPreconditionFailedException('If-Match header does not match with the existing content.');
                 } else {
                     return;
