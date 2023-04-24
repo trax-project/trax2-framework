@@ -22,14 +22,14 @@ export default {
         const filters = {
             context: contextFilters,
             statements: new XapiStatementsFilters(contextFilters),
-            activities: new XapiActivitiesFilters(),
-            agents: new XapiAgentsFilters(),
-            activityProfiles: new XapiActivityProfilesFilters(),
-            agentProfiles: new XapiAgentProfilesFilters(),
-            states: new XapiStatesFilters(),
-            verbs: new XapiVerbsFilters(),
-            activityTypes: new XapiActivityTypesFilters(),
-            statementCategories: new XapiStatementCategoriesFilters(),
+            activities: new XapiActivitiesFilters(contextFilters),
+            agents: new XapiAgentsFilters(contextFilters),
+            activityProfiles: new XapiActivityProfilesFilters(contextFilters),
+            agentProfiles: new XapiAgentProfilesFilters(contextFilters),
+            states: new XapiStatesFilters(contextFilters),
+            verbs: new XapiVerbsFilters(contextFilters),
+            activityTypes: new XapiActivityTypesFilters(contextFilters),
+            statementCategories: new XapiStatementCategoriesFilters(contextFilters),
             logs: new XapiLogsFilters(contextFilters),
         }
 
