@@ -36,8 +36,14 @@ class XapiDate
         // Timezone is taken into account.
         $timestamp = strtotime($isoDate);
 
-        // We need to extract microseconds from the original ISO date.
-        list($date, $time) = explode('T', $isoDate);
+        // We need to extract microseconds from the original ISO date and normalize it.
+
+        // The delimiter may be 'T' or ' ', which are both accepted by the validation rules.
+        $delimiter = \Str::contains($isoDate, 'T') ? 'T' : ' ';
+        $dateTime = explode($delimiter, $isoDate);
+
+        // We may have only the date, not the time.
+        $time = isset($dateTime[1]) ? $dateTime[1] : '00:00:00';
 
         // Remove the timezone at the end.
         if (strpos($time, '+') !== false) {
