@@ -78,17 +78,21 @@ class BasicHttpGuard implements AccessGuardContract
         }
 
         // Get credentials.
-        list($basic, $auth) = explode(' ', $authorization);
-        if ($basic != 'Basic') {
+        // Malformed headers may lead to a code exception. Dont do this!
+        // list($basic, $auth) = explode(' ', $authorization);
+        $basicEncoded = explode(' ', $authorization);
+        if ($basicEncoded[0] != 'Basic' || count($basicEncoded) < 2) {
             return false;
         }
-        list($username, $password) = explode(':', base64_decode(trim($auth)));
-        if (empty($username)) {
+        // Malformed headers may lead to a code exception. Dont do this!
+        // list($username, $password) = explode(':', base64_decode(trim($basicEncoded[1])));
+        $usernamePassword = explode(':', base64_decode(trim($basicEncoded[1])));
+        if (empty($usernamePassword[0]) ||  count($usernamePassword) < 2) {
             return false;
         }
 
         // Check credentials.
-        if ($credentials->username != $username || $credentials->password != $password) {
+        if ($credentials->username != $usernamePassword[0] || $credentials->password != $usernamePassword[1]) {
             return false;
         }
 
