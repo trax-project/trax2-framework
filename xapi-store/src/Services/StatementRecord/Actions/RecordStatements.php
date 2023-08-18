@@ -2,9 +2,10 @@
 
 namespace Trax\XapiStore\Services\StatementRecord\Actions;
 
-use Illuminate\Support\Collection;
 use Trax\Auth\TraxAuth;
+use Illuminate\Support\Collection;
 use Trax\XapiValidation\Statement;
+use Trax\XapiStore\Events\StatementRecordsInserted;
 
 trait RecordStatements
 {
@@ -43,6 +44,7 @@ trait RecordStatements
             // No error, so it was not a unicity issue. We throw the exception.
             throw $e;
         }
+        StatementRecordsInserted::dispatch($batch);
         return $batch->pluck('uuid')->all();
     }
 
